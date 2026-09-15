@@ -32,10 +32,13 @@ class OverworldMap {
     }
 
     mountObjects() {
-        Object.values(this.gameObjects).forEach(o => {
+        Object.keys(this.gameObjects).forEach(key => {
+
+            let object = this.gameObjects[key];
+            object.id = key;
 
             //TODO: determine if this object should actually mount
-            o.mount(this);
+            object.mount(this);
             
         })
     }
@@ -64,11 +67,29 @@ window.OverworldMap = {
             x: utils.withGrid(5),
             y: utils.withGrid(6),
         }),
-         npc1: new Person({
+         npcA: new Person({
             x: utils.withGrid(7),
             y: utils.withGrid(9),
-           src: "images/npc1.png"
-        })
+           src: "images/npc1.png",
+           behaviorLoop: [
+                { type: "stand", direction: "left", time: 800 },
+                { type: "stand", direction: "up", time: 800 },
+                { type: "stand", direction: "right", time: 1200 },
+                { type: "stand", direction: "up", time: 300 },
+            ]
+        }),
+         npcB: new Person({
+            x: utils.withGrid(3),
+            y: utils.withGrid(7),
+           src: "images/npc2.png",
+           behaviorLoop: [
+            { type: "walk", direction: "left" },
+            { type: "stand", direction: "up", time: 800 },
+            { type: "walk", direction: "up" },
+            { type: "walk", direction: "right" },
+            { type: "walk", direction: "down" },
+           ]
+        }),
        },
        walls: {
            [utils.asGridCoord(7,6)] : true,
