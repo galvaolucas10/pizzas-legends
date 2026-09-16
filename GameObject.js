@@ -9,15 +9,35 @@ class GameObject {
            gameObject: this,
            src: config.src || "images/hero.png",
         });
+        
+        this.behaviorLoop = config.behaviorLoop || [];
+        this.behaviorLoopIndex =  0;
+
     }
 
     mount(map) {
         console.log("mouting!")
        this.isMounted = true;
        map.addWall(this.x, this.y);
+
+       //If we have a behavior, kick off after a short delay
+       setTimeout(() => {
+           this.doBehaviorEvent(map);
+       }, 10)
     }
 
     update() {
+    }
+
+    doBehaviorEvent(map) {
+        let eventConfig = this.behaviorLoop[this.behaviorLoopIndex];
+        eventConfig.who = this.id;
+
+        const eventHandler = new OverworldEvent({ map, event: eventConfig });
+        eventHandler.init();
+        
 
     }
+
+
 }
