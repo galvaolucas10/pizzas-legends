@@ -13,8 +13,9 @@
     }
   ],
   "lia_rotina": [
-    { "type": "stand", "who": "lia", "direction": "left", "time": 1500 },
-    { "type": "stand", "who": "lia", "direction": "up", "time": 900 },
-    { "type": "stand", "who": "lia", "direction": "down", "time": 1200 }
+    { "type": "stand", "who": "lia", "direction": "down", "time": 1800 },
+    { "type": "stand", "who": "lia", "direction": "left", "time": 900 },
+    { "type": "stand", "who": "lia", "direction": "down", "time": 1400 },
+    { "type": "stand", "who": "lia", "direction": "right", "time": 900 }
   ]
 }

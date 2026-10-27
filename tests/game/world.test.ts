@@ -75,15 +75,14 @@ describe("andar pelo mapa (F0-10)", () => {
   it("não atravessa a mesa nem NPCs", async () => {
     const { manager, input } = await world();
     expect(hold(manager, input, "right")).toEqual({ x: 6, y: 6 }); // mesa em (7,6)
-    // Bento está em (3,7): andando para a esquerda pela linha 7, o herói para em (4,7).
-    hold(manager, input, "down", 1);
-    expect(hold(manager, input, "left")).toEqual({ x: 4, y: 7 });
+    expect(hold(manager, input, "down")).toEqual({ x: 6, y: 9 }); // parede de baixo
+    // O Mestre está em (7,9): o herói não entra no tile dele.
+    expect(hold(manager, input, "right")).toEqual({ x: 6, y: 9 });
   });
 
   it("NPCs ocupam seus tiles na grade", async () => {
     const { manager } = await world();
     expect(manager.grid?.occupant(7, 9)).toBe("mestre");
-    expect(manager.grid?.occupant(3, 7)).toBe("bento");
     expect(manager.entityAt(7, 9)?.id).toBe("mestre");
   });
 
@@ -116,15 +115,16 @@ describe("câmera (ARCHITECTURE 10.4)", () => {
 
 describe("ordem de desenho (ARCHITECTURE 10.5)", () => {
   it("desenha chão, sombras, personagens por Y e depois a camada de cima", async () => {
-    const { manager } = await world();
+    // Bosque, na entrada da vila (1,15): Sálvia em y=10, herói em y=15, Bento em y=22.
+    const { manager } = await world("map.bosque", "vila");
     dom.calls.length = 0;
     manager.render(dom.ctx, 1);
     const ids = dom.calls.map((c) => (c.image as { id?: string }).id ?? "cache");
     const characters = ids.filter((id) => id.startsWith("img.") && id !== "img.shadow");
-    // Herói em y=6, Bento em y=7, Mestre em y=9: quem está mais abaixo é desenhado por cima.
-    expect(characters).toEqual(["img.hero", "img.npc2", "img.npc1"]);
+    // Quem está mais abaixo é desenhado por cima.
+    expect(characters).toEqual(["img.npc4", "img.hero", "img.npc2"]);
     expect(ids[0]).toBe("cache"); // camada de baixo
-    expect(ids.at(-1)).toBe("cache"); // camada de cima (a cozinha tem tiles "over")
+    expect(ids.at(-1)).toBe("cache"); // camada de cima (copas das árvores)
     expect(ids.indexOf("img.shadow")).toBeLessThan(ids.indexOf("img.hero"));
   });
 });

@@ -394,6 +394,22 @@ Leitura esperada pelo jogador:
 
 Três regiões (Vila, Bosque, Clareira) + dois interiores, conforme a meta de 3 mapas da seção 5 do planejamento.
 
+**Conexões [Implementado – versão provisória]:**
+
+```text
+Cozinha do Mestre ──porta de baixo──▶ Vila do Forno ◀──porta── Despensa da Lia
+        │                              │      ▲                    ▲  │
+        └──passagem do fundo ──────────┼──────┼────────────────────┘  │ seta no chão
+                                       │      └───────────────────────┘ (saída para a vila)
+                                  borda leste
+                                       ▼
+                               Bosque das Ervas ──ponte / borda leste──▶ Clareira do Desafio
+```
+
+- A passagem do fundo da cozinha leva ao fundo da despensa. Da despensa, sai-se sempre pela **seta no chão**, que dá na vila, em frente à porta da despensa.
+- Bordas de mapa usam portas na borda (o jogador sai andando pelo caminho).
+- Arte provisória autoral (`ts.exterior`); posições de NPCs, placas e fornos já seguem o GDD. Bloqueios por missão (ponte) e segredos entram com as etapas (F2-10, F2-14).
+
 ### 9.2 Interações no mapa
 
 - **Interagir** (tecla de ação) com o que estiver no quadrado à frente: NPC, baú, forno, ponto de coleta, placa.

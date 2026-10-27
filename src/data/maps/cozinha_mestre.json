@@ -108,63 +108,12 @@
       ]
     },
     {
-      "id": "bento",
-      "x": 3,
-      "y": 7,
-      "kind": "npc",
-      "npcId": "npc.lenhador_bento",
-      "talking": [
-        {
-          "events": [
-            {
-              "type": "face",
-              "who": "bento",
-              "towards": "player"
-            },
-            {
-              "type": "message",
-              "speaker": "npc.lenhador_bento",
-              "textKey": "dlg.lenhador_bento.padrao.1"
-            }
-          ]
-        }
-      ],
-      "behaviorLoop": [
-        {
-          "type": "walk",
-          "who": "bento",
-          "direction": "left"
-        },
-        {
-          "type": "stand",
-          "who": "bento",
-          "direction": "up",
-          "time": 800
-        },
-        {
-          "type": "walk",
-          "who": "bento",
-          "direction": "up"
-        },
-        {
-          "type": "walk",
-          "who": "bento",
-          "direction": "right"
-        },
-        {
-          "type": "walk",
-          "who": "bento",
-          "direction": "down"
-        }
-      ]
-    },
-    {
       "id": "saida",
       "x": 5,
       "y": 10,
       "kind": "door",
-      "toMap": "map.despensa",
-      "toEntrance": "porta"
+      "toMap": "map.vila",
+      "toEntrance": "casa_mestre"
     },
     {
       "id": "passagem_fundos",

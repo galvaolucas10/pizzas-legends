@@ -1,0 +1,20 @@
+{
+  "ravena": [
+    {
+      "events": [
+        { "type": "face", "who": "ravena", "towards": "player" },
+        {
+          "type": "message",
+          "speaker": "npc.rival_ravena",
+          "textKey": "dlg.rival_ravena.padrao.1"
+        },
+        { "type": "message", "speaker": "npc.rival_ravena", "textKey": "dlg.rival_ravena.padrao.2" }
+      ]
+    }
+  ],
+  "ravena_rotina": [
+    { "type": "stand", "who": "ravena", "direction": "down", "time": 2000 },
+    { "type": "stand", "who": "ravena", "direction": "left", "time": 700 },
+    { "type": "stand", "who": "ravena", "direction": "right", "time": 700 }
+  ]
+}

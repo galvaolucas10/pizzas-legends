@@ -50,30 +50,29 @@ describe("behaviorLoop (F0-11)", () => {
     expect(mestre.mover.direction).toBe("left"); // recomeça o laço
   });
 
-  it("o Bento anda em quadrado e volta ao início, sem interrupções", async () => {
-    const { run, tile, warnings } = await scene();
-    expect(tile("bento")).toEqual([3, 7]);
-    // 4 passos de 16 ticks + 800 ms parado ≈ 1867 ms por volta.
-    for (let lap = 0; lap < 3; lap++) {
-      run(2000);
+  it("o Bento patrulha no bosque e volta ao início, sem interrupções", async () => {
+    const { run, tile, warnings } = await scene("map.bosque", "vila");
+    expect(tile("bento")).toEqual([7, 22]);
+    // 4 passos de 16 ticks + 2,7 s parado ≈ 3,8 s por volta.
+    const seen = new Set<string>();
+    for (let t = 0; t < 120; t++) {
+      run(100);
+      seen.add(tile("bento").join(","));
     }
-    run(6000);
     expect(warnings).toEqual([]);
-    // Depois de várias voltas, continua preso ao seu quadrado.
-    const [x, y] = tile("bento");
-    expect([2, 3]).toContain(x);
-    expect([6, 7]).toContain(y);
+    // Anda 2 tiles para a direita e volta, sempre na mesma linha.
+    expect(seen).toEqual(new Set(["7,22", "8,22", "9,22"]));
   });
 
   it("walk bloqueado espera e tenta de novo (segundo plano não desiste)", async () => {
-    const { s, run, tile } = await scene();
-    // O herói fica no caminho do Bento: (2,7) é o primeiro passo dele (para a esquerda).
-    s.world.player.mover.place(s.world.grid!, 2, 7);
+    const { s, run, tile } = await scene("map.bosque", "vila");
+    // O herói fica no caminho do Bento: (8,22) é o primeiro passo dele (para a direita).
+    s.world.player.mover.place(s.world.grid!, 8, 22);
     run(3000);
-    expect(tile("bento")).toEqual([3, 7]);
-    s.world.player.mover.place(s.world.grid!, 5, 6);
-    run(300);
-    expect(tile("bento")).toEqual([2, 7]);
+    expect(tile("bento")).toEqual([7, 22]);
+    s.world.player.mover.place(s.world.grid!, 1, 15);
+    run(100); // liberado: o passo começa no tick seguinte
+    expect(tile("bento")).toEqual([8, 22]);
   });
 
   it("cenas bloqueantes pausam as rotinas e tomam o contexto de entrada", async () => {
@@ -115,23 +114,23 @@ describe("behaviorLoop (F0-11)", () => {
   it("trocar de mapa cancela os roteiros do mapa anterior", async () => {
     const { s, run, input } = await scene();
     s.events.runBlocking([{ type: "wait", time: 10_000 }]);
-    await s.loadMap("map.despensa", { entrance: "porta" });
+    await s.loadMap("map.vila", { entrance: "casa_mestre" });
     expect(s.events.isBlocking).toBe(false);
     expect(input.activeContext).toBe("world");
     expect([...s.events.backgroundRunners.keys()]).toEqual(["lia"]);
     run(100);
-    expect(s.world.entity("bento")).toBeUndefined();
+    expect(s.world.entity("mestre")).toBeUndefined();
   });
 
   it("eventos instantâneos encadeiam no mesmo tick", async () => {
     const { s } = await scene();
     const events: GameEvent[] = [
       { type: "face", who: "mestre", towards: "up" },
-      { type: "face", who: "bento", towards: "right" },
+      { type: "face", who: "mestre", towards: "right" },
     ];
     s.events.runBlocking(events);
     s.update(TICK_MS);
     expect(s.events.isBlocking).toBe(false);
-    expect(s.world.entity("bento")!.mover.direction).toBe("right");
+    expect(s.world.entity("mestre")!.mover.direction).toBe("right");
   });
 });

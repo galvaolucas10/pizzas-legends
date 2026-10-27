@@ -73,11 +73,24 @@ export class WorldScene implements Scene {
   /** Confirmar olhando para um NPC: roda a primeira fala cuja condição é verdadeira (DATA_MODELS 3.13). */
   interact(x: number, y: number): boolean {
     const target = this.world.entityAt(x, y);
-    if (!(target instanceof Npc) || target.mover.moving) return false;
-    const talking = target.def.talking.find((t) => this.world.isTrue(t.condition));
-    if (!talking) return false;
-    this.events.runBlocking(talking.events);
-    return true;
+    if (target instanceof Npc) {
+      if (target.mover.moving) return false;
+      const talking = target.def.talking.find((t) => this.world.isTrue(t.condition));
+      if (!talking) return false;
+      this.events.runBlocking(talking.events);
+      return true;
+    }
+    const object = this.world.objectAt(x, y);
+    if (object?.kind === "sign") {
+      this.events.runBlocking([{ type: "message", textKey: object.textKey }]);
+      return true;
+    }
+    if (object?.kind === "oven") {
+      // O preparo de pizzas chega na F1-08 (handler openOven); por enquanto, só uma fala.
+      this.events.runBlocking([{ type: "message", textKey: "obj.forno.quente" }]);
+      return true;
+    }
+    return false;
   }
 
   /** Mapa sendo carregado pela última troca (para os testes aguardarem). */

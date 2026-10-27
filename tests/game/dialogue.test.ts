@@ -31,7 +31,7 @@ function fakeDocument(): Document {
 beforeEach(() => vi.stubGlobal("document", stubDom().document));
 afterEach(() => vi.unstubAllGlobals());
 
-async function scene() {
+async function scene(mapId = "map.cozinha_mestre", entrance = "inicio") {
   const input = new InputManager();
   const dialogue = new DialogueBox(fakeDocument(), 40);
   const world = new WorldManager({
@@ -41,7 +41,7 @@ async function scene() {
     state: () => ({ flags: {} }),
   });
   const s = new WorldScene({ world, input, dialogue });
-  await s.loadMap("map.cozinha_mestre", { entrance: "inicio" });
+  await s.loadMap(mapId, { entrance });
   const tick = (n = 1) => {
     for (let i = 0; i < n; i++) {
       input.poll();
@@ -93,6 +93,26 @@ describe("diálogo com NPC (F0-13)", () => {
     tick(60);
     expect([world.player.mover.tileX, world.player.mover.tileY]).toEqual([7, 8]);
     expect(s.events.isBlocking).toBe(true);
+  });
+
+  it("placas e fornos respondem ao confirmar", async () => {
+    const { s, dialogue, tap, tick, world } = await scene("map.vila", "casa_mestre");
+    // Placa "Vila do Forno" em (10,8): o herói fica em (9,8) olhando para a direita.
+    world.player.mover.place(world.grid!, 9, 8, "right");
+    tap("confirm");
+    expect(s.events.isBlocking).toBe(true);
+    dialogue.complete();
+    expect(dialogue.visibleText).toBe("Vila do Forno. Aqui, todo dia é dia de pizza.");
+    tap("confirm");
+    tick();
+    expect(s.events.isBlocking).toBe(false);
+
+    const bosque = await scene("map.bosque", "vila");
+    // Forno do acampamento em (12,22): o herói fica em (12,21) olhando para baixo.
+    bosque.world.player.mover.place(bosque.world.grid!, 12, 21, "down");
+    bosque.tap("confirm");
+    bosque.dialogue.complete();
+    expect(bosque.dialogue.visibleText).toContain("O forno está quente");
   });
 
   it("confirmar olhando para o nada não abre diálogo", async () => {

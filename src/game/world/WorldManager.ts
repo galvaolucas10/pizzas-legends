@@ -39,6 +39,8 @@ export class WorldManager {
   private lowerCache: HTMLCanvasElement | null = null;
   private upperCache: HTMLCanvasElement | null = null;
   private doors = new Map<string, DoorObject>();
+  /** Objetos sem entidade própria (placa, forno, baú...), por tile. */
+  private interactables = new Map<string, MapObject>();
 
   readonly content: ContentRegistry;
 
@@ -94,9 +96,11 @@ export class WorldManager {
         this.entities.push(npc);
       } else if (object.kind === "door") {
         this.doors.set(`${object.x},${object.y}`, object);
-      } else if (isSolid(object)) {
-        // Objetos sem entidade própria ainda (baú, forno, placa): só bloqueiam o tile.
-        grid.reserve(`${map.id}/${object.id}`, object.x, object.y);
+      } else {
+        // Objetos sem entidade própria (placa, forno, baú): o desenho vem do mapa;
+        // aqui eles bloqueiam o tile (se sólidos) e respondem à interação.
+        this.interactables.set(`${object.x},${object.y}`, object);
+        if (isSolid(object)) grid.reserve(`${map.id}/${object.id}`, object.x, object.y);
       }
     }
 
@@ -109,6 +113,7 @@ export class WorldManager {
   unloadMap(): void {
     this.entities = [];
     this.doors.clear();
+    this.interactables.clear();
     this.lowerCache = null;
     this.upperCache = null;
     this.grid = null;
@@ -122,6 +127,10 @@ export class WorldManager {
 
   doorAt(x: number, y: number): DoorObject | undefined {
     return this.doors.get(`${x},${y}`);
+  }
+
+  objectAt(x: number, y: number): MapObject | undefined {
+    return this.interactables.get(`${x},${y}`);
   }
 
   entityAt(x: number, y: number): Entity | undefined {

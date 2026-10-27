@@ -618,34 +618,6 @@
           ]
         },
         {
-          "id": 11,
-          "name": "bento",
-          "type": "npc",
-          "x": 48,
-          "y": 112,
-          "width": 16,
-          "height": 16,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "npcId",
-              "type": "string",
-              "value": "npc.lenhador_bento"
-            },
-            {
-              "name": "script",
-              "type": "string",
-              "value": "dialogues/cozinha_mestre.json#bento"
-            },
-            {
-              "name": "behaviorLoop",
-              "type": "string",
-              "value": "dialogues/cozinha_mestre.json#bento_rotina"
-            }
-          ]
-        },
-        {
           "id": 12,
           "name": "saida",
           "type": "door",
@@ -659,12 +631,12 @@
             {
               "name": "toMap",
               "type": "string",
-              "value": "map.despensa"
+              "value": "map.vila"
             },
             {
               "name": "toEntrance",
               "type": "string",
-              "value": "porta"
+              "value": "casa_mestre"
             }
           ]
         },

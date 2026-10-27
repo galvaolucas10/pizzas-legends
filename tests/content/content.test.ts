@@ -185,16 +185,25 @@ describe("mapas da demo (F0-08)", () => {
     ]).toEqual([false, false, false, false]);
   });
 
-  it("portas ligam a cozinha e a despensa nos dois sentidos", () => {
+  it("as portas ligam os mapas da demo como no GDD 9.1", () => {
     const { maps } = loadContent(bundledContent());
-    const door = (id: string) => maps[id]!.objects.find((o) => o.kind === "door");
-    expect(door("map.cozinha_mestre")).toMatchObject({
-      toMap: "map.despensa",
-      toEntrance: "porta",
-    });
-    expect(door("map.despensa")).toMatchObject({
-      toMap: "map.cozinha_mestre",
-      toEntrance: "porta",
-    });
+    const links = Object.values(maps).flatMap((map) =>
+      map.objects.flatMap((o) =>
+        o.kind === "door" ? [`${map.id} → ${o.toMap}#${o.toEntrance}`] : [],
+      ),
+    );
+    expect(links.sort()).toEqual(
+      [
+        "map.cozinha_mestre → map.vila#casa_mestre",
+        "map.cozinha_mestre → map.despensa#fundos",
+        "map.despensa → map.vila#despensa",
+        "map.vila → map.cozinha_mestre#porta",
+        "map.vila → map.despensa#porta",
+        "map.vila → map.bosque#vila",
+        "map.bosque → map.vila#bosque",
+        "map.bosque → map.clareira#bosque",
+        "map.clareira → map.bosque#clareira",
+      ].sort(),
+    );
   });
 });

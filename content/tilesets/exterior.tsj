@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "exterior",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 8,
+  "tilecount": 24,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/tiles_exterior.png",
+  "imagewidth": 128,
+  "imageheight": 48,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.exterior"
+    }
+  ]
+}

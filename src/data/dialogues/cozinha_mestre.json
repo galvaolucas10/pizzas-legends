@@ -21,24 +21,5 @@
     { "type": "stand", "who": "mestre", "direction": "up", "time": 800 },
     { "type": "stand", "who": "mestre", "direction": "right", "time": 1200 },
     { "type": "stand", "who": "mestre", "direction": "up", "time": 300 }
-  ],
-  "bento": [
-    {
-      "events": [
-        { "type": "face", "who": "bento", "towards": "player" },
-        {
-          "type": "message",
-          "speaker": "npc.lenhador_bento",
-          "textKey": "dlg.lenhador_bento.padrao.1"
-        }
-      ]
-    }
-  ],
-  "bento_rotina": [
-    { "type": "walk", "who": "bento", "direction": "left" },
-    { "type": "stand", "who": "bento", "direction": "up", "time": 800 },
-    { "type": "walk", "who": "bento", "direction": "up" },
-    { "type": "walk", "who": "bento", "direction": "right" },
-    { "type": "walk", "who": "bento", "direction": "down" }
   ]
 }

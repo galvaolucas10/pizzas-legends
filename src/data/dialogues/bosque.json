@@ -1,0 +1,50 @@
+{
+  "salvia": [
+    {
+      "events": [
+        { "type": "face", "who": "salvia", "towards": "player" },
+        {
+          "type": "message",
+          "speaker": "npc.guardia_salvia",
+          "textKey": "dlg.guardia_salvia.padrao.1"
+        },
+        {
+          "type": "message",
+          "speaker": "npc.guardia_salvia",
+          "textKey": "dlg.guardia_salvia.padrao.2"
+        }
+      ]
+    }
+  ],
+  "salvia_rotina": [
+    { "type": "stand", "who": "salvia", "direction": "left", "time": 1500 },
+    { "type": "stand", "who": "salvia", "direction": "down", "time": 1000 },
+    { "type": "stand", "who": "salvia", "direction": "right", "time": 1500 },
+    { "type": "stand", "who": "salvia", "direction": "down", "time": 1000 }
+  ],
+  "bento": [
+    {
+      "events": [
+        { "type": "face", "who": "bento", "towards": "player" },
+        {
+          "type": "message",
+          "speaker": "npc.lenhador_bento",
+          "textKey": "dlg.lenhador_bento.padrao.1"
+        },
+        {
+          "type": "message",
+          "speaker": "npc.lenhador_bento",
+          "textKey": "dlg.lenhador_bento.padrao.2"
+        }
+      ]
+    }
+  ],
+  "bento_rotina": [
+    { "type": "walk", "who": "bento", "direction": "right" },
+    { "type": "walk", "who": "bento", "direction": "right" },
+    { "type": "stand", "who": "bento", "direction": "down", "time": 1500 },
+    { "type": "walk", "who": "bento", "direction": "left" },
+    { "type": "walk", "who": "bento", "direction": "left" },
+    { "type": "stand", "who": "bento", "direction": "right", "time": 1200 }
+  ]
+}

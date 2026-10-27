@@ -305,4 +305,8 @@ F2-09 (mapas) e F2-16 (assets) correm em paralelo desde o início da Fase 2
 
 **Fase 0 concluída (27/10/2026): marco M0 atingido.** F0-01 a F0-15 entregues; a ARCHITECTURE 24 está cumprida até o passo 9.
 
-Próxima: **F1-01** (esquemas Zod do restante do conteúdo do DATA_MODELS 3 e integridade referencial completa).
+F1-01 concluída (27/10/2026): esquemas e conteúdo da demo (dados do GDD) com integridade completa.
+
+**Antecipado da F2-09:** `map.vila`, `map.bosque` e `map.clareira` já existem no Tiled com arte provisória autoral, NPCs, placas, fornos e todas as conexões (GDD 9.1). Falta na F2-09: tilesets definitivos (F2-16) e segredos (GDD 9.4).
+
+Próxima: **F1-02** (`core/rng.ts` e `core/newGame.ts`).
