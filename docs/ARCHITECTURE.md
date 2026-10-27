@@ -563,9 +563,9 @@ As **simulações de batalha** transformam as metas de balanceamento do GDD em t
 ## 20. Qualidade e CI
 
 - Scripts do `package.json`: `dev`, `build`, `preview`, `typecheck`, `lint`, `test`, `validate`, `build:maps`.
-- GitHub Actions em todo push e PR: `typecheck` → `lint` → `validate` → `test` → `build`. Um PR só entra com tudo verde.
+- GitHub Actions em todo push: `typecheck` → `lint` → `validate` → `test` → `build`. Os mesmos comandos rodam localmente antes de cada push.
 - `tsconfig` `strict: true`, `noUncheckedIndexedAccess: true` (pega o tipo de erro do `behaviorLoop[index]` indefinido do código atual).
-- Branches: `main` sempre jogável; trabalho em `feat/...`, `fix/...`.
+- Commits direto na `main`, que precisa estar sempre jogável. A mensagem do commit leva o ID da tarefa do roadmap.
 
 ---
 
@@ -614,7 +614,7 @@ pizzas-legends/                      # monorepo (npm workspaces)
 
 ## 24. Migração do código atual (Fase 0)
 
-Ordem proposta. Cada passo termina com o jogo rodando e é um PR separado.
+Ordem proposta. Cada passo termina com o jogo rodando e é um commit separado.
 
 | Passo | Entrega | Arquivos atuais afetados | Resolve |
 |---:|---|---|---|

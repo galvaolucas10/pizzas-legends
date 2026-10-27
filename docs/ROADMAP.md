@@ -3,7 +3,7 @@
 > **Versão:** 0.1 · **Data:** 27/10/2026
 > **Base:** [`PLANEJAMENTO_TECNICO_PIZZA_LEGENDS.md`](PLANEJAMENTO_TECNICO_PIZZA_LEGENDS.md) (seções 7 e 8) · [`GAME_DESIGN_DOCUMENT.md`](GAME_DESIGN_DOCUMENT.md) · [`DATA_MODELS.md`](DATA_MODELS.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`DECISOES_TECNICAS.md`](DECISOES_TECNICAS.md)
 
-Este roadmap transforma as fases do planejamento em **tarefas verificáveis**, com dependências, critérios de aceite e marcos. É a referência para criar issues e PRs.
+Este roadmap transforma as fases do planejamento em **tarefas verificáveis**, com dependências, critérios de aceite e marcos. É a referência para organizar o trabalho e os commits.
 
 ---
 
@@ -11,7 +11,7 @@ Este roadmap transforma as fases do planejamento em **tarefas verificáveis**, c
 
 ### 1.1 Identificação das tarefas
 
-`F<fase>-<nn>`, ex.: `F1-07`. O ID vai no título da issue, no nome da branch (`feat/F1-07-cesta`) e no PR.
+`F<fase>-<nn>`, ex.: `F1-07`. O ID vai na mensagem do commit, ex.: `feat(F1-07): tela de cesta`. O trabalho é feito direto na `main` (ver 1.5).
 
 ### 1.2 Tamanho relativo
 
@@ -35,6 +35,12 @@ Estimativas relativas, não prazos. O calendário só é definido após medir a 
 ### 1.4 Mudança em relação ao planejamento original
 
 O planejamento colocava receitas e crafting na Fase 2. Com a ADR-004, **a batalha depende de pizzas**, então um preparo mínimo (Margherita) passou para a **Fase 1**. A Fase 2 concentra o que diferencia o jogo: perfis completos, árvore de habilidades, conversões e o conteúdo restante da demo.
+
+### 1.5 Fluxo de trabalho no git
+
+- Commits e pushs **direto na `main`**, sem branches nem PRs, para manter o processo simples.
+- Antes de cada push, rodar localmente `typecheck`, `lint`, `test` e `build`. A `main` precisa estar sempre jogável.
+- Uma tarefa por commit, sempre que possível, com o ID na mensagem: `feat(F0-04): escala inteira responsiva`.
 
 ---
 
@@ -297,4 +303,4 @@ F2-09 (mapas) e F2-16 (assets) correm em paralelo desde o início da Fase 2
 
 ## 11. Próxima ação
 
-Começar pela **F0-01** (projeto Vite + TypeScript com o código atual migrado para módulos) em uma branch `feat/F0-01-vite-typescript`, seguida da **F0-02** (correção do erro do `behaviorLoop`), que pode entrar no mesmo PR por ser pequena.
+F0-01, F0-02 e F0-03 concluídas (27/10/2026). Próxima: **F0-04** (resolução interna e escala inteira responsiva).
