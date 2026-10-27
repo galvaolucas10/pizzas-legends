@@ -303,4 +303,4 @@ F2-09 (mapas) e F2-16 (assets) correm em paralelo desde o início da Fase 2
 
 ## 11. Próxima ação
 
-F0-01, F0-02 e F0-03 concluídas (27/10/2026). Próxima: **F0-04** (resolução interna e escala inteira responsiva).
+F0-01 a F0-04 concluídas (27/10/2026). Próxima: **F0-05** (`InputManager` com ações, contextos e liberação em `blur`).

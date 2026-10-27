@@ -1,5 +1,6 @@
 import type { GameObject } from "./GameObject";
 import { utils } from "./utils";
+import { CAMERA_SCREEN_X, CAMERA_SCREEN_Y } from "./engine/render/viewport";
 
 type Frame = [number, number];
 export type Point = { x: number; y: number };
@@ -112,8 +113,8 @@ export class Sprite {
 
   /** Desenha na posição já interpolada do objeto e da câmera. Não altera estado. */
   draw(ctx: CanvasRenderingContext2D, position: Point, camera: Point): void {
-    const x = position.x - 8 + utils.withGrid(10.5) - camera.x;
-    const y = position.y - 18 + utils.withGrid(6) - camera.y;
+    const x = position.x - 8 + CAMERA_SCREEN_X - camera.x;
+    const y = position.y - 18 + CAMERA_SCREEN_Y - camera.y;
 
     if (this.isShadowLoaded) ctx.drawImage(this.shadow, x, y);
 

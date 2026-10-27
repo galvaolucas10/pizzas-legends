@@ -444,8 +444,8 @@ interface AnimationDef {
 
 ## 13. Renderização
 
-- **Resolução interna** é uma constante (`VIEW_W × VIEW_H`). O GDD propõe **384×216**, a validar na Fase 0. Hoje é 352×198. Nenhum código pode assumir valores fixos.
-- **Escala inteira:** o canvas tem a resolução interna, e o CSS o amplia pelo maior inteiro que cabe na janela (`image-rendering: pixelated`, `ctx.imageSmoothingEnabled = false`). Substitui o `transform: scale(3)` fixo. Recalculado no `resize`.
+- **Resolução interna** é uma constante (`VIEW_W × VIEW_H`). Decidida na F0-04: **384×216** (GDD 13.1). Fica em `engine/render/viewport.ts`, junto com `CAMERA_SCREEN_X/Y` (onde a câmera é desenhada). Nenhum código pode assumir valores fixos.
+- **Escala inteira:** o canvas tem a resolução interna, e o CSS o amplia pelo maior inteiro que cabe na janela (`image-rendering: pixelated`, `ctx.imageSmoothingEnabled = false`). Substitui o `transform: scale(3)` fixo. A conta é feita em pixels físicos (`innerWidth × devicePixelRatio`), para continuar nítido com zoom do Windows em 125%/150%. Recalculado no `resize` e quando o `devicePixelRatio` muda.
 - **Cache de tiles:** ao carregar um mapa, as camadas `lower` e `upper` são desenhadas uma vez em canvases fora da tela (`TileLayerCache`). Em cada quadro, são só dois `drawImage` recortados pela câmera, o mesmo custo do modelo atual de duas imagens.
 - **Sprites:** `SpriteSheet` + `SpriteAnimator` (frame atual por tempo). Desenhar **não** avança a animação: hoje `Sprite.draw()` faz as duas coisas.
 - **Batalha:** canvas para cenário, combatentes e efeitos. Números, barras e menus ficam no DOM (seção 14).
@@ -467,7 +467,7 @@ interface AnimationDef {
 - `ui/` **lê** o estado (`session.state`) e **escuta** sinais, e só altera o jogo por `dispatch` ou por métodos explícitos de cena (ex.: `battleScene.choose(action)`).
 - A UI não guarda estado de jogo próprio. Ao reabrir uma tela, ela é renderizada a partir do `SaveData`.
 - Componentes em TypeScript puro com uma pequena função `h()` (ou `lit-html`, se a complexidade justificar). Sem framework na demo.
-- O container da UI acompanha o tamanho e a escala do canvas. Uma variável CSS `--px` (= escala inteira) mantém a estética pixel art nas medidas.
+- O container da UI acompanha o tamanho e a escala do canvas. Uma variável CSS `--px` (= tamanho de 1 pixel de jogo em pixels CSS; igual à escala inteira quando `devicePixelRatio` = 1) mantém a estética pixel art nas medidas.
 - **Navegação por teclado:** as telas consomem as ações do `InputManager` (contexto `menu`/`battle`), não eventos de teclado do DOM. Assim, o futuro gamepad funciona igual.
 
 ---
@@ -635,7 +635,7 @@ Ao final do passo 9, os critérios de encerramento da estabilização do planeja
 
 ## 25. Questões em aberto
 
-1. Resolução interna final (352×198 ou 384×216), a decidir na tarefa F0-04 do roadmap.
+1. ~~Resolução interna final (352×198 ou 384×216).~~ **Resolvida (F0-04):** 384×216 (GDD 13.1).
 2. Função `h()` própria ou `lit-html` para a UI. Decidir quando a tela do forno for implementada.
 3. Fonte pixel art e sua licença (registrar em `ASSETS_AND_LICENSES.md`).
 4. Hospedagem da demo (estática): Vercel, GitHub Pages ou Netlify. Decidir na Fase 3.

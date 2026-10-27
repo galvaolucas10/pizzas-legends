@@ -514,7 +514,21 @@ Remapeamento de teclas, gamepad e touch ficam para depois da demo. Toda entrada 
 ### 13.1 Arte
 
 - Pixel art em grade de **16 px**. Personagens em quadros de **32×32** com 4 direções (padrão do `Sprite.js` atual).
-- **Resolução interna [Proposta]:** migrar de 352×198 para **384×216**. A proporção continua 16:9, mas a escala inteira ×5 preenche exatamente 1920×1080. Em telas menores, usa-se a maior escala inteira que couber, com bordas (ex.: ×3 = 1152×648 em 1280×720). Validar na Fase 0.
+- **Resolução interna [Decidida, F0-04]:** **384×216** (antes 352×198). A proporção continua 16:9, e a escala inteira ×5 preenche exatamente 1920×1080. Em outras telas, usa-se a maior escala inteira que couber, com bordas (ex.: ×3 = 1152×648 em 1366×768). A escala é calculada em pixels físicos, então o jogo continua nítido com o Windows em 125% ou 150%.
+- **Medição (F0-04):** área da tela ocupada pelo jogo com escala inteira. "Janela" desconta ~120 px de navegador e barra de tarefas.
+
+  | Tela | 352×198 | 384×216 |
+  |---|---|---|
+  | 1366×768, tela cheia | ×3, 60% | ×3, 71% |
+  | 1366×768, janela | ×3, 71% | ×3, 84% |
+  | 1920×1080, tela cheia | ×5, 84% | **×5, 100%** |
+  | 1920×1080, janela | ×4, 61% | ×4, 72% |
+  | 1920×1080 a 125%, janela | ×4, 62% | ×4, 74% |
+  | 2560×1440, tela cheia | ×7, 93% | ×6, 81% |
+  | 2560×1440, janela | ×6, 74% | ×6, 88% |
+  | 2560×1440 a 150%, janela | ×6, 78% | ×5, 64% |
+
+  A 384×216 ocupa mais a tela em 6 dos 8 casos, incluindo os mais comuns (1366×768 e 1920×1080), e mostra 24×13,5 tiles em vez de 22×12,4.
 - Cada perfil tem uma cor e uma forma de ícone próprias, usadas de forma consistente em ingredientes, pizzas, inimigos e efeitos.
 - **Todos os assets do tutorial serão substituídos** por assets autorais ou de licença compatível, registrados no `ASSETS_AND_LICENSES.md`.
 
@@ -578,7 +592,7 @@ Sem telemetria remota na demo. Se houver no futuro, ela será opcional e respeit
 ## 17. Questões em aberto
 
 1. Nome definitivo do jogo, do protagonista e dos personagens.
-2. Resolução interna final (352×198 ou 384×216).
+2. ~~Resolução interna final (352×198 ou 384×216).~~ **Resolvida (13.1, F0-04):** 384×216.
 3. Haverá moeda/loja depois da demo? Se sim, como evitar que ela substitua a exploração?
 4. Formato do minigame de preparo (se houver) e se ele altera a qualidade.
 5. Batalhas contra grupos e equipe após a demo: como a cesta funciona com vários personagens (ADR-005 prepara o save, não o design).

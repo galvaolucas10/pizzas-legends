@@ -433,7 +433,7 @@ Não adicionar mecânicas de retenção baseadas em fricção artificial, press�
 4. ~~Como ganhar ingredientes e como funcionam receitas repetidas?~~ **Resolvida (GDD 4 e 5):** ingredientes vêm de coleta, baús, drops e missões; cada preparo consome ingredientes e gera uma nova pizza, sem limite de repetição.
 5. ~~Haverá nível/XP, desbloqueio de habilidades, ou ambos?~~ **Resolvida (GDD 3 e 6):** ambos. O nível dá PV e pontos para a árvore de habilidades.
 6. ~~Qual estilo narrativo (humor, fantasia, aventura) e qual classificação etária desejada?~~ **Resolvida (GDD 1.4):** aventura leve com humor, classificação livre.
-7. ~~Quais navegadores e tamanhos de tela terão suporte oficial na demo?~~ **Resolvida (GDD 1.4 e 13.1):** Chrome, Edge e Firefox desktop, com escala inteira responsiva. A resolução interna final é decidida na tarefa F0-04 do roadmap.
+7. ~~Quais navegadores e tamanhos de tela terão suporte oficial na demo?~~ **Resolvida (GDD 1.4 e 13.1):** Chrome, Edge e Firefox desktop, com escala inteira responsiva. A resolução interna final é 384×216 (decidida na F0-04).
 8. ~~A primeira release usará apenas JavaScript ou já terá build tool (ex.: Vite)?~~ **Resolvida (ADR-006):** Vite + TypeScript, Vitest e Zod.
 9. ~~Quais elementos do tutorial serão mantidos, adaptados ou substituídos por materiais autorais?~~ **Resolvida (GDD 9.1, 10.4 e 13.1):** todos os assets, personagens e textos do tutorial serão substituídos; só a estrutura dos mapas `DemoRoom` e `Kitchen` é reaproveitada.
 10. ~~Em que momento vale integrar Next.js e Supabase?~~ **Resolvida (ADR-001/ADR-002):** stack definida; a integração ocorre quando algum gatilho da ADR-001 entrar no escopo.

@@ -2,6 +2,7 @@ import { GameObject } from "./GameObject";
 import { Person } from "./Person";
 import type { Point } from "./Sprite";
 import { utils, type Direction } from "./utils";
+import { CAMERA_SCREEN_X, CAMERA_SCREEN_Y } from "./engine/render/viewport";
 
 export interface OverworldMapConfig {
   lowerSrc: string;
@@ -28,11 +29,11 @@ export class OverworldMap {
   }
 
   drawLowerImage(ctx: CanvasRenderingContext2D, camera: Point): void {
-    ctx.drawImage(this.lowerImage, utils.withGrid(10.5) - camera.x, utils.withGrid(6) - camera.y);
+    ctx.drawImage(this.lowerImage, CAMERA_SCREEN_X - camera.x, CAMERA_SCREEN_Y - camera.y);
   }
 
   drawUpperImage(ctx: CanvasRenderingContext2D, camera: Point): void {
-    ctx.drawImage(this.upperImage, utils.withGrid(10.5) - camera.x, utils.withGrid(6) - camera.y);
+    ctx.drawImage(this.upperImage, CAMERA_SCREEN_X - camera.x, CAMERA_SCREEN_Y - camera.y);
   }
 
   isSpaceTaken(currentX: number, currentY: number, direction: Direction): boolean {

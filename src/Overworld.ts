@@ -1,5 +1,6 @@
 import { DirectionInput } from "./DirectionInput";
 import { GameLoop } from "./engine/GameLoop";
+import { VIEW_H, VIEW_W, attachScreenScaler } from "./engine/render/viewport";
 import { OverworldMap, OverworldMaps } from "./OverworldMap";
 
 export class Overworld {
@@ -15,6 +16,10 @@ export class Overworld {
     const canvas = this.element.querySelector<HTMLCanvasElement>(".game-canvas");
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) throw new Error("Canvas .game-canvas não encontrado");
+    // O canvas tem a resolução interna; o CSS só o amplia por um fator inteiro.
+    canvas.width = VIEW_W;
+    canvas.height = VIEW_H;
+    ctx.imageSmoothingEnabled = false;
     this.canvas = canvas;
     this.ctx = ctx;
     this.map = null;
@@ -71,6 +76,7 @@ export class Overworld {
     this.map.mountObjects();
 
     this.directionInput.init();
+    attachScreenScaler(this.element);
 
     // Aba oculta: para o loop. Ao voltar, recomeça sem "pular" o tempo perdido (ARCHITECTURE 5.3).
     document.addEventListener("visibilitychange", () => {
