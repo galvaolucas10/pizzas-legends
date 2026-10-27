@@ -3,47 +3,140 @@
     "id": "rew.primeiro_desafio_etapa1",
     "xp": 30,
     "ingredients": [
-      { "ingredientId": "ing.farinha", "count": 3 },
-      { "ingredientId": "ing.molho_tomate", "count": 3 },
-      { "ingredientId": "ing.mussarela", "count": 3 }
+      {
+        "ingredientId": "ing.farinha",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 3
+      }
     ]
   },
   {
     "id": "rew.primeiro_desafio_etapa2",
     "xp": 40,
     "recipes": ["rec.quatro_queijos"],
-    "ingredients": [{ "ingredientId": "ing.queijo_cabra", "count": 3 }]
+    "ingredients": [
+      {
+        "ingredientId": "ing.queijo_cabra",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.farinha",
+        "count": 4
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 4
+      }
+    ]
   },
   {
     "id": "rew.primeiro_desafio_etapa3",
     "xp": 50,
     "recipes": ["rec.brasa"],
-    "ingredients": [{ "ingredientId": "ing.molho_apimentado", "count": 3 }],
+    "ingredients": [
+      {
+        "ingredientId": "ing.molho_apimentado",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.farinha",
+        "count": 4
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 4
+      },
+      {
+        "ingredientId": "ing.queijo_cabra",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 3
+      }
+    ],
     "setFlags": ["flag.ponte_aberta"]
   },
-  { "id": "rew.primeiro_desafio_etapa4", "xp": 30, "skillPoints": 1 },
-  { "id": "rew.primeiro_desafio_etapa6", "setFlags": ["flag.demo_concluida"] },
+  {
+    "id": "rew.primeiro_desafio_etapa4",
+    "xp": 30,
+    "skillPoints": 1,
+    "ingredients": [
+      {
+        "ingredientId": "ing.farinha",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.queijo_cabra",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 3
+      },
+      {
+        "ingredientId": "ing.azeite_dourado",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "id": "rew.primeiro_desafio_etapa6",
+    "setFlags": ["flag.demo_concluida"]
+  },
   {
     "id": "rew.pedido_lenhador",
     "xp": 60,
     "skillPoints": 1,
-    "ingredients": [{ "ingredientId": "ing.azeite_dourado", "count": 2 }]
+    "ingredients": [
+      {
+        "ingredientId": "ing.azeite_dourado",
+        "count": 2
+      }
+    ]
   },
   {
     "id": "rew.segredo_pimenta",
     "xp": 15,
-    "ingredients": [{ "ingredientId": "ing.pimenta_dragao", "count": 1 }]
+    "ingredients": [
+      {
+        "ingredientId": "ing.pimenta_dragao",
+        "count": 1
+      }
+    ]
   },
   {
     "id": "rew.bau_sotao",
     "xp": 15,
-    "ingredients": [{ "ingredientId": "ing.linguica", "count": 2 }]
+    "ingredients": [
+      {
+        "ingredientId": "ing.linguica",
+        "count": 2
+      }
+    ]
   },
   {
     "id": "rew.bau_vila",
     "ingredients": [
-      { "ingredientId": "ing.farinha", "count": 2 },
-      { "ingredientId": "ing.molho_tomate", "count": 1 }
+      {
+        "ingredientId": "ing.farinha",
+        "count": 2
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      }
     ]
   }
 ]

@@ -3,14 +3,41 @@
     "id": "enemy.rato_despensa",
     "profile": "fresco",
     "maxHp": 18,
-    "traits": [{ "type": "agile" }],
+    "traits": [
+      {
+        "type": "agile"
+      }
+    ],
     "canFlee": true,
     "xp": 15,
     "drops": [
-      { "ingredientId": "ing.linguica", "count": 1, "chance": 0.5 },
-      { "ingredientId": "ing.farinha", "count": 1, "chance": 1 }
+      {
+        "ingredientId": "ing.farinha",
+        "count": 1,
+        "chance": 1
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 1,
+        "chance": 1
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 1,
+        "chance": 0.7
+      },
+      {
+        "ingredientId": "ing.linguica",
+        "count": 1,
+        "chance": 0.3
+      }
     ],
-    "phases": [{ "untilHpAtOrBelow": 0, "pattern": ["act.mordida", "act.mordida", "act.belisco"] }],
+    "phases": [
+      {
+        "untilHpAtOrBelow": 0,
+        "pattern": ["act.mordida", "act.mordida", "act.belisco"]
+      }
+    ],
     "sprite": "img.enemy_rato"
   },
   {
@@ -20,9 +47,33 @@
     "traits": [],
     "canFlee": true,
     "xp": 20,
-    "drops": [{ "ingredientId": "ing.molho_apimentado", "count": 1, "chance": 0.6 }],
+    "drops": [
+      {
+        "ingredientId": "ing.molho_apimentado",
+        "count": 1,
+        "chance": 0.7
+      },
+      {
+        "ingredientId": "ing.farinha",
+        "count": 1,
+        "chance": 1
+      },
+      {
+        "ingredientId": "ing.molho_tomate",
+        "count": 1,
+        "chance": 1
+      },
+      {
+        "ingredientId": "ing.mussarela",
+        "count": 1,
+        "chance": 1
+      }
+    ],
     "phases": [
-      { "untilHpAtOrBelow": 0, "pattern": ["act.ferroada", "act.zumbido", "act.ferroada"] }
+      {
+        "untilHpAtOrBelow": 0,
+        "pattern": ["act.ferroada", "act.zumbido", "act.ferroada"]
+      }
     ],
     "sprite": "img.enemy_vespa"
   },
@@ -30,14 +81,37 @@
     "id": "enemy.fungo_rabugento",
     "profile": "defumado",
     "maxHp": 26,
-    "traits": [{ "type": "resistant", "flatReduction": 2 }],
+    "traits": [
+      {
+        "type": "resistant",
+        "flatReduction": 2
+      }
+    ],
     "canFlee": true,
     "xp": 25,
     "drops": [
-      { "ingredientId": "ing.cogumelo", "count": 1, "chance": 1 },
-      { "ingredientId": "ing.cogumelo", "count": 1, "chance": 0.4 }
+      {
+        "ingredientId": "ing.cogumelo",
+        "count": 1,
+        "chance": 1
+      },
+      {
+        "ingredientId": "ing.cogumelo",
+        "count": 1,
+        "chance": 0.4
+      },
+      {
+        "ingredientId": "ing.farinha",
+        "count": 1,
+        "chance": 1
+      }
     ],
-    "phases": [{ "untilHpAtOrBelow": 0, "pattern": ["act.esporos", "act.pancada", "act.pancada"] }],
+    "phases": [
+      {
+        "untilHpAtOrBelow": 0,
+        "pattern": ["act.esporos", "act.pancada", "act.pancada"]
+      }
+    ],
     "sprite": "img.enemy_fungo"
   },
   {
@@ -62,13 +136,21 @@
       }
     ],
     "basket": [
-      { "label": "enemy.rival_ravena.pizza_fumaca", "actionId": "act.fatia_fumaca", "slices": 3 },
+      {
+        "label": "enemy.rival_ravena.pizza_fumaca",
+        "actionId": "act.fatia_fumaca",
+        "slices": 3
+      },
       {
         "label": "enemy.rival_ravena.pizza_brasa_lenta",
         "actionId": "act.brasa_lenta",
         "slices": 3
       },
-      { "label": "enemy.rival_ravena.pizza_labareda", "actionId": "act.labareda", "slices": 3 }
+      {
+        "label": "enemy.rival_ravena.pizza_labareda",
+        "actionId": "act.labareda",
+        "slices": 3
+      }
     ],
     "sprite": "img.npc5"
   }
