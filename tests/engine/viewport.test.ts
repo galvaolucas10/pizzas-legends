@@ -1,18 +1,9 @@
 import { describe, expect, it } from "vitest";
-import {
-  CAMERA_SCREEN_X,
-  CAMERA_SCREEN_Y,
-  VIEW_H,
-  VIEW_W,
-  fitToScreen,
-} from "../../src/engine/render/viewport";
+import { VIEW_H, VIEW_W, fitToScreen } from "../../src/engine/render/viewport";
 
 describe("viewport", () => {
-  it("usa a resolução interna 384×216 com a câmera no centro", () => {
+  it("usa a resolução interna 384×216", () => {
     expect([VIEW_W, VIEW_H]).toEqual([384, 216]);
-    // O tile de 16 px seguido pela câmera fica exatamente no meio da tela.
-    expect(CAMERA_SCREEN_X + 8).toBe(VIEW_W / 2);
-    expect(CAMERA_SCREEN_Y + 8).toBe(VIEW_H / 2);
   });
 
   it.each([

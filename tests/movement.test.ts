@@ -1,69 +1,65 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
-import type { OverworldMap } from "../src/OverworldMap";
-import type { Direction } from "../src/utils";
+import { describe, expect, it } from "vitest";
+import { GameLoop, TICK_MS } from "../src/engine/GameLoop";
+import { Player } from "../src/game/entities/Player";
+import { GridOccupancy } from "../src/game/world/GridOccupancy";
+import { FakeInput, testSprite } from "./helpers";
+import type { Direction } from "../src/engine/input/InputManager";
 
-// Os testes rodam em Node, sem DOM: basta uma imagem falsa para o Sprite.
-beforeAll(() => {
-  vi.stubGlobal(
-    "Image",
-    class {
-      src = "";
-      onload: (() => void) | null = null;
-    },
-  );
-});
-
-/** Mapa mínimo: sem paredes, só o que o Person usa ao andar. */
-const openMap = {
-  isSpaceTaken: () => false,
-  moveWall: () => {},
-} as unknown as OverworldMap;
+/** Sala aberta de 40×40 tiles, sem paredes internas. */
+const openGrid = () => new GridOccupancy(Array(40).fill(".".repeat(40)), 40, 40);
 
 /** Segura uma direção por `durationMs` num monitor de `hz` e devolve a posição final do herói. */
-async function walk(hz: number, durationMs: number, arrow: Direction) {
-  const { GameLoop } = await import("../src/engine/GameLoop");
-  const { Person } = await import("../src/Person");
-  const hero = new Person({ isPlayerControlled: true, x: 0, y: 0 });
-  const loop = new GameLoop({
-    update: (dt) => {
-      hero.savePrevious();
-      hero.update({ arrow, map: openMap });
-      hero.sprite.update(dt);
-    },
-    render: () => {},
-  });
+function walk(hz: number, durationMs: number, direction: Direction) {
+  const input = new FakeInput();
+  input.direction = direction;
+  const grid = openGrid();
+  const hero = new Player(input, { x: 1, y: 1, direction: "down", sprite: testSprite });
+  hero.mover.place(grid, 1, 1);
+  const loop = new GameLoop({ update: (dt) => hero.update(dt, grid), render: () => {} });
   const frameMs = 1000 / hz;
   const frames = Math.round(durationMs / frameMs);
   for (let i = 0; i <= frames; i++) loop.frame(i * frameMs);
-  return { x: hero.x, y: hero.y, frame: hero.sprite.currentAnimationFrame };
+  return { x: hero.mover.x, y: hero.mover.y, frame: hero.animator.frameIndex };
 }
 
 describe("velocidade de caminhada", () => {
-  it("é a mesma em 60, 120 e 144 Hz", async () => {
-    const at60 = await walk(60, 1000, "right");
-    expect(at60.x).toBe(60); // 60 ticks = 60 px = 3,75 tiles, sem pausas entre os passos
-    expect(await walk(120, 1000, "right")).toEqual(at60);
-    expect(await walk(144, 1000, "right")).toEqual(at60);
+  it("é a mesma em 60, 120 e 144 Hz", () => {
+    const at60 = walk(60, 1000, "right");
+    expect(at60.x).toBe(16 + 60); // 60 ticks = 60 px, sem pausas entre os passos
+    expect(walk(120, 1000, "right")).toEqual(at60);
+    expect(walk(144, 1000, "right")).toEqual(at60);
   });
 
-  it("anda 1 tile (16 px) a cada 16 ticks (~267 ms)", async () => {
-    // 60 Hz: 1 quadro = 1 tick, então 16 quadros = 16 ticks exatos.
-    const { TICK_MS } = await import("../src/engine/GameLoop");
-    const result = await walk(60, 16 * TICK_MS, "down");
-    expect(result.y).toBe(16);
+  it("anda 1 tile (16 px) a cada 16 ticks (~267 ms)", () => {
+    expect(walk(60, 16 * TICK_MS, "down").y).toBe(16 + 16);
+  });
+
+  it("a animação não reinicia entre passos seguidos", () => {
+    const input = new FakeInput();
+    input.direction = "right";
+    const grid = openGrid();
+    const hero = new Player(input, { x: 1, y: 1, direction: "right", sprite: testSprite });
+    hero.mover.place(grid, 1, 1);
+    const seen: number[] = [];
+    for (let tick = 0; tick < 64; tick++) {
+      hero.update(TICK_MS, grid);
+      seen.push(hero.animator.frameIndex);
+    }
+    // 64 ticks ≈ 1067 ms ≈ 7 quadros de 150 ms: o ciclo passa por todos os 4 quadros.
+    expect(new Set(seen)).toEqual(new Set([0, 1, 2, 3]));
+    expect(hero.animator.current).toBe("walk-right");
   });
 });
 
 describe("animação do sprite", () => {
-  it("troca de quadro a cada 150 ms, independente da taxa de quadros", async () => {
-    const { Person } = await import("../src/Person");
-    const hero = new Person({ x: 0, y: 0 });
-    hero.sprite.setAnimation("walk-down");
-    hero.sprite.update(149);
-    expect(hero.sprite.currentAnimationFrame).toBe(0);
-    hero.sprite.update(1);
-    expect(hero.sprite.currentAnimationFrame).toBe(1);
-    hero.sprite.update(150 * 3);
-    expect(hero.sprite.currentAnimationFrame).toBe(0); // 4 quadros: volta ao início
+  it("troca de quadro a cada 150 ms, independente da taxa de quadros", () => {
+    const hero = new Player(new FakeInput(), { x: 0, y: 0, direction: "down", sprite: testSprite });
+    hero.animator.play("walk-down");
+    hero.animator.update(149);
+    expect(hero.animator.frameIndex).toBe(0);
+    hero.animator.update(1);
+    expect(hero.animator.frameIndex).toBe(1);
+    hero.animator.update(150 * 3);
+    expect(hero.animator.frameIndex).toBe(0); // 4 quadros: volta ao início
   });
 });

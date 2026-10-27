@@ -20,3 +20,15 @@ body {
   height: 100%;
   image-rendering: pixelated;
 }
+
+.fatal-error {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  background: #200;
+  color: #fbb;
+  font: 13px/1.4 monospace;
+  white-space: pre-wrap;
+}

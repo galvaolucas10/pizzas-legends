@@ -444,7 +444,7 @@ interface AnimationDef {
 
 ## 13. Renderização
 
-- **Resolução interna** é uma constante (`VIEW_W × VIEW_H`). Decidida na F0-04: **384×216** (GDD 13.1). Fica em `engine/render/viewport.ts`, junto com `CAMERA_SCREEN_X/Y` (onde a câmera é desenhada). Nenhum código pode assumir valores fixos.
+- **Resolução interna** é uma constante (`VIEW_W × VIEW_H`). Decidida na F0-04: **384×216** (GDD 13.1). Fica em `engine/render/viewport.ts`; a câmera (`engine/Camera.ts`) centraliza o jogador a partir dela. Nenhum código pode assumir valores fixos.
 - **Escala inteira:** o canvas tem a resolução interna, e o CSS o amplia pelo maior inteiro que cabe na janela (`image-rendering: pixelated`, `ctx.imageSmoothingEnabled = false`). Substitui o `transform: scale(3)` fixo. A conta é feita em pixels físicos (`innerWidth × devicePixelRatio`), para continuar nítido com zoom do Windows em 125%/150%. Recalculado no `resize` e quando o `devicePixelRatio` muda.
 - **Cache de tiles:** ao carregar um mapa, as camadas `lower` e `upper` são desenhadas uma vez em canvases fora da tela (`TileLayerCache`). Em cada quadro, são só dois `drawImage` recortados pela câmera, o mesmo custo do modelo atual de duas imagens.
 - **Sprites:** `SpriteSheet` + `SpriteAnimator` (frame atual por tempo). Desenhar **não** avança a animação: hoje `Sprite.draw()` faz as duas coisas.

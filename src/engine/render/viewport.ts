@@ -2,13 +2,6 @@
 export const VIEW_W = 384;
 export const VIEW_H = 216;
 
-/**
- * Onde a câmera é desenhada na tela: o tile de 16 px que ela segue fica centralizado.
- * Substitui os `withGrid(10.5)` / `withGrid(6)` espalhados pelo código.
- */
-export const CAMERA_SCREEN_X = VIEW_W / 2 - 8;
-export const CAMERA_SCREEN_Y = VIEW_H / 2 - 8;
-
 export interface ScreenFit {
   /** Pixels físicos por pixel de jogo (sempre inteiro, mínimo 1). */
   scale: number;
