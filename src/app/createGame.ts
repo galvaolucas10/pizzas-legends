@@ -23,6 +23,11 @@ export interface GameHandle {
   destroy(): void;
 }
 
+interface DebugHooks {
+  tick(lastUpdateMs: number): void;
+  render(ctx: CanvasRenderingContext2D, alpha: number, renderMs: number): void;
+}
+
 export const START_MAP = "map.cozinha_mestre";
 export const START_ENTRANCE = "inicio";
 
@@ -54,15 +59,24 @@ export function createGame(options: GameOptions): GameHandle {
     state: () => ({ flags }),
   });
 
+  // Ferramentas de depuração: só em dev (carregadas no start; o build de produção não as inclui).
+  let debug: DebugHooks | null = null;
+  let lastUpdateMs = 0;
+
   const loop = new GameLoop({
     update: (dt) => {
+      const startedAt = performance.now();
       input.poll();
+      debug?.tick(lastUpdateMs);
       scenes.update(dt);
+      lastUpdateMs = performance.now() - startedAt;
     },
     render: (alpha) => {
+      const startedAt = performance.now();
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, VIEW_W, VIEW_H);
       scenes.render(ctx, alpha);
+      debug?.render(ctx, alpha, performance.now() - startedAt);
     },
   });
 
@@ -94,6 +108,13 @@ export function createGame(options: GameOptions): GameHandle {
       });
       await worldScene.loadMap(START_MAP, { entrance: START_ENTRANCE });
       await scenes.push(worldScene);
+
+      if (import.meta.env.DEV) {
+        const { DebugTools } = await import("./debug/DebugTools");
+        const tools = new DebugTools(worldScene, input, content);
+        debug = tools;
+        cleanups.push(() => tools.destroy());
+      }
       loop.start();
     },
     pause() {
