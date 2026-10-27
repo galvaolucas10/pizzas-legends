@@ -3,7 +3,7 @@ import type { Scene } from "../../engine/SceneStack";
 import { Npc } from "../entities/Npc";
 import type { EventContext, HandlerTable } from "../events/EventRunner";
 import { EventSystem } from "../events/EventSystem";
-import { movementHandlers } from "../events/handlers";
+import { movementHandlers, worldHandlers } from "../events/handlers";
 import type { Placement, WorldManager } from "../world/WorldManager";
 
 export interface WorldSceneOptions {
@@ -12,6 +12,8 @@ export interface WorldSceneOptions {
   handlers?: HandlerTable;
   /** Partes extras do contexto dos eventos (diálogo, troca de mapa). */
   extendContext?: (ctx: EventContext) => EventContext;
+  /** Transição com fade (SceneStack.transition). Sem ela, a troca de mapa é imediata. */
+  transition?: (work: () => Promise<void>) => boolean;
   warn?: (message: string) => void;
 }
 
@@ -20,9 +22,12 @@ export class WorldScene implements Scene {
   readonly blocksUpdateBelow = true;
   readonly world: WorldManager;
   readonly events: EventSystem;
+  private readonly transition: WorldSceneOptions["transition"];
+  private pending: Promise<void> | null = null;
 
   constructor(options: WorldSceneOptions) {
     this.world = options.world;
+    this.transition = options.transition;
     const warn = options.warn ?? ((message: string) => console.warn(`[eventos] ${message}`));
     const world = this.world;
     const base = (mode: EventContext["mode"]): EventContext => ({
@@ -34,13 +39,38 @@ export class WorldScene implements Scene {
       get grid() {
         return world.grid;
       },
+      changeMap: (mapId, entrance) => this.goTo(mapId, entrance),
       warn,
     });
     this.events = new EventSystem(
-      options.handlers ?? movementHandlers,
+      options.handlers ?? { ...movementHandlers, ...worldHandlers },
       (mode) => options.extendContext?.(base(mode)) ?? base(mode),
       options.input,
     );
+
+    // Portas disparam ao terminar um passo sobre o tile (ARCHITECTURE 10.3).
+    world.player.hooks.onStepEnd = (x, y) => {
+      const door = world.doorAt(x, y);
+      if (door) this.goTo(door.toMap, door.toEntrance);
+    };
+  }
+
+  /** Mapa sendo carregado pela última troca (para os testes aguardarem). */
+  get loading(): Promise<void> | null {
+    return this.pending;
+  }
+
+  /** Vai para outro mapa pela entrada indicada, com fade quando houver transição. */
+  goTo(mapId: string, entrance: string): void {
+    const held = this.world.player.mover.direction;
+    const work = () => {
+      this.pending = this.loadMap(mapId, { entrance }).then(() => {
+        this.world.player.lockDirection(held);
+      });
+      return this.pending;
+    };
+    if (this.transition) this.transition(work);
+    else void work();
   }
 
   /** Troca o mapa: cancela os roteiros do anterior e inicia os behaviorLoop do novo. */

@@ -1,4 +1,4 @@
-import type { ActionReader } from "../../engine/input/InputManager";
+import type { ActionReader, Direction } from "../../engine/input/InputManager";
 import type { GridOccupancy } from "../world/GridOccupancy";
 import { Entity, type EntityConfig } from "./Entity";
 
@@ -14,6 +14,8 @@ export const PLAYER_ID = "player";
 /** Protagonista: anda pelas ações do contexto "world" e interage com o tile à frente. */
 export class Player extends Entity {
   hooks: PlayerHooks = {};
+  /** Direção ignorada até ser solta (ver lockDirection). */
+  private lockedDirection: Direction | null = null;
 
   constructor(
     private readonly input: ActionReader,
@@ -23,14 +25,24 @@ export class Player extends Entity {
   }
 
   protected override think(grid: GridOccupancy): void {
-    if (this.mover.moving) return;
+    // Fora do contexto "world" (diálogo, fade) o jogador não decide nada, nem solta a trava.
+    if (this.mover.moving || !this.input.active) return;
     if (this.input.wasPressed("confirm")) {
       const ahead = this.mover.facingTile;
       this.hooks.onInteract?.(ahead.x, ahead.y);
       return;
     }
     const direction = this.input.direction;
-    if (direction) this.mover.tryStep(direction, grid);
+    if (direction !== this.lockedDirection) this.lockedDirection = null;
+    if (direction && !this.lockedDirection) this.mover.tryStep(direction, grid);
+  }
+
+  /**
+   * Depois de passar por uma porta, quem segura a mesma tecla não anda de novo até soltá-la:
+   * evita voltar pela porta sem querer. Outra direção funciona na hora.
+   */
+  lockDirection(direction: Direction): void {
+    this.lockedDirection = direction;
   }
 
   protected override onStepEnd(): void {

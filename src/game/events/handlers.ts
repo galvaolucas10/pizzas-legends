@@ -76,3 +76,15 @@ export const movementHandlers: HandlerTable = {
     return waitFor(event.time);
   },
 };
+
+/** Troca de mapa (F0-12). A troca cancela este roteiro; até lá, ele só espera. */
+export const worldHandlers: HandlerTable = {
+  changeMap(event, ctx) {
+    if (!ctx.changeMap) {
+      ctx.warn("changeMap sem suporte neste contexto");
+      return DONE;
+    }
+    ctx.changeMap(event.mapId, event.entrance);
+    return { update: () => "running" };
+  },
+};

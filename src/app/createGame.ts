@@ -40,7 +40,11 @@ export function createGame(options: GameOptions): GameHandle {
     baseUrl: `${import.meta.env.BASE_URL}assets/`,
   });
   const input = new InputManager();
-  const scenes = new SceneStack();
+  // Durante o fade, a entrada vai para o contexto "transition": o jogador não anda.
+  const scenes = new SceneStack({
+    onTransitionStart: () => input.pushContext("transition"),
+    onTransitionEnd: () => input.popContext("transition"),
+  });
   const flags: Record<string, boolean | number> = {};
   const world = new WorldManager({
     content,
@@ -79,7 +83,11 @@ export function createGame(options: GameOptions): GameHandle {
       cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
       await assets.loadBundle(content.assets.bundles.boot ?? []);
-      const worldScene = new WorldScene({ world, input });
+      const worldScene = new WorldScene({
+        world,
+        input,
+        transition: (work) => scenes.transition(work),
+      });
       await worldScene.loadMap(START_MAP, { entrance: START_ENTRANCE });
       await scenes.push(worldScene);
       loop.start();
