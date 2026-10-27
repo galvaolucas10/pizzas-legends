@@ -126,6 +126,6 @@ describe("inimigos no mapa (F1-12)", () => {
     await s.loading;
     expect(s.world.map?.id).toBe("map.cozinha_mestre");
     const p = s.world.player.mover;
-    expect([p.tileX, p.tileY, p.direction]).toEqual([2, 5, "up"]); // forno em (2,4)
+    expect([p.tileX, p.tileY, p.direction]).toEqual([6, 6, "right"]); // forno na mesa (7,6)
   });
 });

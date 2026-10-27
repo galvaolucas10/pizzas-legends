@@ -97,6 +97,65 @@
       "npcId": "npc.guardia_salvia",
       "talking": [
         {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 4
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "salvia",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.guardia_salvia",
+              "textKey": "dlg.guardia_salvia.etapa5.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 3
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "salvia",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.guardia_salvia",
+              "textKey": "dlg.guardia_salvia.etapa4.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 2
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "salvia",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.guardia_salvia",
+              "textKey": "dlg.guardia_salvia.etapa3.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.guardia_salvia",
+              "textKey": "dlg.guardia_salvia.etapa3.2"
+            }
+          ]
+        },
+        {
           "events": [
             {
               "type": "face",
@@ -151,6 +210,105 @@
       "kind": "npc",
       "npcId": "npc.lenhador_bento",
       "talking": [
+        {
+          "condition": {
+            "any": [
+              {
+                "quest": "quest.pedido_lenhador",
+                "status": "completed"
+              },
+              {
+                "quest": "quest.pedido_lenhador",
+                "status": "rewarded"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.depois.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.pedido_lenhador",
+            "status": "active"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "if",
+              "condition": {
+                "hasPizza": {
+                  "minQuality": 4
+                }
+              },
+              "then": [
+                {
+                  "type": "takePizza",
+                  "filter": {
+                    "minQuality": 4
+                  }
+                },
+                {
+                  "type": "message",
+                  "speaker": "npc.lenhador_bento",
+                  "textKey": "dlg.lenhador_bento.entregue.1"
+                },
+                {
+                  "type": "setFlag",
+                  "flag": "flag.pizza_entregue_bento"
+                }
+              ],
+              "else": [
+                {
+                  "type": "message",
+                  "speaker": "npc.lenhador_bento",
+                  "textKey": "dlg.lenhador_bento.esperando.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.pedido_lenhador",
+            "status": "available"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.pedido.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.pedido.2"
+            },
+            {
+              "type": "advanceQuest",
+              "questId": "quest.pedido_lenhador",
+              "toStep": 0
+            }
+          ]
+        },
         {
           "events": [
             {
@@ -221,6 +379,147 @@
       "kind": "door",
       "toMap": "map.clareira",
       "toEntrance": "bosque"
+    },
+    {
+      "id": "vespa1",
+      "x": 18,
+      "y": 9,
+      "direction": "down",
+      "visibleIf": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
+      "kind": "enemy",
+      "enemyId": "enemy.vespa_pimenta",
+      "respawn": "rest",
+      "behaviorLoop": [
+        {
+          "type": "walk",
+          "who": "vespa1",
+          "direction": "right"
+        },
+        {
+          "type": "stand",
+          "who": "vespa1",
+          "direction": "down",
+          "time": 700
+        },
+        {
+          "type": "walk",
+          "who": "vespa1",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "vespa1",
+          "direction": "down",
+          "time": 900
+        }
+      ],
+      "onDefeat": [
+        {
+          "type": "incrementFlag",
+          "flag": "flag.vespas_derrotadas"
+        }
+      ]
+    },
+    {
+      "id": "vespa2",
+      "x": 24,
+      "y": 14,
+      "direction": "down",
+      "visibleIf": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
+      "kind": "enemy",
+      "enemyId": "enemy.vespa_pimenta",
+      "respawn": "rest",
+      "behaviorLoop": [
+        {
+          "type": "walk",
+          "who": "vespa2",
+          "direction": "right"
+        },
+        {
+          "type": "stand",
+          "who": "vespa2",
+          "direction": "down",
+          "time": 800
+        },
+        {
+          "type": "walk",
+          "who": "vespa2",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "vespa2",
+          "direction": "left",
+          "time": 600
+        }
+      ],
+      "onDefeat": [
+        {
+          "type": "incrementFlag",
+          "flag": "flag.vespas_derrotadas"
+        }
+      ]
+    },
+    {
+      "id": "vespa3",
+      "x": 12,
+      "y": 17,
+      "direction": "down",
+      "visibleIf": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
+      "kind": "enemy",
+      "enemyId": "enemy.vespa_pimenta",
+      "respawn": "rest",
+      "behaviorLoop": [
+        {
+          "type": "walk",
+          "who": "vespa3",
+          "direction": "right"
+        },
+        {
+          "type": "stand",
+          "who": "vespa3",
+          "direction": "right",
+          "time": 600
+        },
+        {
+          "type": "walk",
+          "who": "vespa3",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "vespa3",
+          "direction": "down",
+          "time": 1000
+        }
+      ],
+      "onDefeat": [
+        {
+          "type": "incrementFlag",
+          "flag": "flag.vespas_derrotadas"
+        }
+      ]
+    },
+    {
+      "id": "ponte_quebrada",
+      "x": 29,
+      "y": 8,
+      "visibleIf": {
+        "not": {
+          "flag": "flag.ponte_aberta"
+        }
+      },
+      "kind": "sign",
+      "textKey": "placa.ponte_quebrada"
     }
   ]
 }

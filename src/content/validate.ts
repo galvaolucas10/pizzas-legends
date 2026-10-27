@@ -410,7 +410,12 @@ export function validateContent(content: ContentRegistry): string[] {
 }
 
 /** Objetos que podem ficar sobre um tile de colisão (DATA_MODELS 7.1). */
-const WALL_ALLOWED: ReadonlySet<MapObject["kind"]> = new Set(["door", "trigger"]);
+const WALL_ALLOWED: ReadonlySet<MapObject["kind"]> = new Set([
+  "door",
+  "trigger",
+  // Fornos costumam ser parte da arte (balcão, fogão): ficam sobre a colisão e respondem ao lado.
+  "oven",
+]);
 
 function isFree(map: MapDef, x: number, y: number): boolean {
   return map.collision[y]?.[x] === ".";

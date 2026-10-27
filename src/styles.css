@@ -499,3 +499,7 @@ body {
   background: #fff;
   color: var(--ink);
 }
+
+.hud__objective {
+  white-space: pre-line;
+}

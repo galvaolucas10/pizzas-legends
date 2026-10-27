@@ -58,7 +58,7 @@ export class PauseMenu {
     const pages = [
       { label: "Pizzas", paint: () => this.paintPizzas() },
       { label: "Ingredientes", paint: () => this.paintIngredients() },
-      { label: "Missões", paint: () => this.paintQuests() },
+      { label: "Missões (guia)", paint: () => this.paintQuests() },
       { label: "Status", paint: () => this.paintStatus() },
     ];
     this.menu.onFocus = (_item, index) => pages[index]?.paint();
@@ -140,7 +140,11 @@ export class PauseMenu {
       );
       const step = session.state.quests[quest.id]?.step ?? 0;
       const objective = status === "active" ? quest.steps[step]?.objectiveKey : undefined;
-      if (objective) li.append(h(doc, "p", "panel__hint", this.text(objective)));
+      if (objective) {
+        li.append(h(doc, "p", "panel__text", this.text(objective)));
+        const guide = this.o.content.locale[`${objective}.guia`];
+        if (guide) li.append(h(doc, "p", "panel__hint", guide));
+      }
       list.append(li);
     }
     this.side.replaceChildren(

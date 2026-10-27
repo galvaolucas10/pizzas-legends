@@ -55,7 +55,10 @@ export class Hud {
     this.hp.set(this.session.maxHp, this.session.maxHp);
     const objective = this.session.objective;
     this.objectiveEl.hidden = !objective;
-    this.objectiveEl.textContent = objective ? `◆ ${this.text(objective)}` : "";
+    this.objectiveEl.textContent = objective
+      ? `◆ ${this.text(objective)}
+Tab: menu → Missões para o passo a passo`
+      : "";
   }
 
   set visible(value: boolean) {

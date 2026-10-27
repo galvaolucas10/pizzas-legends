@@ -249,7 +249,12 @@ export function createGame(options: GameOptions): GameHandle {
           hud!.visible = true;
           playing = true;
           saves.start();
-          if (fresh) void saves.autosave();
+          if (fresh) {
+            void saves.autosave();
+            worldScene.events.runBlocking(
+              ["intro.1", "intro.2", "intro.3"].map((textKey) => ({ type: "message", textKey })),
+            );
+          }
         });
       };
       const latest = await saves.latest();

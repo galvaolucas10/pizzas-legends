@@ -881,7 +881,7 @@ Executada em todo carregamento em ambiente de desenvolvimento e em um teste auto
 - Todo ID tem o prefixo correto e é único no seu tipo.
 - **Integridade referencial:** todo ID citado (em receitas, habilidades, drops, recompensas, condições, eventos, portas, entradas) existe no registro.
 - Toda porta aponta para um mapa e uma entrada existentes.
-- Objetos de mapa estão dentro dos limites e não ficam sobre `#` da colisão (exceto `door` e `trigger`).
+- Objetos de mapa estão dentro dos limites e não ficam sobre `#` da colisão (exceto `door`, `trigger` e `oven`, que pode ser parte da arte, como um balcão).
 - `collision` tem exatamente `height` linhas de `width` caracteres.
 - Coletas `renew: "never"` têm `rewardId`.
 - Fases de inimigo têm limiares de PV decrescentes, e a última termina em 0.

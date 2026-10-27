@@ -2,5 +2,14 @@
   "etapa1_concluida": {
     "quest": "quest.primeiro_desafio",
     "stepAtLeast": 1
+  },
+  "etapa2_concluida": {
+    "quest": "quest.primeiro_desafio",
+    "stepAtLeast": 2
+  },
+  "ponte_fechada": {
+    "not": {
+      "flag": "flag.ponte_aberta"
+    }
   }
 }

@@ -63,6 +63,101 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 6
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.fim.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 5
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa6.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa6.2"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.voltou_vila"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 4
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa5.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 3
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa4.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa4.2"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa4.3"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.mestre_explicou_arvore"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
             "stepAtLeast": 2
           },
           "events": [
@@ -176,11 +271,10 @@
     },
     {
       "id": "forno",
-      "x": 2,
-      "y": 4,
+      "x": 7,
+      "y": 6,
       "kind": "oven",
-      "ovenId": "oven.mestre",
-      "draw": true
+      "ovenId": "oven.mestre"
     }
   ]
 }
