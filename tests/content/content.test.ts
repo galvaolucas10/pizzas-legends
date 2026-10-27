@@ -181,11 +181,12 @@ describe("mapas da demo (F0-08)", () => {
       wall(despensa, 1, 9),
       wall(despensa, 9, 9),
     ]).toEqual([true, true, true, true]);
-    expect([wall(despensa, 4, 4), wall(despensa, 8, 7), wall(despensa, 5, 10)]).toEqual([
-      false,
-      false,
-      false,
-    ]);
+    expect([
+      wall(despensa, 4, 4),
+      wall(despensa, 8, 7),
+      wall(despensa, 5, 10),
+      wall(despensa, 12, 6),
+    ]).toEqual([false, false, false, false]);
   });
 
   it("portas ligam a cozinha e a despensa nos dois sentidos", () => {
