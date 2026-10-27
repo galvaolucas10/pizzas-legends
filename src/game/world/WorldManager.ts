@@ -87,7 +87,8 @@ export class WorldManager {
     this.upperCache = buildTileLayerCache(map.upper, map.width, map.height, tilesets);
 
     const state = this.options.state();
-    const visible = (o: MapObject) => !o.visibleIf || evaluateCondition(o.visibleIf, state, this.content);
+    const visible = (o: MapObject) =>
+      !o.visibleIf || evaluateCondition(o.visibleIf, state, this.content);
     for (const object of map.objects.filter(visible)) {
       if (object.kind === "npc") {
         const npcDef = this.options.content.npcs[object.npcId];

@@ -1,0 +1,84 @@
+{
+  "format": "pizzalegends-save",
+  "schemaVersion": 1,
+  "gameVersion": "0.2.0",
+  "slotId": "slot1",
+  "createdAt": "2026-10-27T18:00:00.000Z",
+  "updatedAt": "2026-10-27T18:00:00.000Z",
+  "revision": 1,
+  "summary": {
+    "characterName": "Nico",
+    "level": 1,
+    "mapId": "map.cozinha_mestre",
+    "objectiveKey": "quest.primeiro_desafio.etapa1",
+    "playTimeMs": 0
+  },
+  "checksum": "ee1bea8d",
+  "data": {
+    "activeCharacterId": "char.aprendiz",
+    "characters": [
+      {
+        "id": "char.aprendiz",
+        "name": "Nico",
+        "level": 1,
+        "xp": 0,
+        "skillPoints": 0,
+        "skills": [],
+        "knownRecipes": ["rec.margherita"],
+        "cookedRecipes": []
+      }
+    ],
+    "inventory": {
+      "ingredients": {
+        "ing.farinha": 1,
+        "ing.molho_tomate": 1,
+        "ing.mussarela": 1
+      },
+      "pizzas": [],
+      "lastBasket": []
+    },
+    "quests": {
+      "quest.primeiro_desafio": {
+        "status": "active",
+        "step": 0
+      }
+    },
+    "flags": {},
+    "world": {
+      "mapId": "map.cozinha_mestre",
+      "position": {
+        "x": 5,
+        "y": 6,
+        "direction": "down"
+      },
+      "lastOvenId": "oven.mestre",
+      "defeatedEnemies": [],
+      "harvested": []
+    },
+    "rng": {
+      "seed": 123,
+      "state": 123
+    },
+    "counters": {
+      "nextPizzaSeq": 1
+    },
+    "stats": {
+      "playTimeMs": 0,
+      "battlesWon": 0,
+      "battlesLost": 0,
+      "fled": 0,
+      "bossAttempts": {},
+      "pizzasCooked": {},
+      "slicesUsedByProfile": {
+        "picante": 0,
+        "cremoso": 0,
+        "defumado": 0,
+        "fresco": 0
+      },
+      "defendUsed": 0,
+      "improviseUsed": 0,
+      "firstVictoryAtMs": null,
+      "firstPizzaAtMs": null
+    }
+  }
+}
