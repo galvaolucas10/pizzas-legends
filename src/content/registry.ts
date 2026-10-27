@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AssetManifestSchema, type AssetManifest } from "./schemas/assets";
 import { NamedConditionsSchema, type Condition } from "./schemas/conditions";
 import { MapDefSchema, NpcSchema, type MapDef, type Npc } from "./schemas/map";
 import { validateContent } from "./validate";
@@ -8,6 +9,7 @@ export interface RawContent {
   npcs: unknown;
   conditions: unknown;
   locale: unknown;
+  assets: unknown;
   maps: Record<string, unknown>;
 }
 
@@ -17,6 +19,7 @@ export interface ContentRegistry {
   readonly maps: Readonly<Record<string, MapDef>>;
   readonly conditions: Readonly<Record<string, Condition>>;
   readonly locale: Readonly<Record<string, string>>;
+  readonly assets: Readonly<AssetManifest>;
 }
 
 export class ContentError extends Error {
@@ -27,6 +30,14 @@ export class ContentError extends Error {
 }
 
 const LocaleSchema = z.record(z.string(), z.string());
+
+const EMPTY_MANIFEST: AssetManifest = {
+  animationSets: {},
+  images: {},
+  tilesets: {},
+  audio: {},
+  bundles: {},
+};
 
 /** Valida o formato (Zod), monta o registro e confere a integridade referencial. */
 export function loadContent(raw: RawContent): ContentRegistry {
@@ -42,6 +53,7 @@ export function loadContent(raw: RawContent): ContentRegistry {
   const npcList = parse(z.array(NpcSchema), raw.npcs, "npcs.json") ?? [];
   const conditions = parse(NamedConditionsSchema, raw.conditions, "conditions.json") ?? {};
   const locale = parse(LocaleSchema, raw.locale, "locales/pt-BR.json") ?? {};
+  const assets = parse(AssetManifestSchema, raw.assets, "assets.json") ?? EMPTY_MANIFEST;
 
   const npcs: Record<string, Npc> = {};
   for (const npc of npcList) {
@@ -57,7 +69,7 @@ export function loadContent(raw: RawContent): ContentRegistry {
     maps[map.id] = map;
   }
 
-  const registry: ContentRegistry = deepFreeze({ npcs, maps, conditions, locale });
+  const registry: ContentRegistry = deepFreeze({ npcs, maps, conditions, locale, assets });
   problems.push(...validateContent(registry));
   if (problems.length > 0) throw new ContentError(problems);
   return registry;

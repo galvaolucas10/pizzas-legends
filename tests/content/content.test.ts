@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ContentError, loadContent, type RawContent } from "../../src/content/registry";
 import { bundledContent } from "../../src/content/sources";
 import { readContent } from "../../scripts/lib/readContent";
+import { checkAssetFiles } from "../../scripts/lib/checkAssetFiles";
 
 /** Conteúdo mínimo válido, para estragar de propósito em cada teste. */
 function sample(): RawContent {
@@ -13,6 +14,13 @@ function sample(): RawContent {
       "map.a.name": "A",
       "map.b.name": "B",
       "dlg.oi": "Oi!",
+    },
+    assets: {
+      animationSets: {},
+      images: { "img.npc1": { src: "images/npc1.png" } },
+      tilesets: {},
+      audio: {},
+      bundles: {},
     },
     maps: {
       "maps/a.json": {
@@ -69,6 +77,10 @@ describe("conteúdo do jogo", () => {
     expect(readContent()).toEqual(bundledContent());
   });
 
+  it("todo arquivo do manifesto existe e todo arquivo em public/assets está no manifesto", () => {
+    expect(checkAssetFiles(loadContent(bundledContent()).assets)).toEqual([]);
+  });
+
   it("o exemplo mínimo é válido", () => {
     expect(problemsOf(sample())).toEqual([]);
   });
@@ -107,6 +119,23 @@ describe("conteúdo inválido de propósito gera erro claro", () => {
     expect(text).toContain('texto inexistente "dlg.oi"');
     expect(text).toContain('entrada inexistente "map.a#janela"');
     expect(text).toContain('objeto "teste" (2,0) está sobre uma parede');
+  });
+
+  it("asset inexistente no manifesto", () => {
+    const raw = sample();
+    raw.npcs = [{ id: "npc.teste", sprite: "img.fantasma" }];
+    expect(problemsOf(raw).join("\n")).toContain(`sprite inexistente "img.fantasma"`);
+  });
+
+  it("arquivo de asset ausente no disco", () => {
+    const manifest = loadContent(bundledContent()).assets;
+    const broken = {
+      ...manifest,
+      images: { ...manifest.images, "img.x": { src: "images/nao_existe.png" } },
+    };
+    expect(checkAssetFiles(broken)).toContain(
+      `assets.json: arquivo inexistente "public/assets/images/nao_existe.png"`,
+    );
   });
 
   it("evento que cita objeto que não existe no mapa", () => {

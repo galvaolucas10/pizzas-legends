@@ -13,6 +13,7 @@ export function readContent(dataDir = join(import.meta.dirname, "../../src/data"
     npcs: read("npcs.json"),
     conditions: read("conditions.json"),
     locale: read("locales/pt-BR.json"),
+    assets: read("assets.json"),
     maps,
   };
 }

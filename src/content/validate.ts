@@ -1,4 +1,5 @@
 import type { ContentRegistry } from "./registry";
+import { manifestIds } from "./schemas/assets";
 import { forEachEvent, type GameEvent } from "./schemas/events";
 import { isSolid, type MapDef } from "./schemas/map";
 
@@ -10,13 +11,40 @@ export function validateContent(content: ContentRegistry): string[] {
   const problems: string[] = [];
   const hasText = (key: string) => key in content.locale;
 
+  const { assets } = content;
+  const allAssets = manifestIds(assets);
+
+  for (const [id, image] of Object.entries(assets.images)) {
+    if (image.animations && !assets.animationSets[image.animations]) {
+      problems.push(
+        `assets.json: "${id}" cita o conjunto de animação inexistente "${image.animations}"`,
+      );
+    }
+  }
+  for (const [name, ids] of Object.entries(assets.bundles)) {
+    for (const id of ids) {
+      if (!allAssets.has(id))
+        problems.push(`assets.json: pacote "${name}" cita o asset inexistente "${id}"`);
+    }
+  }
+
   for (const npc of Object.values(content.npcs)) {
     if (!hasText(`${npc.id}.name`)) problems.push(`${npc.id}: falta o texto "${npc.id}.name"`);
+    if (!assets.images[npc.sprite]) problems.push(`${npc.id}: sprite inexistente "${npc.sprite}"`);
+    if (npc.portrait && !assets.images[npc.portrait]) {
+      problems.push(`${npc.id}: retrato inexistente "${npc.portrait}"`);
+    }
   }
 
   for (const map of Object.values(content.maps)) {
     const where = (detail: string) => `${map.id}: ${detail}`;
     if (!hasText(`${map.id}.name`)) problems.push(where(`falta o texto "${map.id}.name"`));
+    for (const tileset of map.tilesets) {
+      if (!assets.tilesets[tileset.assetId])
+        problems.push(where(`tileset inexistente "${tileset.assetId}"`));
+    }
+    if (map.music && !assets.audio[map.music])
+      problems.push(where(`música inexistente "${map.music}"`));
 
     const localIds = new Set<string>();
     for (const object of map.objects) {

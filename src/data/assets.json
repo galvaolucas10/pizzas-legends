@@ -1,0 +1,99 @@
+{
+  "animationSets": {
+    "anim.character_32": {
+      "idle-down": { "frames": [[0, 0]], "frameDurationMs": 150, "loop": true },
+      "idle-right": { "frames": [[0, 1]], "frameDurationMs": 150, "loop": true },
+      "idle-up": { "frames": [[0, 2]], "frameDurationMs": 150, "loop": true },
+      "idle-left": { "frames": [[0, 3]], "frameDurationMs": 150, "loop": true },
+      "walk-down": {
+        "frames": [
+          [1, 0],
+          [0, 0],
+          [3, 0],
+          [0, 0]
+        ],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "walk-right": {
+        "frames": [
+          [1, 1],
+          [0, 1],
+          [3, 1],
+          [0, 1]
+        ],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "walk-up": {
+        "frames": [
+          [1, 2],
+          [0, 2],
+          [3, 2],
+          [0, 2]
+        ],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "walk-left": {
+        "frames": [
+          [1, 3],
+          [0, 3],
+          [3, 3],
+          [0, 3]
+        ],
+        "frameDurationMs": 150,
+        "loop": true
+      }
+    }
+  },
+  "images": {
+    "img.hero": {
+      "src": "images/hero.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.npc1": {
+      "src": "images/npc1.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.npc2": {
+      "src": "images/npc2.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.npc3": {
+      "src": "images/npc3.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.npc4": {
+      "src": "images/npc4.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.npc5": {
+      "src": "images/npc5.png",
+      "frame": { "w": 32, "h": 32 },
+      "origin": { "x": 8, "y": 18 },
+      "animations": "anim.character_32"
+    },
+    "img.shadow": { "src": "images/shadow.png", "origin": { "x": 8, "y": 18 } }
+  },
+  "tilesets": {
+    "ts.cozinha_mestre_lower": { "src": "images/demo_lower.png", "tileSize": 16, "columns": 12 },
+    "ts.cozinha_mestre_upper": { "src": "images/demo_upper.png", "tileSize": 16, "columns": 12 },
+    "ts.despensa_lower": { "src": "images/kitchen_lower.png", "tileSize": 16, "columns": 14 },
+    "ts.despensa_upper": { "src": "images/kitchen_upper.png", "tileSize": 16, "columns": 14 }
+  },
+  "audio": {},
+  "bundles": {
+    "boot": ["img.hero", "img.shadow"]
+  }
+}
