@@ -1,5 +1,6 @@
-import { DirectionInput } from "./DirectionInput";
 import { GameLoop } from "./engine/GameLoop";
+import { InputManager, type ActionReader } from "./engine/input/InputManager";
+import { attachKeyboard } from "./engine/input/KeyboardSource";
 import { VIEW_H, VIEW_W, attachScreenScaler } from "./engine/render/viewport";
 import { OverworldMap, OverworldMaps } from "./OverworldMap";
 
@@ -8,7 +9,8 @@ export class Overworld {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   map: OverworldMap | null;
-  directionInput: DirectionInput;
+  input: InputManager;
+  worldInput: ActionReader;
   loop: GameLoop;
 
   constructor(config: { element: HTMLElement }) {
@@ -23,7 +25,8 @@ export class Overworld {
     this.canvas = canvas;
     this.ctx = ctx;
     this.map = null;
-    this.directionInput = new DirectionInput();
+    this.input = new InputManager();
+    this.worldInput = this.input.reader("world");
     this.loop = new GameLoop({
       update: (dt) => this.update(dt),
       render: (alpha) => this.render(alpha),
@@ -32,6 +35,7 @@ export class Overworld {
 
   /** Um tick de lógica (dt fixo de 1/60 s). */
   update(dt: number): void {
+    this.input.poll();
     const map = this.map;
     if (!map) return;
 
@@ -39,7 +43,7 @@ export class Overworld {
     objects.forEach((object) => object.savePrevious());
     objects.forEach((object) => {
       object.update({
-        arrow: this.directionInput.direction,
+        arrow: this.worldInput.direction ?? undefined,
         map,
       });
       object.sprite.update(dt);
@@ -75,7 +79,7 @@ export class Overworld {
     this.map = new OverworldMap(demoRoom);
     this.map.mountObjects();
 
-    this.directionInput.init();
+    attachKeyboard(this.input);
     attachScreenScaler(this.element);
 
     // Aba oculta: para o loop. Ao voltar, recomeça sem "pular" o tempo perdido (ARCHITECTURE 5.3).
