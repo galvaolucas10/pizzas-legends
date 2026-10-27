@@ -1,0 +1,49 @@
+[
+  {
+    "id": "quest.primeiro_desafio",
+    "kind": "main",
+    "steps": [
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa1",
+        "completeWhen": { "flag": "flag.primeira_margherita" },
+        "rewardId": "rew.primeiro_desafio_etapa1"
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa2",
+        "completeWhen": { "flag": "flag.ratos_expulsos" },
+        "rewardId": "rew.primeiro_desafio_etapa2"
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa3",
+        "completeWhen": { "flag": "flag.vespas_derrotadas", "atLeast": 3 },
+        "rewardId": "rew.primeiro_desafio_etapa3"
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa4",
+        "completeWhen": { "flag": "flag.mestre_explicou_arvore" },
+        "rewardId": "rew.primeiro_desafio_etapa4"
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa5",
+        "completeWhen": { "flag": "flag.ravena_derrotada" }
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa6",
+        "completeWhen": { "flag": "flag.voltou_vila" },
+        "rewardId": "rew.primeiro_desafio_etapa6"
+      }
+    ]
+  },
+  {
+    "id": "quest.pedido_lenhador",
+    "kind": "side",
+    "availableWhen": { "quest": "quest.primeiro_desafio", "stepAtLeast": 2 },
+    "steps": [
+      {
+        "objectiveKey": "quest.pedido_lenhador.etapa1",
+        "completeWhen": { "flag": "flag.pizza_entregue_bento" },
+        "rewardId": "rew.pedido_lenhador"
+      }
+    ]
+  }
+]

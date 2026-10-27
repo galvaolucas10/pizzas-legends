@@ -41,7 +41,40 @@ Por isso, a regra é a do GDD 13.1: **todos os assets do tutorial serão substit
 | `images/kitchen_lower.png` | `ts.despensa_lower` | Chão, móveis e paredes da `map.despensa` (tileset provisório) | Tutorial (`Kitchen`) | Não verificada | **A substituir** |
 | `images/kitchen_upper.png` | `ts.despensa_upper` | Camada de cima da `map.despensa` (vazia) | Tutorial (`Kitchen`) | Não verificada | **A substituir** |
 
-### 2.2 `content/tilesets` (só no editor Tiled)
+### 2.2 Arte provisória autoral (gerada por código)
+
+Desenhada no próprio projeto pelo script `npm run art` (`scripts/art/`), de forma determinística: rodar de novo gera os mesmos arquivos. É **autoral** e pode ir para a demo, mas é provisória: a arte final da F2-16 a substitui.
+
+| Arquivo | AssetId | Uso no jogo | Origem | Licença | Status |
+|---|---|---|---|---|---|
+| `images/tiles_exterior.png` | `ts.exterior` | Tileset externo 16×16 (grama, caminho, árvores, casas, ponte, forno, barraca, seta de saída) da vila, do bosque e da clareira | `scripts/art/exterior.ts` | Do projeto | **Autoral** (provisória) |
+| `images/enemy_rato.png` | `img.enemy_rato` | Rato de Despensa (folha 4×4 de 32×32) | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `images/enemy_vespa.png` | `img.enemy_vespa` | Vespa-Pimenta | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `images/enemy_fungo.png` | `img.enemy_fungo` | Fungo Rabugento | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_farinha.png` | `icon.ing_farinha` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_massa_fermentada.png` | `icon.ing_massa_fermentada` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_molho_tomate.png` | `icon.ing_molho_tomate` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_molho_apimentado.png` | `icon.ing_molho_apimentado` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_mussarela.png` | `icon.ing_mussarela` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_queijo_cabra.png` | `icon.ing_queijo_cabra` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_queijo_defumado.png` | `icon.ing_queijo_defumado` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_manjericao.png` | `icon.ing_manjericao` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_cogumelo.png` | `icon.ing_cogumelo` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_linguica.png` | `icon.ing_linguica` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_pimenta_dragao.png` | `icon.ing_pimenta_dragao` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_azeite_dourado.png` | `icon.ing_azeite_dourado` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/branch_massa.png` | `icon.branch_massa` | Ícone do ramo Massa | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/branch_forno.png` | `icon.branch_forno` | Ícone do ramo Forno | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/branch_coberturas.png` | `icon.branch_coberturas` | Ícone do ramo Coberturas | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/intent_ataque.png` | `icon.intent_ataque` | Intenção do inimigo: ataque | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/intent_status.png` | `icon.intent_status` | Intenção: aplicar efeito | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/intent_preparar.png` | `icon.intent_preparar` | Intenção: preparar golpe | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/intent_cura.png` | `icon.intent_cura` | Intenção: cura | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/intent_especial.png` | `icon.intent_especial` | Intenção: ação especial | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+
+A Ravena Fumê usa provisoriamente `img.npc5` (tutorial, seção 2.1).
+
+### 2.3 `content/tilesets` (só no editor Tiled)
 
 | Arquivo | Uso | Origem | Licença | Status |
 |---|---|---|---|---|
@@ -49,7 +82,7 @@ Por isso, a regra é a do GDD 13.1: **todos os assets do tutorial serão substit
 
 Os `.tsj` de `content/tilesets` são descrições dos tilesets (texto), não imagens; apontam para os PNGs da seção 2.1.
 
-### 2.3 Outros
+### 2.4 Outros
 
 | Arquivo | Uso | Origem | Licença | Status |
 |---|---|---|---|---|

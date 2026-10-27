@@ -4,58 +4,54 @@ import { bundledContent } from "../../src/content/sources";
 import { readContent } from "../../scripts/lib/readContent";
 import { checkAssetFiles } from "../../scripts/lib/checkAssetFiles";
 
-/** Conteúdo mínimo válido, para estragar de propósito em cada teste. */
+/**
+ * Conteúdo válido para estragar de propósito em cada teste: o conteúdo real do jogo,
+ * com dois mapas pequenos de teste no lugar dos mapas reais.
+ */
 function sample(): RawContent {
-  return {
-    npcs: [{ id: "npc.teste", sprite: "img.npc1" }],
-    conditions: {},
-    locale: {
-      "npc.teste.name": "Teste",
-      "map.a.name": "A",
-      "map.b.name": "B",
-      "dlg.oi": "Oi!",
+  const raw = structuredClone(bundledContent());
+  raw.npcs = [...(raw.npcs as unknown[]), { id: "npc.teste", sprite: "img.npc1" }];
+  raw.locale = {
+    ...(raw.locale as Record<string, string>),
+    "npc.teste.name": "Teste",
+    "map.a.name": "A",
+    "map.b.name": "B",
+    "dlg.oi": "Oi!",
+  };
+  raw.maps = {
+    "maps/a.json": {
+      id: "map.a",
+      width: 3,
+      height: 3,
+      tilesets: [],
+      lower: [],
+      upper: [],
+      collision: ["###", "#..", "###"],
+      entrances: { porta: { x: 1, y: 1, direction: "right" } },
+      objects: [
+        {
+          kind: "npc",
+          id: "teste",
+          x: 2,
+          y: 1,
+          npcId: "npc.teste",
+          talking: [{ events: [{ type: "message", textKey: "dlg.oi" }] }],
+        },
+      ],
     },
-    assets: {
-      animationSets: {},
-      images: { "img.npc1": { src: "images/npc1.png" } },
-      tilesets: {},
-      audio: {},
-      bundles: {},
-    },
-    maps: {
-      "maps/a.json": {
-        id: "map.a",
-        width: 3,
-        height: 3,
-        tilesets: [],
-        lower: [],
-        upper: [],
-        collision: ["###", "#..", "###"],
-        entrances: { porta: { x: 1, y: 1, direction: "right" } },
-        objects: [
-          {
-            kind: "npc",
-            id: "teste",
-            x: 2,
-            y: 1,
-            npcId: "npc.teste",
-            talking: [{ events: [{ type: "message", textKey: "dlg.oi" }] }],
-          },
-        ],
-      },
-      "maps/b.json": {
-        id: "map.b",
-        width: 2,
-        height: 1,
-        tilesets: [],
-        lower: [],
-        upper: [],
-        collision: [".."],
-        entrances: { porta: { x: 0, y: 0, direction: "down" } },
-        objects: [{ kind: "door", id: "saida", x: 1, y: 0, toMap: "map.a", toEntrance: "porta" }],
-      },
+    "maps/b.json": {
+      id: "map.b",
+      width: 2,
+      height: 1,
+      tilesets: [],
+      lower: [],
+      upper: [],
+      collision: [".."],
+      entrances: { porta: { x: 0, y: 0, direction: "down" } },
+      objects: [{ kind: "door", id: "saida", x: 1, y: 0, toMap: "map.a", toEntrance: "porta" }],
     },
   };
+  return raw;
 }
 
 function problemsOf(raw: RawContent): string[] {
@@ -124,7 +120,7 @@ describe("conteúdo inválido de propósito gera erro claro", () => {
   it("asset inexistente no manifesto", () => {
     const raw = sample();
     raw.npcs = [{ id: "npc.teste", sprite: "img.fantasma" }];
-    expect(problemsOf(raw).join("\n")).toContain(`sprite inexistente "img.fantasma"`);
+    expect(problemsOf(raw).join("\n")).toContain(`imagem inexistente "img.fantasma"`);
   });
 
   it("arquivo de asset ausente no disco", () => {

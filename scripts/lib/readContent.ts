@@ -10,6 +10,17 @@ export function readContent(dataDir = join(import.meta.dirname, "../../src/data"
     maps[`maps/${file}`] = read(join("maps", file));
   }
   return {
+    balance: read("balance.json"),
+    ingredients: read("ingredients.json"),
+    recipes: read("recipes.json"),
+    conversions: read("conversions.json"),
+    skills: read("skills.json"),
+    statuses: read("statuses.json"),
+    actions: read("actions.json"),
+    enemies: read("enemies.json"),
+    rewards: read("rewards.json"),
+    quests: read("quests.json"),
+    characters: read("characters.json"),
     npcs: read("npcs.json"),
     conditions: read("conditions.json"),
     locale: read("locales/pt-BR.json"),

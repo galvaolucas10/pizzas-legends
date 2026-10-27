@@ -1,0 +1,30 @@
+[
+  {
+    "id": "status.queimadura",
+    "polarity": "negative",
+    "defaultDuration": 2,
+    "stacking": "refresh",
+    "tick": { "damage": 2 }
+  },
+  {
+    "id": "status.enfraquecido",
+    "polarity": "negative",
+    "defaultDuration": 2,
+    "stacking": "refresh",
+    "damageDealtMultiplier": 0.7
+  },
+  {
+    "id": "status.escudo",
+    "polarity": "positive",
+    "defaultDuration": 1,
+    "stacking": "sum",
+    "maxValue": 2
+  },
+  {
+    "id": "status.preparando",
+    "polarity": "positive",
+    "defaultDuration": null,
+    "stacking": "refresh",
+    "nextActionMultiplier": 2
+  }
+]

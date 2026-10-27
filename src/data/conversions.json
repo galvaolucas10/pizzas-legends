@@ -1,0 +1,14 @@
+[
+  {
+    "id": "conv.fermentacao",
+    "inputs": [{ "ingredientId": "ing.farinha", "count": 2 }],
+    "output": { "ingredientId": "ing.massa_fermentada", "count": 1 },
+    "requiresSkill": "skill.fermentacao"
+  },
+  {
+    "id": "conv.defumacao",
+    "inputs": [{ "ingredientId": "ing.mussarela", "count": 1 }],
+    "output": { "ingredientId": "ing.queijo_defumado", "count": 1 },
+    "requiresSkill": "skill.defumacao"
+  }
+]

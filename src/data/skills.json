@@ -1,0 +1,87 @@
+{
+  "branches": [
+    { "id": "branch.massa", "order": 0, "icon": "icon.branch_massa" },
+    { "id": "branch.forno", "order": 1, "icon": "icon.branch_forno" },
+    { "id": "branch.coberturas", "order": 2, "icon": "icon.branch_coberturas" }
+  ],
+  "skills": [
+    {
+      "id": "skill.sova_firme",
+      "branchId": "branch.massa",
+      "tier": 1,
+      "cost": 1,
+      "requires": [],
+      "effects": [{ "type": "addSlices", "value": 1 }]
+    },
+    {
+      "id": "skill.fermentacao",
+      "branchId": "branch.massa",
+      "tier": 2,
+      "cost": 1,
+      "requires": ["skill.sova_firme"],
+      "effects": [{ "type": "unlockConversion", "conversionId": "conv.fermentacao" }]
+    },
+    {
+      "id": "skill.borda_recheada",
+      "branchId": "branch.massa",
+      "tier": 3,
+      "cost": 2,
+      "requires": ["skill.fermentacao"],
+      "minLevel": 4,
+      "effects": [{ "type": "lastSliceMultiplier", "value": 1.5 }]
+    },
+    {
+      "id": "skill.fogo_controlado",
+      "branchId": "branch.forno",
+      "tier": 1,
+      "cost": 1,
+      "requires": [],
+      "effects": [{ "type": "addQuality", "value": 1 }]
+    },
+    {
+      "id": "skill.defumacao",
+      "branchId": "branch.forno",
+      "tier": 2,
+      "cost": 1,
+      "requires": ["skill.fogo_controlado"],
+      "effects": [
+        { "type": "unlockConversion", "conversionId": "conv.defumacao" },
+        { "type": "unlockRecipe", "recipeId": "rec.defumada" }
+      ]
+    },
+    {
+      "id": "skill.forno_lenha",
+      "branchId": "branch.forno",
+      "tier": 3,
+      "cost": 2,
+      "requires": ["skill.defumacao"],
+      "minLevel": 4,
+      "effects": [{ "type": "batchFreeCategory", "category": "massa", "batchSize": 2 }]
+    },
+    {
+      "id": "skill.mao_generosa",
+      "branchId": "branch.coberturas",
+      "tier": 1,
+      "cost": 1,
+      "requires": [],
+      "effects": [{ "type": "addToppingSlots", "value": 1 }]
+    },
+    {
+      "id": "skill.harmonia",
+      "branchId": "branch.coberturas",
+      "tier": 2,
+      "cost": 1,
+      "requires": ["skill.mao_generosa"],
+      "effects": [{ "type": "harmonyBonus", "value": 2 }]
+    },
+    {
+      "id": "skill.toque_final",
+      "branchId": "branch.coberturas",
+      "tier": 3,
+      "cost": 2,
+      "requires": ["skill.harmonia"],
+      "minLevel": 4,
+      "effects": [{ "type": "toppingIntensity", "value": 1.5 }]
+    }
+  ]
+}

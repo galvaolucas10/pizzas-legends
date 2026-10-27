@@ -1,0 +1,101 @@
+[
+  {
+    "id": "ing.farinha",
+    "category": "massa",
+    "rarity": "comum",
+    "profile": null,
+    "toppingModifiers": [],
+    "icon": "icon.ing_farinha"
+  },
+  {
+    "id": "ing.massa_fermentada",
+    "category": "massa",
+    "rarity": "incomum",
+    "profile": null,
+    "toppingModifiers": [],
+    "icon": "icon.ing_massa_fermentada"
+  },
+  {
+    "id": "ing.molho_tomate",
+    "category": "molho",
+    "rarity": "comum",
+    "profile": "fresco",
+    "toppingModifiers": [],
+    "icon": "icon.ing_molho_tomate"
+  },
+  {
+    "id": "ing.molho_apimentado",
+    "category": "molho",
+    "rarity": "incomum",
+    "profile": "picante",
+    "toppingModifiers": [],
+    "icon": "icon.ing_molho_apimentado"
+  },
+  {
+    "id": "ing.mussarela",
+    "category": "queijo",
+    "rarity": "comum",
+    "profile": "cremoso",
+    "toppingModifiers": [],
+    "icon": "icon.ing_mussarela"
+  },
+  {
+    "id": "ing.queijo_cabra",
+    "category": "queijo",
+    "rarity": "incomum",
+    "profile": "cremoso",
+    "toppingModifiers": [],
+    "icon": "icon.ing_queijo_cabra"
+  },
+  {
+    "id": "ing.queijo_defumado",
+    "category": "queijo",
+    "rarity": "incomum",
+    "profile": "defumado",
+    "toppingModifiers": [],
+    "icon": "icon.ing_queijo_defumado"
+  },
+  {
+    "id": "ing.manjericao",
+    "category": "cobertura",
+    "rarity": "comum",
+    "profile": "fresco",
+    "toppingModifiers": [{ "type": "healPerSlice", "value": 2 }],
+    "icon": "icon.ing_manjericao"
+  },
+  {
+    "id": "ing.cogumelo",
+    "category": "cobertura",
+    "rarity": "comum",
+    "profile": "defumado",
+    "toppingModifiers": [{ "type": "statusDuration", "status": "status.enfraquecido", "value": 1 }],
+    "icon": "icon.ing_cogumelo"
+  },
+  {
+    "id": "ing.linguica",
+    "category": "cobertura",
+    "rarity": "incomum",
+    "profile": "defumado",
+    "toppingModifiers": [{ "type": "damagePerSlice", "value": 2 }],
+    "icon": "icon.ing_linguica"
+  },
+  {
+    "id": "ing.pimenta_dragao",
+    "category": "cobertura",
+    "rarity": "raro",
+    "profile": "picante",
+    "toppingModifiers": [
+      { "type": "statusDamage", "status": "status.queimadura", "value": 1 },
+      { "type": "statusDuration", "status": "status.queimadura", "value": 1 }
+    ],
+    "icon": "icon.ing_pimenta_dragao"
+  },
+  {
+    "id": "ing.azeite_dourado",
+    "category": "cobertura",
+    "rarity": "raro",
+    "profile": null,
+    "toppingModifiers": [{ "type": "qualityBonus", "value": 1 }],
+    "icon": "icon.ing_azeite_dourado"
+  }
+]

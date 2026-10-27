@@ -1,0 +1,63 @@
+[
+  { "id": "act.mordida", "profile": "fresco", "damage": 4, "intentIcon": "icon.intent_ataque" },
+  {
+    "id": "act.belisco",
+    "profile": "fresco",
+    "stealSlice": true,
+    "intentIcon": "icon.intent_especial"
+  },
+  {
+    "id": "act.ferroada",
+    "profile": "picante",
+    "damage": 5,
+    "applyStatus": [{ "status": "status.queimadura", "target": "opponent" }],
+    "intentIcon": "icon.intent_ataque"
+  },
+  {
+    "id": "act.zumbido",
+    "profile": "picante",
+    "applyStatus": [{ "status": "status.preparando", "target": "self" }],
+    "intentIcon": "icon.intent_preparar"
+  },
+  {
+    "id": "act.esporos",
+    "profile": "defumado",
+    "applyStatus": [{ "status": "status.enfraquecido", "target": "opponent" }],
+    "intentIcon": "icon.intent_status"
+  },
+  { "id": "act.pancada", "profile": "defumado", "damage": 6, "intentIcon": "icon.intent_ataque" },
+  {
+    "id": "act.fatia_fumaca",
+    "profile": "defumado",
+    "applyStatus": [{ "status": "status.enfraquecido", "target": "opponent" }],
+    "intentIcon": "icon.intent_status"
+  },
+  { "id": "act.golpe_pa", "profile": null, "damage": 8, "intentIcon": "icon.intent_ataque" },
+  {
+    "id": "act.brasa_lenta",
+    "profile": "defumado",
+    "damage": 6,
+    "applyStatus": [{ "status": "status.queimadura", "target": "opponent" }],
+    "intentIcon": "icon.intent_ataque"
+  },
+  {
+    "id": "act.atica_forno",
+    "profile": null,
+    "skipTurn": true,
+    "intentIcon": "icon.intent_especial"
+  },
+  {
+    "id": "act.labareda",
+    "profile": "picante",
+    "damage": 10,
+    "applyStatus": [{ "status": "status.queimadura", "target": "opponent" }],
+    "intentIcon": "icon.intent_ataque"
+  },
+  {
+    "id": "act.respiro",
+    "profile": null,
+    "heal": 8,
+    "usesPerBattle": 1,
+    "intentIcon": "icon.intent_cura"
+  }
+]

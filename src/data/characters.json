@@ -1,0 +1,12 @@
+[
+  {
+    "id": "char.aprendiz",
+    "sprite": "img.hero",
+    "startingRecipes": ["rec.margherita"],
+    "startingIngredients": [
+      { "ingredientId": "ing.farinha", "count": 1 },
+      { "ingredientId": "ing.molho_tomate", "count": 1 },
+      { "ingredientId": "ing.mussarela", "count": 1 }
+    ]
+  }
+]

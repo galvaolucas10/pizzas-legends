@@ -7,7 +7,13 @@ import {
   SkillIdSchema,
 } from "./common";
 
-export const QuestStatusSchema = z.enum(["locked", "active", "completed"]);
+export const QuestStatusSchema = z.enum([
+  "unavailable",
+  "available",
+  "active",
+  "completed",
+  "rewarded",
+]);
 
 /** Linguagem única de condições (DATA_MODELS 3.11). */
 export type Condition =

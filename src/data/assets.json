@@ -1,10 +1,26 @@
 {
   "animationSets": {
     "anim.character_32": {
-      "idle-down": { "frames": [[0, 0]], "frameDurationMs": 150, "loop": true },
-      "idle-right": { "frames": [[0, 1]], "frameDurationMs": 150, "loop": true },
-      "idle-up": { "frames": [[0, 2]], "frameDurationMs": 150, "loop": true },
-      "idle-left": { "frames": [[0, 3]], "frameDurationMs": 150, "loop": true },
+      "idle-down": {
+        "frames": [[0, 0]],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "idle-right": {
+        "frames": [[0, 1]],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "idle-up": {
+        "frames": [[0, 2]],
+        "frameDurationMs": 150,
+        "loop": true
+      },
+      "idle-left": {
+        "frames": [[0, 3]],
+        "frameDurationMs": 150,
+        "loop": true
+      },
       "walk-down": {
         "frames": [
           [1, 0],
@@ -50,47 +66,206 @@
   "images": {
     "img.hero": {
       "src": "images/hero.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
     "img.npc1": {
       "src": "images/npc1.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
     "img.npc2": {
       "src": "images/npc2.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
     "img.npc3": {
       "src": "images/npc3.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
     "img.npc4": {
       "src": "images/npc4.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
     "img.npc5": {
       "src": "images/npc5.png",
-      "frame": { "w": 32, "h": 32 },
-      "origin": { "x": 8, "y": 18 },
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
       "animations": "anim.character_32"
     },
-    "img.shadow": { "src": "images/shadow.png", "origin": { "x": 8, "y": 18 } }
+    "img.shadow": {
+      "src": "images/shadow.png",
+      "origin": {
+        "x": 8,
+        "y": 18
+      }
+    },
+    "icon.branch_coberturas": {
+      "src": "icons/branch_coberturas.png"
+    },
+    "icon.branch_forno": {
+      "src": "icons/branch_forno.png"
+    },
+    "icon.branch_massa": {
+      "src": "icons/branch_massa.png"
+    },
+    "icon.ing_azeite_dourado": {
+      "src": "icons/ing_azeite_dourado.png"
+    },
+    "icon.ing_cogumelo": {
+      "src": "icons/ing_cogumelo.png"
+    },
+    "icon.ing_farinha": {
+      "src": "icons/ing_farinha.png"
+    },
+    "icon.ing_linguica": {
+      "src": "icons/ing_linguica.png"
+    },
+    "icon.ing_manjericao": {
+      "src": "icons/ing_manjericao.png"
+    },
+    "icon.ing_massa_fermentada": {
+      "src": "icons/ing_massa_fermentada.png"
+    },
+    "icon.ing_molho_apimentado": {
+      "src": "icons/ing_molho_apimentado.png"
+    },
+    "icon.ing_molho_tomate": {
+      "src": "icons/ing_molho_tomate.png"
+    },
+    "icon.ing_mussarela": {
+      "src": "icons/ing_mussarela.png"
+    },
+    "icon.ing_pimenta_dragao": {
+      "src": "icons/ing_pimenta_dragao.png"
+    },
+    "icon.ing_queijo_cabra": {
+      "src": "icons/ing_queijo_cabra.png"
+    },
+    "icon.ing_queijo_defumado": {
+      "src": "icons/ing_queijo_defumado.png"
+    },
+    "icon.intent_ataque": {
+      "src": "icons/intent_ataque.png"
+    },
+    "icon.intent_cura": {
+      "src": "icons/intent_cura.png"
+    },
+    "icon.intent_especial": {
+      "src": "icons/intent_especial.png"
+    },
+    "icon.intent_preparar": {
+      "src": "icons/intent_preparar.png"
+    },
+    "icon.intent_status": {
+      "src": "icons/intent_status.png"
+    },
+    "img.enemy_rato": {
+      "src": "images/enemy_rato.png",
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
+      "animations": "anim.character_32"
+    },
+    "img.enemy_vespa": {
+      "src": "images/enemy_vespa.png",
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
+      "animations": "anim.character_32"
+    },
+    "img.enemy_fungo": {
+      "src": "images/enemy_fungo.png",
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
+      "animations": "anim.character_32"
+    }
   },
   "tilesets": {
-    "ts.cozinha_mestre_lower": { "src": "images/demo_lower.png", "tileSize": 16, "columns": 12 },
-    "ts.cozinha_mestre_upper": { "src": "images/demo_upper.png", "tileSize": 16, "columns": 12 },
-    "ts.despensa_lower": { "src": "images/kitchen_lower.png", "tileSize": 16, "columns": 14 },
-    "ts.despensa_upper": { "src": "images/kitchen_upper.png", "tileSize": 16, "columns": 14 }
+    "ts.cozinha_mestre_lower": {
+      "src": "images/demo_lower.png",
+      "tileSize": 16,
+      "columns": 12
+    },
+    "ts.cozinha_mestre_upper": {
+      "src": "images/demo_upper.png",
+      "tileSize": 16,
+      "columns": 12
+    },
+    "ts.despensa_lower": {
+      "src": "images/kitchen_lower.png",
+      "tileSize": 16,
+      "columns": 14
+    },
+    "ts.despensa_upper": {
+      "src": "images/kitchen_upper.png",
+      "tileSize": 16,
+      "columns": 14
+    },
+    "ts.exterior": {
+      "src": "images/tiles_exterior.png",
+      "tileSize": 16,
+      "columns": 8
+    }
   },
   "audio": {},
   "bundles": {

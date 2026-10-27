@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "validate": "tsx scripts/validate-content.ts",
-    "build:maps": "tsx scripts/build-maps.ts"
+    "build:maps": "tsx scripts/build-maps.ts",
+    "art": "tsx scripts/art/generate-art.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

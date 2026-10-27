@@ -1,0 +1,75 @@
+[
+  {
+    "id": "enemy.rato_despensa",
+    "profile": "fresco",
+    "maxHp": 18,
+    "traits": [{ "type": "agile" }],
+    "canFlee": true,
+    "xp": 15,
+    "drops": [
+      { "ingredientId": "ing.linguica", "count": 1, "chance": 0.5 },
+      { "ingredientId": "ing.farinha", "count": 1, "chance": 1 }
+    ],
+    "phases": [{ "untilHpAtOrBelow": 0, "pattern": ["act.mordida", "act.mordida", "act.belisco"] }],
+    "sprite": "img.enemy_rato"
+  },
+  {
+    "id": "enemy.vespa_pimenta",
+    "profile": "picante",
+    "maxHp": 22,
+    "traits": [],
+    "canFlee": true,
+    "xp": 20,
+    "drops": [{ "ingredientId": "ing.molho_apimentado", "count": 1, "chance": 0.6 }],
+    "phases": [
+      { "untilHpAtOrBelow": 0, "pattern": ["act.ferroada", "act.zumbido", "act.ferroada"] }
+    ],
+    "sprite": "img.enemy_vespa"
+  },
+  {
+    "id": "enemy.fungo_rabugento",
+    "profile": "defumado",
+    "maxHp": 26,
+    "traits": [{ "type": "resistant", "flatReduction": 2 }],
+    "canFlee": true,
+    "xp": 25,
+    "drops": [
+      { "ingredientId": "ing.cogumelo", "count": 1, "chance": 1 },
+      { "ingredientId": "ing.cogumelo", "count": 1, "chance": 0.4 }
+    ],
+    "phases": [{ "untilHpAtOrBelow": 0, "pattern": ["act.esporos", "act.pancada", "act.pancada"] }],
+    "sprite": "img.enemy_fungo"
+  },
+  {
+    "id": "enemy.rival_ravena",
+    "profile": "defumado",
+    "maxHp": 90,
+    "traits": [],
+    "canFlee": false,
+    "xp": 120,
+    "drops": [],
+    "phases": [
+      {
+        "untilHpAtOrBelow": 45,
+        "profile": "defumado",
+        "pattern": ["act.fatia_fumaca", "act.golpe_pa", "act.brasa_lenta"]
+      },
+      {
+        "untilHpAtOrBelow": 0,
+        "profile": "picante",
+        "onEnterAction": "act.atica_forno",
+        "pattern": ["act.labareda", "act.golpe_pa", "act.respiro"]
+      }
+    ],
+    "basket": [
+      { "label": "enemy.rival_ravena.pizza_fumaca", "actionId": "act.fatia_fumaca", "slices": 3 },
+      {
+        "label": "enemy.rival_ravena.pizza_brasa_lenta",
+        "actionId": "act.brasa_lenta",
+        "slices": 3
+      },
+      { "label": "enemy.rival_ravena.pizza_labareda", "actionId": "act.labareda", "slices": 3 }
+    ],
+    "sprite": "img.npc5"
+  }
+]

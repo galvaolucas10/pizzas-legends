@@ -1,0 +1,23 @@
+{
+  "rarityValue": { "comum": 1, "incomum": 2, "raro": 3, "lendario": 4 },
+  "profileBeats": {
+    "fresco": "picante",
+    "picante": "cremoso",
+    "cremoso": "defumado",
+    "defumado": "fresco"
+  },
+  "advantageMultiplier": 1.5,
+  "sameProfileMultiplier": 0.75,
+  "potency": { "base": 4, "perQuality": 2 },
+  "slices": { "min": 1, "max": 8 },
+  "xpTable": [0, 60, 150, 280, 450],
+  "maxHp": { "base": 40, "perLevel": 8 },
+  "basketSize": 4,
+  "maxPizzas": 12,
+  "maxIngredientStack": 99,
+  "defendMultiplier": 0.5,
+  "improviseDamage": 3,
+  "fleeStunMs": 3000,
+  "firstCookXp": 10,
+  "maxLevel": 5
+}
