@@ -1,0 +1,12 @@
+{
+  "type": "tileset",
+  "name": "exemplo",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 2,
+  "tilecount": 4,
+  "image": "exemplo.png",
+  "imagewidth": 32,
+  "imageheight": 32,
+  "properties": [{ "name": "assetId", "type": "string", "value": "ts.exemplo" }]
+}

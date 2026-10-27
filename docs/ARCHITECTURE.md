@@ -525,9 +525,13 @@ assets.json + public/assets ─────────────────�
 | Camada de objetos `objects` | **classe** do objeto = `kind` (`npc`, `enemy`, `chest`...); nome = ID local; propriedades personalizadas = campos | `objects[]` |
 | Propriedade `script` em NPC/trigger | referência a `src/data/dialogues/<arquivo>.json#<chave>` | `talking` / `events` |
 | Propriedade `visibleIf` | referência nomeada a uma condição em `src/data/conditions.json` | `visibleIf` |
+| Propriedade `behaviorLoop` em NPC/inimigo | referência a `src/data/dialogues/<arquivo>.json#<chave>` (lista de eventos) | `behaviorLoop` |
+| Propriedade `assetId` no tileset (`.tsj`) | `AssetId` da imagem no manifesto (ex.: `ts.cozinha_mestre_lower`) | `tilesets[].assetId` |
 
 - Tamanho de tile: 16×16 obrigatório (o conversor recusa outro valor).
-- Coordenadas de objetos do Tiled (em pixels) são convertidas para tiles pelo conversor. Um objeto fora da grade gera erro.
+- Coordenadas de objetos do Tiled (em pixels) são convertidas para tiles pelo conversor. Um objeto fora da grade gera erro. Objetos são **pontos ou retângulos de 16×16** com o canto superior esquerdo no canto do tile ("Snap to Grid" ligado); objetos de tile (com imagem) não são aceitos.
+- Camadas de tiles em formato **CSV** (sem base64/compressão), sem tiles espelhados ou rotacionados. Mapas infinitos não são aceitos.
+- Comandos: `npm run build:maps` converte `content/maps/*.tmj` em `src/data/maps/<slug>.json` (o `npm run dev` faz isso sozinho e reconverte ao salvar). Os JSON gerados são versionados; a CI falha se estiverem desatualizados.
 - Roteiros e condições ficam fora do Tiled, para serem versionados, revisados em diff e validados como JSON.
 
 > Isso acrescenta ao `DATA_MODELS.md` o arquivo `src/data/conditions.json` (condições nomeadas reutilizáveis). O `MapDef` gerado já contém a condição resolvida, então o runtime não muda.
