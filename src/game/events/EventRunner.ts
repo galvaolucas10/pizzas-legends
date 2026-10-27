@@ -1,6 +1,8 @@
+import type { Condition } from "../../content/schemas/conditions";
 import type { GameEvent, GameEventType } from "../../content/schemas/events";
 import type { ActionReader } from "../../engine/input/InputManager";
 import type { Entity } from "../entities/Entity";
+import type { GameSession } from "../GameSession";
 import type { GridOccupancy } from "../world/GridOccupancy";
 
 export type RunMode = "blocking" | "background";
@@ -22,7 +24,25 @@ export interface EventContext {
   changeMap?(mapId: string, entrance: string): void;
   /** Avisos de roteiro (ex.: tempo-limite de um walk bloqueado). */
   warn(message: string): void;
+  /** Partida atual: os eventos de progresso viram comandos (ARCHITECTURE 8.1). */
+  session?: GameSession;
+  /** Avalia uma condição de conteúdo com o estado atual. */
+  isTrue?(condition: Condition): boolean;
+  /** Abre a tela do forno; `onClose` é chamado ao sair dela (F1-08). */
+  openOven?(ovenId: string, onClose: () => void): void;
+  /** Empilha a batalha; `onEnd` recebe o resultado quando ela fecha (F1-13). */
+  startBattle?(request: BattleRequest, onEnd: (outcome: BattleOutcome) => void): void;
+  /** Pede um autosave (o SaveSystem decide como gravar). */
+  autosave?(): void;
 }
+
+export interface BattleRequest {
+  enemyId: string;
+  /** Objeto do mapa que iniciou a batalha (inimigo no mapa). */
+  source?: string;
+}
+
+export type BattleOutcome = "victory" | "defeat" | "fled";
 
 /**
  * Caixa de diálogo vista pelos roteiros. A UI só exibe: quem lê "confirmar" é o handler.
@@ -47,9 +67,13 @@ export interface ActiveEvent {
   cancel?(): void;
 }
 
+/** Cria um sub-executor com os mesmos handlers e contexto (usado por `if` e `startBattle`). */
+export type SubRunner = (events: readonly GameEvent[]) => ActiveEvent;
+
 export type EventHandler<E extends GameEvent = GameEvent> = (
   event: E,
   ctx: EventContext,
+  sub: SubRunner,
 ) => ActiveEvent;
 export type HandlerTable = { [T in GameEventType]?: EventHandler<Extract<GameEvent, { type: T }>> };
 
@@ -117,6 +141,6 @@ export class EventRunner {
       this.ctx.warn(`evento sem handler: "${event.type}"`);
       return { update: () => "done" };
     }
-    return handler(event, this.ctx);
+    return handler(event, this.ctx, (events) => new EventRunner(events, this.handlers, this.ctx));
   }
 }

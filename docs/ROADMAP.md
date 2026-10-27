@@ -309,13 +309,13 @@ F1-01 concluída (27/10/2026): esquemas e conteúdo da demo (dados do GDD) com i
 
 **Antecipado da F2-09:** `map.vila`, `map.bosque` e `map.clareira` já existem no Tiled com arte provisória autoral, NPCs, placas, fornos e todas as conexões (GDD 9.1). Falta na F2-09: tilesets definitivos (F2-16) e segredos (GDD 9.4).
 
-**Em andamento (pausado em 27/10/2026):** Fase 1, seguindo os episódios 11–25 da série do tutorial (batalha, HUD, menu de pausa, progresso, criar pizzas, save, título).
+**Em andamento:** Fase 1, seguindo os episódios 11–25 da série do tutorial (batalha, HUD, menu de pausa, progresso, criar pizzas, save, título).
 
-- Feito e testado: F1-02, F1-03, F1-04, F1-05 (core de missões), F1-07, F1-10, F1-11, F1-16, F1-20.
+- Feito e testado: F1-02, F1-03, F1-04, F1-05, F1-06, F1-07, F1-10, F1-11, F1-16, F1-20.
+- Handlers de progresso ligados à `GameSession` (`progressHandlers`); `openOven`, `startBattle` e `autosave` esperam as portas do contexto (`EventContext.openOven/startBattle/autosave`), que as cenas dos passos 2–3 vão preencher.
 - Escrito, ainda não ligado ao jogo: `game/battle/BattleController.ts` e `game/oven/OvenController.ts`.
 - Próximos passos, nesta ordem:
-  1. Handlers de eventos com a sessão (`claimReward`, `setFlag`, `incrementFlag`, `advanceQuest`, `if`, `openOven`, `startBattle`, `autosave`) e falas condicionais (F1-05, F1-06).
-  2. `EnemyActor` no mapa (contato → batalha, atordoamento após fuga, `defeatedEnemies`) (F1-12).
-  3. Cenas e telas: `BattleScene` + UI de batalha com fundos do tutorial (F1-13), cesta (F1-14), derrota → forno (F1-15), forno (F1-08), mochila/menu de pausa (F1-09), HUD com objetivo.
-  4. `SaveSystem` (autosave em troca de mapa e fim de batalha) e `TitleScene` (Novo jogo / Continuar) (F1-17, F1-18).
-  5. Conteúdo das etapas 1–2: forno do Mestre na cozinha, ratos na despensa com `onDefeat`, falas condicionais do Mestre e da Lia (F1-19).
+  1. `EnemyActor` no mapa (contato → batalha, atordoamento após fuga, `defeatedEnemies`) (F1-12).
+  2. Cenas e telas: `BattleScene` + UI de batalha com fundos do tutorial (F1-13), cesta (F1-14), derrota → forno (F1-15), forno (F1-08), mochila/menu de pausa (F1-09), HUD com objetivo.
+  3. `SaveSystem` (autosave em troca de mapa e fim de batalha) e `TitleScene` (Novo jogo / Continuar) (F1-17, F1-18).
+  4. Conteúdo das etapas 1–2: forno do Mestre na cozinha, ratos na despensa com `onDefeat`, falas condicionais do Mestre e da Lia (F1-19).

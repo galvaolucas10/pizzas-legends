@@ -1,11 +1,13 @@
 import { loadContent } from "../content/registry";
 import { bundledContent } from "../content/sources";
+import { newGame, START_ENTRANCE, START_MAP } from "../core/newGame";
 import { AssetLoader } from "../engine/assets/AssetLoader";
 import { GameLoop } from "../engine/GameLoop";
 import { InputManager } from "../engine/input/InputManager";
 import { attachKeyboard } from "../engine/input/KeyboardSource";
 import { attachScreenScaler, VIEW_H, VIEW_W } from "../engine/render/viewport";
 import { SceneStack } from "../engine/SceneStack";
+import { GameSession } from "../game/GameSession";
 import { WorldScene } from "../game/scenes/WorldScene";
 import { WorldManager } from "../game/world/WorldManager";
 import { UiRoot } from "../ui/UiRoot";
@@ -28,9 +30,6 @@ interface DebugHooks {
   render(ctx: CanvasRenderingContext2D, alpha: number, renderMs: number): void;
 }
 
-export const START_MAP = "map.cozinha_mestre";
-export const START_ENTRANCE = "inicio";
-
 /** API pública do motor (ARCHITECTURE 5.1): a única coisa que a página hospedeira usa. */
 export function createGame(options: GameOptions): GameHandle {
   const { canvas, container } = options;
@@ -51,12 +50,16 @@ export function createGame(options: GameOptions): GameHandle {
     onTransitionStart: () => input.pushContext("transition"),
     onTransitionEnd: () => input.popContext("transition"),
   });
-  const flags: Record<string, boolean | number> = {};
+  // Até a tela de título (F1-18), todo início é um novo jogo.
+  const session = new GameSession(
+    content,
+    newGame(content, { name: "Nico", seed: Date.now() >>> 0 }),
+  );
   const world = new WorldManager({
     content,
     assets,
     input: input.reader("world"),
-    state: () => ({ flags }),
+    state: () => session.state,
   });
 
   // Ferramentas de depuração: só em dev (carregadas no start; o build de produção não as inclui).
@@ -105,6 +108,7 @@ export function createGame(options: GameOptions): GameHandle {
         input,
         dialogue: ui.dialogue,
         transition: (work) => scenes.transition(work),
+        session,
       });
       await worldScene.loadMap(START_MAP, { entrance: START_ENTRANCE });
       await scenes.push(worldScene);

@@ -3,7 +3,13 @@ import type { Scene } from "../../engine/SceneStack";
 import { Npc } from "../entities/Npc";
 import type { DialoguePort, EventContext, HandlerTable } from "../events/EventRunner";
 import { EventSystem } from "../events/EventSystem";
-import { dialogueHandlers, movementHandlers, worldHandlers } from "../events/handlers";
+import {
+  dialogueHandlers,
+  movementHandlers,
+  progressHandlers,
+  worldHandlers,
+} from "../events/handlers";
+import type { GameSession } from "../GameSession";
 import type { Placement, WorldManager } from "../world/WorldManager";
 
 export interface WorldSceneOptions {
@@ -17,13 +23,16 @@ export interface WorldSceneOptions {
   /** Transição com fade (SceneStack.transition). Sem ela, a troca de mapa é imediata. */
   transition?: (work: () => Promise<void>) => boolean;
   warn?: (message: string) => void;
+  /** Partida atual (sem ela, eventos de progresso são pulados com aviso). */
+  session?: GameSession;
 }
 
-/** Todos os handlers de eventos suportados na Fase 0. */
+/** Todos os handlers de eventos suportados. */
 export const DEFAULT_HANDLERS: HandlerTable = {
   ...movementHandlers,
   ...worldHandlers,
   ...dialogueHandlers,
+  ...progressHandlers,
 };
 
 /** Exploração do mapa ativo (ARCHITECTURE 7): mundo + EventSystem. */
@@ -53,6 +62,8 @@ export class WorldScene implements Scene {
       dialogue: options.dialogue,
       input: dialogueInput,
       text: (key) => world.content.locale[key] ?? key,
+      session: options.session,
+      isTrue: (condition) => world.isTrue(condition),
       warn,
     });
     this.events = new EventSystem(
