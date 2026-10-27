@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "cozinha_mestre_lower",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 12,
+  "tilecount": 144,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/demo_lower.png",
+  "imagewidth": 192,
+  "imageheight": 192,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.cozinha_mestre_lower"
+    }
+  ]
+}

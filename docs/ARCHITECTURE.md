@@ -527,6 +527,7 @@ assets.json + public/assets ─────────────────�
 | Propriedade `visibleIf` | referência nomeada a uma condição em `src/data/conditions.json` | `visibleIf` |
 | Propriedade `behaviorLoop` em NPC/inimigo | referência a `src/data/dialogues/<arquivo>.json#<chave>` (lista de eventos) | `behaviorLoop` |
 | Propriedade `assetId` no tileset (`.tsj`) | `AssetId` da imagem no manifesto (ex.: `ts.cozinha_mestre_lower`) | `tilesets[].assetId` |
+| Propriedade `editorOnly` (bool) no tileset | tileset usado só no editor (ex.: `colisao.tsj`, que pinta a camada `collision`) | ignorado |
 
 - Tamanho de tile: 16×16 obrigatório (o conversor recusa outro valor).
 - Coordenadas de objetos do Tiled (em pixels) são convertidas para tiles pelo conversor. Um objeto fora da grade gera erro. Objetos são **pontos ou retângulos de 16×16** com o canto superior esquerdo no canto do tile ("Snap to Grid" ligado); objetos de tile (com imagem) não são aceitos.

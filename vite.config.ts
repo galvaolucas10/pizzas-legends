@@ -27,5 +27,7 @@ export default defineConfig({
   plugins: [tiledMaps()],
   test: {
     include: ["tests/**/*.test.ts"],
+    // O cache em disco do Vitest não percebe arquivos novos em import.meta.glob (ex.: um mapa novo).
+    fsModuleCache: false,
   },
 });

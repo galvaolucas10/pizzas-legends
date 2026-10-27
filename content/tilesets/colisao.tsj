@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "colisao",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 1,
+  "tilecount": 1,
+  "margin": 0,
+  "spacing": 0,
+  "image": "colisao.png",
+  "imagewidth": 16,
+  "imageheight": 16,
+  "properties": [
+    {
+      "name": "editorOnly",
+      "type": "bool",
+      "value": true
+    }
+  ]
+}

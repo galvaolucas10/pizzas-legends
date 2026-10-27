@@ -1,0 +1,20 @@
+{
+  "lia": [
+    {
+      "events": [
+        { "type": "face", "who": "lia", "towards": "player" },
+        {
+          "type": "message",
+          "speaker": "npc.feirante_lia",
+          "textKey": "dlg.feirante_lia.padrao.1"
+        },
+        { "type": "message", "speaker": "npc.feirante_lia", "textKey": "dlg.feirante_lia.padrao.2" }
+      ]
+    }
+  ],
+  "lia_rotina": [
+    { "type": "stand", "who": "lia", "direction": "left", "time": 1500 },
+    { "type": "stand", "who": "lia", "direction": "up", "time": 900 },
+    { "type": "stand", "who": "lia", "direction": "down", "time": 1200 }
+  ]
+}

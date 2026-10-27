@@ -114,7 +114,10 @@ export function convertMap(tmj: TiledMap, options: ConvertOptions): MapDef {
         `tileset "${label}": tile de ${tileset.tilewidth}×${tileset.tileheight} px; exigido ${TILE_SIZE}×${TILE_SIZE}`,
       );
     }
-    const assetId = props(tileset.properties).assetId;
+    const tilesetProps = props(tileset.properties);
+    // Tilesets só do editor (ex.: o tile vermelho da camada de colisão) não vão para o jogo.
+    if (tilesetProps.editorOnly === true) continue;
+    const assetId = tilesetProps.assetId;
     if (typeof assetId !== "string") fail(`tileset "${label}": falta a propriedade "assetId"`);
     tilesets.push({
       assetId: String(assetId),

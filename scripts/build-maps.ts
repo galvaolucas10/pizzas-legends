@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { NamedConditionsSchema } from "../src/content/schemas/conditions";
+import type { MapDef } from "../src/content/schemas/map";
 import { convertMap, type TiledMap } from "./lib/tiled";
 
 const ROOT = resolve(import.meta.dirname, "..");
@@ -21,15 +22,13 @@ export function formatMapJson(value: unknown): string {
   );
 }
 
-/** Converte content/maps/*.tmj em src/data/maps/*.json. Devolve os arquivos gerados. */
-export function buildAllMaps(): string[] {
+/** Converte content/maps/*.tmj em MapDef, sem gravar nada. Chave = nome do arquivo de saída. */
+export function convertAllMaps(): Record<string, MapDef> {
   const conditions = NamedConditionsSchema.parse(readJson(join(DATA_DIR, "conditions.json")));
   const sources = existsSync(MAPS_SRC)
     ? readdirSync(MAPS_SRC).filter((f) => f.endsWith(".tmj"))
     : [];
-  mkdirSync(MAPS_OUT, { recursive: true });
-
-  const written: string[] = [];
+  const result: Record<string, MapDef> = {};
   for (const file of sources) {
     const path = join(MAPS_SRC, file);
     const map = convertMap(readJson(path) as TiledMap, {
@@ -41,10 +40,18 @@ export function buildAllMaps(): string[] {
       },
       conditions,
     });
-    const out = `${map.id.replace(/^map\./, "")}.json`;
-    writeFileSync(join(MAPS_OUT, out), formatMapJson(map));
-    written.push(out);
+    result[`${map.id.replace(/^map./, "")}.json`] = map;
   }
+  return result;
+}
+
+/** Converte content/maps/*.tmj em src/data/maps/*.json. Devolve os arquivos gerados. */
+export function buildAllMaps(): string[] {
+  const maps = convertAllMaps();
+  mkdirSync(MAPS_OUT, { recursive: true });
+  const written = Object.keys(maps);
+  for (const [out, map] of Object.entries(maps))
+    writeFileSync(join(MAPS_OUT, out), formatMapJson(map));
 
   // Remove mapas gerados cuja fonte .tmj não existe mais.
   for (const old of readdirSync(MAPS_OUT).filter((f) => f.endsWith(".json"))) {

@@ -116,3 +116,59 @@ describe("conteúdo inválido de propósito gera erro claro", () => {
     expect(problemsOf(raw).join("\n")).toContain('objeto "fantasma" não existe neste mapa');
   });
 });
+
+describe("mapas da demo (F0-08)", () => {
+  it("os JSON gerados estão iguais à conversão atual dos .tmj", async () => {
+    const { convertAllMaps } = await import("../../scripts/build-maps");
+    const maps = bundledContent().maps;
+    for (const [file, map] of Object.entries(convertAllMaps())) {
+      expect(maps[`maps/${file}`], `rode npm run build:maps (${file})`).toEqual(map);
+    }
+  });
+
+  it("colisão correta nos pontos-chave", () => {
+    const { maps } = loadContent(bundledContent());
+    const cozinha = maps["map.cozinha_mestre"]!;
+    const despensa = maps["map.despensa"]!;
+    const wall = (map: typeof cozinha, x: number, y: number) => map.collision[y]![x] === "#";
+
+    // Cozinha: mesa 2×2, estante, parede de cima e a passagem da porta.
+    expect([
+      wall(cozinha, 7, 6),
+      wall(cozinha, 8, 7),
+      wall(cozinha, 3, 4),
+      wall(cozinha, 5, 3),
+    ]).toEqual([true, true, true, true]);
+    expect([wall(cozinha, 5, 6), wall(cozinha, 7, 4), wall(cozinha, 5, 10)]).toEqual([
+      false,
+      false,
+      false,
+    ]);
+
+    // Despensa: fogões, bancadas, caixas e a porta.
+    expect([
+      wall(despensa, 6, 4),
+      wall(despensa, 6, 7),
+      wall(despensa, 1, 9),
+      wall(despensa, 9, 9),
+    ]).toEqual([true, true, true, true]);
+    expect([wall(despensa, 4, 4), wall(despensa, 8, 7), wall(despensa, 5, 10)]).toEqual([
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it("portas ligam a cozinha e a despensa nos dois sentidos", () => {
+    const { maps } = loadContent(bundledContent());
+    const door = (id: string) => maps[id]!.objects.find((o) => o.kind === "door");
+    expect(door("map.cozinha_mestre")).toMatchObject({
+      toMap: "map.despensa",
+      toEntrance: "porta",
+    });
+    expect(door("map.despensa")).toMatchObject({
+      toMap: "map.cozinha_mestre",
+      toEntrance: "porta",
+    });
+  });
+});
