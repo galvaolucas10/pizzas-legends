@@ -17,6 +17,8 @@ export class EventSystem {
     private readonly handlers: HandlerTable,
     private readonly context: (mode: EventContext["mode"]) => EventContext,
     private readonly input: InputManager,
+    /** Chamado quando uma cena bloqueante termina ou é cancelada (ex.: fechar o diálogo). */
+    private readonly onBlockingEnd?: () => void,
   ) {}
 
   get isBlocking(): boolean {
@@ -70,12 +72,14 @@ export class EventSystem {
       this.blocking.cancel();
       this.blocking = null;
       this.input.popContext("dialogue");
+      this.onBlockingEnd?.();
     }
   }
 
   private finishBlocking(): void {
     this.blocking = null;
     this.input.popContext("dialogue");
+    if (this.queue.length === 0) this.onBlockingEnd?.();
     const done = this.onBlockingDone;
     this.onBlockingDone = undefined;
     done?.();

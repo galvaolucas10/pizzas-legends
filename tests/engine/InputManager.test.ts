@@ -80,3 +80,17 @@ describe("InputManager", () => {
     expect(input.activeContext).toBe("world");
   });
 });
+
+describe("consume", () => {
+  it("esconde o pressionamento do resto do tick, só no contexto ativo", () => {
+    const input = new InputManager();
+    const world = input.reader("world");
+    const dialogue = input.reader("dialogue");
+    input.press("confirm");
+    input.poll();
+    dialogue.consume("confirm"); // contexto inativo: não faz nada
+    expect(world.wasPressed("confirm")).toBe(true);
+    world.consume("confirm");
+    expect(world.wasPressed("confirm")).toBe(false);
+  });
+});

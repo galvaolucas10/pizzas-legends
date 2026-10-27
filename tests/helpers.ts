@@ -15,6 +15,9 @@ export class FakeInput implements ActionReader {
   wasPressed(action: Action): boolean {
     return this.pressed.has(action);
   }
+  consume(action: Action): void {
+    this.pressed.delete(action);
+  }
 }
 
 export const testSprite: SpriteDef = {

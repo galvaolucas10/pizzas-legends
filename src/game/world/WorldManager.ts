@@ -1,5 +1,6 @@
 import type { ContentRegistry } from "../../content/registry";
 import type { Direction } from "../../content/schemas/common";
+import type { Condition } from "../../content/schemas/conditions";
 import { isSolid, type MapDef, type MapObject } from "../../content/schemas/map";
 import { evaluateCondition, type ConditionState } from "../../core/conditions";
 import type { AssetLoader } from "../../engine/assets/AssetLoader";
@@ -39,7 +40,10 @@ export class WorldManager {
   private upperCache: HTMLCanvasElement | null = null;
   private doors = new Map<string, DoorObject>();
 
+  readonly content: ContentRegistry;
+
   constructor(private readonly options: WorldOptions) {
+    this.content = options.content;
     this.player = new Player(options.input, {
       x: 0,
       y: 0,
@@ -109,6 +113,11 @@ export class WorldManager {
     this.upperCache = null;
     this.grid = null;
     this.map = null;
+  }
+
+  /** Avalia uma condição de conteúdo com o estado atual (flags). */
+  isTrue(condition: Condition | undefined): boolean {
+    return !condition || evaluateCondition(condition, this.options.state());
   }
 
   doorAt(x: number, y: number): DoorObject | undefined {

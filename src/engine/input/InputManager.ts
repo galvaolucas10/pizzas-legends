@@ -14,6 +14,8 @@ export interface ActionReader {
   readonly active: boolean;
   isHeld(action: Action): boolean;
   wasPressed(action: Action): boolean;
+  /** Marca o pressionamento deste tick como usado: ninguém mais o vê (ex.: o confirmar que fecha um diálogo). */
+  consume(action: Action): void;
   /** Direção mais recente mantida (ou tocada neste tick), ou null. */
   readonly direction: Direction | null;
 }
@@ -82,6 +84,10 @@ export class InputManager {
     return this.pressed.has(action);
   }
 
+  consume(action: Action): void {
+    this.pressed.delete(action);
+  }
+
   get direction(): Direction | null {
     return this.heldThisTick.find(isDirection) ?? null;
   }
@@ -108,6 +114,10 @@ class ContextReader implements ActionReader {
 
   wasPressed(action: Action): boolean {
     return this.active && this.input.wasPressed(action);
+  }
+
+  consume(action: Action): void {
+    if (this.active) this.input.consume(action);
   }
 
   get direction(): Direction | null {

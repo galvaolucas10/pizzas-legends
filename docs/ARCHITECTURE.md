@@ -317,6 +317,7 @@ type InputContext = "world" | "dialogue" | "menu" | "battle" | "transition";
 - **Contexto ativo** = topo da pilha. Só a cena ou sistema do contexto ativo lê as ações. Isso impede, por exemplo, que o jogador ande enquanto um diálogo está aberto.
 - `input.poll()` acontece uma vez por tick (seção 6.1). Pressionamentos entre ticks não se perdem: ficam em buffer até o próximo `poll`.
 - `blur` da janela libera todas as teclas, o que corrige o personagem "andando sozinho" após um Alt+Tab.
+- `consume(action)`: quem usa um pressionamento o marca como usado naquele tick. Ex.: o "confirmar" que fecha a última fala não reabre a conversa com o NPC à frente.
 
 ---
 

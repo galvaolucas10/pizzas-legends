@@ -1,4 +1,5 @@
 import type { GameEvent, GameEventType } from "../../content/schemas/events";
+import type { ActionReader } from "../../engine/input/InputManager";
 import type { Entity } from "../entities/Entity";
 import type { GridOccupancy } from "../world/GridOccupancy";
 
@@ -11,21 +12,33 @@ export interface EventContext {
   entity(ref: string): Entity | undefined;
   readonly player: Entity;
   readonly grid: GridOccupancy | null;
-  /** Mostra uma fala e diz quando o jogador a fechou (F0-13). */
+  /** Caixa de diálogo da UI (F0-13). */
   dialogue?: DialoguePort;
+  /** Ações do contexto "dialogue" (confirmar avança a fala). */
+  input?: ActionReader;
+  /** Texto do arquivo de idioma; a própria chave se faltar. */
+  text(key: string): string;
   /** Troca de mapa (F0-12). */
   changeMap?(mapId: string, entrance: string): void;
   /** Avisos de roteiro (ex.: tempo-limite de um walk bloqueado). */
   warn(message: string): void;
 }
 
+/**
+ * Caixa de diálogo vista pelos roteiros. A UI só exibe: quem lê "confirmar" é o handler.
+ * Implementada em ui/ (DialogueBox) e injetada pelo app.
+ */
 export interface DialoguePort {
-  /** Abre (ou troca) a fala atual. */
+  /** Abre a caixa (ou troca a fala) e começa a revelar o texto letra a letra. */
   show(text: string, speaker?: string): void;
-  /** Fecha a caixa de diálogo. */
+  /** Avança a revelação do texto pelo relógio do jogo. */
+  update(dt: number): void;
+  /** Ainda revelando letras? */
+  readonly typing: boolean;
+  /** Mostra o texto inteiro de uma vez. */
+  complete(): void;
+  /** Fecha a caixa. */
   hide(): void;
-  /** Avança um tick: confirmar completa o texto ou fecha a fala. Devolve "done" quando fechada. */
-  update(dt: number): Status;
 }
 
 /** Um evento em execução. Avança só com `dt` do GameLoop: sem Promises nem timers. */

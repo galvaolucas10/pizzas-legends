@@ -8,6 +8,7 @@ import { attachScreenScaler, VIEW_H, VIEW_W } from "../engine/render/viewport";
 import { SceneStack } from "../engine/SceneStack";
 import { WorldScene } from "../game/scenes/WorldScene";
 import { WorldManager } from "../game/world/WorldManager";
+import { UiRoot } from "../ui/UiRoot";
 
 export interface GameOptions {
   canvas: HTMLCanvasElement;
@@ -83,9 +84,12 @@ export function createGame(options: GameOptions): GameHandle {
       cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
       await assets.loadBundle(content.assets.bundles.boot ?? []);
+      const ui = new UiRoot(container);
+      cleanups.push(() => ui.destroy());
       const worldScene = new WorldScene({
         world,
         input,
+        dialogue: ui.dialogue,
         transition: (work) => scenes.transition(work),
       });
       await worldScene.loadMap(START_MAP, { entrance: START_ENTRANCE });

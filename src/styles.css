@@ -32,3 +32,72 @@ body {
   font: 13px/1.4 monospace;
   white-space: pre-wrap;
 }
+
+/* ---------- UI em DOM sobre o canvas (ARCHITECTURE 14) ---------- */
+
+.game-container {
+  --px: 1px; /* atualizado por attachScreenScaler */
+}
+
+.ui-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: calc(var(--px) * 8);
+  line-height: 1.35;
+  color: #3a2418;
+}
+
+.dialogue {
+  position: absolute;
+  left: calc(var(--px) * 8);
+  right: calc(var(--px) * 8);
+  bottom: calc(var(--px) * 6);
+  min-height: calc(var(--px) * 46);
+  padding: calc(var(--px) * 6) calc(var(--px) * 9);
+  background: #fbf0dc;
+  border: calc(var(--px) * 2) solid #3a2418;
+  box-shadow: 0 calc(var(--px) * 2) 0 #00000055;
+}
+
+.dialogue__speaker {
+  position: absolute;
+  top: calc(var(--px) * -9);
+  left: calc(var(--px) * 6);
+  padding: 0 calc(var(--px) * 4);
+  background: #c0392b;
+  color: #fff;
+  border: calc(var(--px) * 2) solid #3a2418;
+  font-weight: bold;
+  font-size: calc(var(--px) * 7);
+}
+
+.dialogue__text {
+  margin: 0;
+  min-height: 2.7em;
+  white-space: pre-wrap;
+}
+
+.dialogue__hint {
+  position: absolute;
+  right: calc(var(--px) * 6);
+  bottom: calc(var(--px) * 2);
+  font-size: calc(var(--px) * 6);
+  animation: dialogue-hint 0.8s steps(2) infinite;
+}
+
+@keyframes dialogue-hint {
+  50% {
+    transform: translateY(calc(var(--px) * 1));
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

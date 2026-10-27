@@ -1,9 +1,9 @@
 import type { InputManager } from "../../engine/input/InputManager";
 import type { Scene } from "../../engine/SceneStack";
 import { Npc } from "../entities/Npc";
-import type { EventContext, HandlerTable } from "../events/EventRunner";
+import type { DialoguePort, EventContext, HandlerTable } from "../events/EventRunner";
 import { EventSystem } from "../events/EventSystem";
-import { movementHandlers, worldHandlers } from "../events/handlers";
+import { dialogueHandlers, movementHandlers, worldHandlers } from "../events/handlers";
 import type { Placement, WorldManager } from "../world/WorldManager";
 
 export interface WorldSceneOptions {
@@ -12,10 +12,19 @@ export interface WorldSceneOptions {
   handlers?: HandlerTable;
   /** Partes extras do contexto dos eventos (diálogo, troca de mapa). */
   extendContext?: (ctx: EventContext) => EventContext;
+  /** Caixa de diálogo da UI (sem ela, falas são puladas com aviso). */
+  dialogue?: DialoguePort;
   /** Transição com fade (SceneStack.transition). Sem ela, a troca de mapa é imediata. */
   transition?: (work: () => Promise<void>) => boolean;
   warn?: (message: string) => void;
 }
+
+/** Todos os handlers de eventos suportados na Fase 0. */
+export const DEFAULT_HANDLERS: HandlerTable = {
+  ...movementHandlers,
+  ...worldHandlers,
+  ...dialogueHandlers,
+};
 
 /** Exploração do mapa ativo (ARCHITECTURE 7): mundo + EventSystem. */
 export class WorldScene implements Scene {
@@ -30,6 +39,7 @@ export class WorldScene implements Scene {
     this.transition = options.transition;
     const warn = options.warn ?? ((message: string) => console.warn(`[eventos] ${message}`));
     const world = this.world;
+    const dialogueInput = options.input.reader("dialogue");
     const base = (mode: EventContext["mode"]): EventContext => ({
       mode,
       entity: (ref) => (ref === "player" ? world.player : world.entity(ref)),
@@ -40,12 +50,16 @@ export class WorldScene implements Scene {
         return world.grid;
       },
       changeMap: (mapId, entrance) => this.goTo(mapId, entrance),
+      dialogue: options.dialogue,
+      input: dialogueInput,
+      text: (key) => world.content.locale[key] ?? key,
       warn,
     });
     this.events = new EventSystem(
-      options.handlers ?? { ...movementHandlers, ...worldHandlers },
+      options.handlers ?? DEFAULT_HANDLERS,
       (mode) => options.extendContext?.(base(mode)) ?? base(mode),
       options.input,
+      () => options.dialogue?.hide(),
     );
 
     // Portas disparam ao terminar um passo sobre o tile (ARCHITECTURE 10.3).
@@ -53,6 +67,17 @@ export class WorldScene implements Scene {
       const door = world.doorAt(x, y);
       if (door) this.goTo(door.toMap, door.toEntrance);
     };
+    world.player.hooks.onInteract = (x, y) => this.interact(x, y);
+  }
+
+  /** Confirmar olhando para um NPC: roda a primeira fala cuja condição é verdadeira (DATA_MODELS 3.13). */
+  interact(x: number, y: number): boolean {
+    const target = this.world.entityAt(x, y);
+    if (!(target instanceof Npc) || target.mover.moving) return false;
+    const talking = target.def.talking.find((t) => this.world.isTrue(t.condition));
+    if (!talking) return false;
+    this.events.runBlocking(talking.events);
+    return true;
   }
 
   /** Mapa sendo carregado pela última troca (para os testes aguardarem). */

@@ -77,6 +77,34 @@ export const movementHandlers: HandlerTable = {
   },
 };
 
+/** Falas (F0-13): confirmar completa o texto; com o texto completo, confirmar avança. */
+export const dialogueHandlers: HandlerTable = {
+  message(event, ctx) {
+    const { dialogue, input } = ctx;
+    if (!dialogue || !input) {
+      ctx.warn(`message "${event.textKey}" sem caixa de diálogo`);
+      return DONE;
+    }
+    dialogue.show(
+      ctx.text(event.textKey),
+      event.speaker ? ctx.text(`${event.speaker}.name`) : undefined,
+    );
+    return {
+      update(dt) {
+        dialogue.update(dt);
+        if (!input.wasPressed("confirm")) return "running";
+        input.consume("confirm"); // a mesma tecla não avança a próxima fala nem reabre a conversa
+        if (dialogue.typing) {
+          dialogue.complete();
+          return "running";
+        }
+        return "done";
+      },
+      cancel: () => dialogue.hide(),
+    };
+  },
+};
+
 /** Troca de mapa (F0-12). A troca cancela este roteiro; até lá, ele só espera. */
 export const worldHandlers: HandlerTable = {
   changeMap(event, ctx) {
