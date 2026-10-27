@@ -1,0 +1,13 @@
+{
+  "npc.mestre_basilio.name": "Mestre Basílio",
+  "npc.lenhador_bento.name": "Lenhador Bento",
+  "npc.feirante_lia.name": "Feirante Lia",
+  "map.cozinha_mestre.name": "Cozinha do Mestre",
+  "map.despensa.name": "Despensa da Lia",
+
+  "dlg.mestre_basilio.padrao.1": "Acordou, aprendiz? O forno não espera!",
+  "dlg.mestre_basilio.padrao.2": "A Lia está com problemas na despensa. Desça pela porta e vá ajudá-la.",
+  "dlg.lenhador_bento.padrao.1": "Hmm... esse cheiro de massa assando me deu uma fome de lenhador!",
+  "dlg.feirante_lia.padrao.1": "Que bom que você veio! Tem ratos roendo meus queijos.",
+  "dlg.feirante_lia.padrao.2": "Ainda não sei como expulsá-los... volte quando o Mestre te ensinar a primeira receita."
+}

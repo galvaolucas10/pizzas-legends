@@ -1,0 +1,5 @@
+[
+  { "id": "npc.mestre_basilio", "sprite": "img.npc1" },
+  { "id": "npc.lenhador_bento", "sprite": "img.npc2" },
+  { "id": "npc.feirante_lia", "sprite": "img.npc3" }
+]
