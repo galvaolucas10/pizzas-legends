@@ -238,6 +238,18 @@
         "y": 18
       },
       "animations": "anim.character_32"
+    },
+    "img.erio": {
+      "src": "images/erio.png",
+      "frame": {
+        "w": 32,
+        "h": 32
+      },
+      "origin": {
+        "x": 8,
+        "y": 18
+      },
+      "animations": "anim.character_32"
     }
   },
   "tilesets": {
@@ -265,6 +277,56 @@
       "src": "images/tiles_exterior.png",
       "tileSize": 16,
       "columns": 8
+    },
+    "ts.vila_lower": {
+      "src": "images/street_lower.png",
+      "tileSize": 16,
+      "columns": 40
+    },
+    "ts.vila_upper": {
+      "src": "images/street_upper.png",
+      "tileSize": 16,
+      "columns": 40
+    },
+    "ts.praca_lower": {
+      "src": "images/street_north_lower.png",
+      "tileSize": 16,
+      "columns": 16
+    },
+    "ts.praca_upper": {
+      "src": "images/street_north_upper.png",
+      "tileSize": 16,
+      "columns": 16
+    },
+    "ts.salao_lower": {
+      "src": "images/dining_room_lower.png",
+      "tileSize": 16,
+      "columns": 14
+    },
+    "ts.salao_upper": {
+      "src": "images/dining_room_upper.png",
+      "tileSize": 16,
+      "columns": 14
+    },
+    "ts.loja_lower": {
+      "src": "images/pizza_shop_lower.png",
+      "tileSize": 16,
+      "columns": 12
+    },
+    "ts.loja_upper": {
+      "src": "images/pizza_shop_upper.png",
+      "tileSize": 16,
+      "columns": 12
+    },
+    "ts.estufa_lower": {
+      "src": "images/green_kitchen_lower.png",
+      "tileSize": 16,
+      "columns": 11
+    },
+    "ts.estufa_upper": {
+      "src": "images/green_kitchen_upper.png",
+      "tileSize": 16,
+      "columns": 11
     }
   },
   "audio": {},

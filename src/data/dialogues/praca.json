@@ -1,0 +1,20 @@
+{
+  "tito": [
+    {
+      "events": [
+        { "type": "face", "who": "tito", "towards": "player" },
+        { "type": "message", "speaker": "npc.seu_tito", "textKey": "dlg.seu_tito.padrao.1" }
+      ]
+    }
+  ],
+  "tito_rotina": [
+    { "type": "walk", "who": "tito", "direction": "right" },
+    { "type": "walk", "who": "tito", "direction": "right" },
+    { "type": "walk", "who": "tito", "direction": "right" },
+    { "type": "stand", "who": "tito", "direction": "up", "time": 2000 },
+    { "type": "walk", "who": "tito", "direction": "left" },
+    { "type": "walk", "who": "tito", "direction": "left" },
+    { "type": "walk", "who": "tito", "direction": "left" },
+    { "type": "stand", "who": "tito", "direction": "down", "time": 1800 }
+  ]
+}

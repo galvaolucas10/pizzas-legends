@@ -656,7 +656,7 @@
             {
               "name": "toEntrance",
               "type": "string",
-              "value": "despensa"
+              "value": "salao"
             }
           ]
         }

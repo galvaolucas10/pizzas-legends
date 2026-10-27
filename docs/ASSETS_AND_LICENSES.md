@@ -31,15 +31,28 @@ Por isso, a regra é a do GDD 13.1: **todos os assets do tutorial serão substit
 |---|---|---|---|---|---|
 | `images/hero.png` | `img.hero` | Protagonista (folha 4×4 de 32×32) | Tutorial | Não verificada | **A substituir** |
 | `images/npc1.png` | `img.npc1` | Mestre Basílio (provisório) | Tutorial | Não verificada | **A substituir** |
-| `images/npc2.png` | `img.npc2` | Lenhador Bento (provisório) | Tutorial | Não verificada | **A substituir** |
+| `images/npc2.png` | `img.npc2` | Lenhador Bento e Seu Tito (provisório) | Tutorial | Não verificada | **A substituir** |
 | `images/npc3.png` | `img.npc3` | Feirante Lia (provisório) | Tutorial | Não verificada | **A substituir** |
-| `images/npc4.png` | `img.npc4` | Sem uso no momento | Tutorial | Não verificada | **A substituir** (ou remover) |
-| `images/npc5.png` | `img.npc5` | Sem uso no momento | Tutorial | Não verificada | **A substituir** (ou remover) |
+| `images/npc4.png` | `img.npc4` | Guardiã Sálvia e Dona Rita (provisório) | Tutorial | Não verificada | **A substituir** |
+| `images/npc5.png` | `img.npc5` | Ravena Fumê e o garçom Beto (provisório) | Tutorial | Não verificada | **A substituir** |
 | `images/shadow.png` | `img.shadow` | Sombra sob os personagens | Tutorial | Não verificada | **A substituir** |
 | `images/demo_lower.png` | `ts.cozinha_mestre_lower` | Chão e paredes da `map.cozinha_mestre` (tileset provisório) | Tutorial (`DemoRoom`) | Não verificada | **A substituir** |
 | `images/demo_upper.png` | `ts.cozinha_mestre_upper` | Camada de cima da `map.cozinha_mestre` | Tutorial (`DemoRoom`) | Não verificada | **A substituir** |
 | `images/kitchen_lower.png` | `ts.despensa_lower` | Chão, móveis e paredes da `map.despensa` (tileset provisório) | Tutorial (`Kitchen`) | Não verificada | **A substituir** |
 | `images/kitchen_upper.png` | `ts.despensa_upper` | Camada de cima da `map.despensa` (vazia) | Tutorial (`Kitchen`) | Não verificada | **A substituir** |
+| `images/street_lower.png` | `ts.vila_lower` | Avenida da `map.vila` (Anchovy Avenue) | Tutorial (`Street`) | Não verificada | **A substituir** |
+| `images/street_upper.png` | `ts.vila_upper` | Camada de cima da `map.vila` | Tutorial (`Street`) | Não verificada | **A substituir** |
+| `images/street_north_lower.png` | `ts.praca_lower` | `map.praca` (praça Neon Greens) | Tutorial (`StreetNorth`) | Não verificada | **A substituir** |
+| `images/street_north_upper.png` | `ts.praca_upper` | Camada de cima da `map.praca` | Tutorial (`StreetNorth`) | Não verificada | **A substituir** |
+| `images/dining_room_lower.png` | `ts.salao_lower` | `map.salao` (salão da pizzaria do Mestre) | Tutorial (`DiningRoom`) | Não verificada | **A substituir** |
+| `images/dining_room_upper.png` | `ts.salao_upper` | Camada de cima da `map.salao` | Tutorial (`DiningRoom`) | Não verificada | **A substituir** |
+| `images/pizza_shop_lower.png` | `ts.loja_lower` | `map.loja` (mercadinho da Lia) | Tutorial (`PizzaShop`) | Não verificada | **A substituir** |
+| `images/pizza_shop_upper.png` | `ts.loja_upper` | Camada de cima da `map.loja` | Tutorial (`PizzaShop`) | Não verificada | **A substituir** |
+| `images/green_kitchen_lower.png` | `ts.estufa_lower` | `map.estufa` (Neon Greens) | Tutorial (`GreenKitchen`) | Não verificada | **A substituir** |
+| `images/green_kitchen_upper.png` | `ts.estufa_upper` | Camada de cima da `map.estufa` | Tutorial (`GreenKitchen`) | Não verificada | **A substituir** |
+| `images/erio.png` | `img.erio` | Erio, entregador da avenida | Tutorial (`erio`) | Não verificada | **A substituir** |
+
+Origem do pacote do tutorial: link de download na descrição do primeiro vídeo da série ("Download the code (and images) for this episode from Google Drive"). Ele traz também fundos de batalha (`*Battle.png`), ícones de perfil (`spicy`, `veggie`, `fungi`, `chill`), `logo.png` e `box.png`, ainda não usados no jogo.
 
 ### 2.2 Arte provisória autoral (gerada por código)
 

@@ -1,0 +1,29 @@
+{
+  "garcom": [
+    {
+      "events": [
+        { "type": "face", "who": "garcom", "towards": "player" },
+        { "type": "message", "speaker": "npc.garcom_beto", "textKey": "dlg.garcom_beto.padrao.1" },
+        { "type": "message", "speaker": "npc.garcom_beto", "textKey": "dlg.garcom_beto.padrao.2" }
+      ]
+    }
+  ],
+  "garcom_rotina": [
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "walk", "who": "garcom", "direction": "right" },
+    { "type": "stand", "who": "garcom", "direction": "up", "time": 1500 },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "walk", "who": "garcom", "direction": "left" },
+    { "type": "stand", "who": "garcom", "direction": "up", "time": 1500 }
+  ]
+}

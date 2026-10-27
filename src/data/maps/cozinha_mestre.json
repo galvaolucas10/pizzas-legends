@@ -112,8 +112,8 @@
       "x": 5,
       "y": 10,
       "kind": "door",
-      "toMap": "map.vila",
-      "toEntrance": "casa_mestre"
+      "toMap": "map.salao",
+      "toEntrance": "cozinha"
     },
     {
       "id": "passagem_fundos",

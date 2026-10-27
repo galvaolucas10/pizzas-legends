@@ -394,21 +394,33 @@ Leitura esperada pelo jogador:
 
 Três regiões (Vila, Bosque, Clareira) + dois interiores, conforme a meta de 3 mapas da seção 5 do planejamento.
 
-**Conexões [Implementado – versão provisória]:**
+**Mapas implementados [versão provisória, com as imagens do tutorial]:**
+
+| ID | Mapa | Imagem | Conteúdo |
+|---|---|---|---|
+| `map.vila` | Vila do Forno (Anchovy Avenue) | `Street` | Pizzaria do Mestre, mercadinho da Lia (SHOP), passagem para a praça, saída leste para o bosque; Erio e Dona Rita passeando |
+| `map.salao` | Salão da Pizzaria do Mestre | `DiningRoom` | Mesas, bar, garçom Beto; porta do fundo para a cozinha |
+| `map.cozinha_mestre` | Cozinha do Mestre | `DemoRoom` | Mestre Basílio; passagem do fundo para a despensa |
+| `map.despensa` | Despensa da Lia | `Kitchen` | Saída pela seta no chão, para a avenida |
+| `map.loja` | Mercadinho da Lia | `PizzaShop` | Feirante Lia no balcão |
+| `map.praca` | Praça Neon | `StreetNorth` | Canteiros, Seu Tito passeando, entrada da Neon Greens |
+| `map.estufa` | Neon Greens | `GreenKitchen` | Restaurante verde (sem NPC ainda) |
+| `map.bosque` | Bosque das Ervas | arte autoral gerada | Sálvia, Bento, acampamento com forno |
+| `map.clareira` | Clareira do Desafio | arte autoral gerada | Ravena Fumê |
 
 ```text
-Cozinha do Mestre ──porta de baixo──▶ Vila do Forno ◀──porta── Despensa da Lia
-        │                              │      ▲                    ▲  │
-        └──passagem do fundo ──────────┼──────┼────────────────────┘  │ seta no chão
-                                       │      └───────────────────────┘ (saída para a vila)
-                                  borda leste
-                                       ▼
-                               Bosque das Ervas ──ponte / borda leste──▶ Clareira do Desafio
+Cozinha ─porta de baixo─▶ Salão ─seta─▶ Avenida (Vila) ─SHOP─▶ Mercadinho da Lia
+   │                       ▲              │  │  ▲
+   └─passagem do fundo─▶ Despensa ─seta───┘  │  └──── Praça Neon ─porta─▶ Neon Greens
+                                             │        (passagem do meio)
+                                     borda leste
+                                             ▼
+                                   Bosque das Ervas ──ponte──▶ Clareira do Desafio
 ```
 
-- A passagem do fundo da cozinha leva ao fundo da despensa. Da despensa, sai-se sempre pela **seta no chão**, que dá na vila, em frente à porta da despensa.
-- Bordas de mapa usam portas na borda (o jogador sai andando pelo caminho).
-- Arte provisória autoral (`ts.exterior`); posições de NPCs, placas e fornos já seguem o GDD. Bloqueios por missão (ponte) e segredos entram com as etapas (F2-10, F2-14).
+- Toda porta tem volta; nos interiores, a saída é a **seta no chão**.
+- Poucos moradores andando por mapa (no máximo dois), para dar vida sem poluir.
+- As imagens do tutorial continuam marcadas "a substituir" (`ASSETS_AND_LICENSES.md`). Bloqueios por missão (ponte) e segredos entram com as etapas (F2-10, F2-14).
 
 ### 9.2 Interações no mapa
 

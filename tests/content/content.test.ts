@@ -194,12 +194,19 @@ describe("mapas da demo (F0-08)", () => {
     );
     expect(links.sort()).toEqual(
       [
-        "map.cozinha_mestre → map.vila#casa_mestre",
+        "map.cozinha_mestre → map.salao#cozinha",
         "map.cozinha_mestre → map.despensa#fundos",
-        "map.despensa → map.vila#despensa",
-        "map.vila → map.cozinha_mestre#porta",
-        "map.vila → map.despensa#porta",
+        "map.despensa → map.vila#salao",
+        "map.salao → map.cozinha_mestre#porta",
+        "map.salao → map.vila#salao",
+        "map.vila → map.salao#rua",
+        "map.vila → map.loja#rua",
+        "map.vila → map.praca#vila",
         "map.vila → map.bosque#vila",
+        "map.loja → map.vila#loja",
+        "map.praca → map.estufa#rua",
+        "map.praca → map.vila#praca",
+        "map.estufa → map.praca#estufa",
         "map.bosque → map.vila#bosque",
         "map.bosque → map.clareira#bosque",
         "map.clareira → map.bosque#clareira",

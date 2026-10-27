@@ -60,38 +60,60 @@ async function walk(
 }
 
 describe("portas (F0-12) e mundo da demo", () => {
-  it("cozinha ↔ vila pela porta de baixo, preservando o controle e a direção", async () => {
+  it("cozinha → salão → avenida e volta, preservando o controle e a direção", async () => {
     const g = await game();
-    // Da entrada (5,6), 4 passos para baixo chegam à porta (5,10).
-    await walk(g, "down", 4);
-    expect(g.where()).toEqual({ map: "map.vila", x: 6, y: 7, direction: "down" });
+    await walk(g, "down", 4); // porta de baixo da cozinha (5,10)
+    expect(g.where()).toEqual({ map: "map.salao", x: 7, y: 4, direction: "down" });
 
-    // O controle volta ao jogador e a porta da Casa do Mestre (6,6) leva de volta.
+    // Do salão até a seta (6,12), que sai na avenida em frente à pizzaria.
+    await walk(g, "down", 2); // (7,6)
+    await walk(g, "left", 1); // (6,6)
+    await walk(g, "down", 6); // (6,12)
+    expect(g.where()).toEqual({ map: "map.vila", x: 5, y: 10, direction: "down" });
+
+    // A porta da pizzaria leva de volta ao salão; a porta do fundo, à cozinha.
     await walk(g, "up", 1);
+    expect(g.where()).toEqual({ map: "map.salao", x: 6, y: 11, direction: "up" });
+    await walk(g, "up", 5); // (6,6)
+    await walk(g, "right", 1); // (7,6)
+    await walk(g, "up", 3); // porta (7,3)
     expect(g.where()).toEqual({ map: "map.cozinha_mestre", x: 5, y: 9, direction: "up" });
     expect(g.input.activeContext).toBe("world");
   });
 
-  it("passagem do fundo leva à despensa, e a seta no chão leva de volta para fora", async () => {
+  it("passagem do fundo leva à despensa, e a seta no chão sai na avenida", async () => {
     const g = await game();
     await walk(g, "up", 1); // (5,5)
     await walk(g, "right", 2); // (7,5)
     await walk(g, "up", 1); // abertura (7,4)
     expect(g.where()).toEqual({ map: "map.despensa", x: 4, y: 5, direction: "down" });
 
-    // Na despensa, a seta no chão (5,10) é a saída: leva à vila, na porta da despensa.
     await walk(g, "right", 1); // (5,5)
     await walk(g, "down", 5); // (5,10): seta
-    expect(g.where()).toEqual({ map: "map.vila", x: 23, y: 7, direction: "down" });
-
-    // E a porta da despensa, na vila, leva para dentro de novo (chegando acima da seta).
-    await walk(g, "up", 1);
-    expect(g.where()).toEqual({ map: "map.despensa", x: 5, y: 9, direction: "up" });
+    expect(g.where()).toEqual({ map: "map.vila", x: 5, y: 10, direction: "down" });
   });
 
-  it("vila → bosque → clareira e volta, pelas bordas dos mapas", async () => {
+  it("avenida ↔ loja, praça ↔ Neon Greens e vila ↔ bosque ↔ clareira", async () => {
     const g = await game();
-    await g.scene.loadMap("map.vila", { entrance: "bosque" }); // (30,9), na saída leste
+    await g.scene.loadMap("map.vila", { entrance: "loja" }); // (29,10)
+    await walk(g, "up", 1);
+    expect(g.where()).toMatchObject({ map: "map.loja", x: 5, y: 11 });
+    await walk(g, "down", 1);
+    expect(g.where()).toMatchObject({ map: "map.vila", x: 29, y: 10 });
+
+    await g.scene.loadMap("map.vila", { entrance: "praca" }); // (25,6)
+    await walk(g, "up", 1);
+    expect(g.where()).toMatchObject({ map: "map.praca", x: 7, y: 15 });
+    await walk(g, "down", 1);
+    expect(g.where()).toMatchObject({ map: "map.vila", x: 25, y: 6 });
+
+    await g.scene.loadMap("map.praca", { entrance: "estufa" }); // (7,6)
+    await walk(g, "up", 1);
+    expect(g.where()).toMatchObject({ map: "map.estufa", x: 5, y: 11 });
+    await walk(g, "down", 1);
+    expect(g.where()).toMatchObject({ map: "map.praca", x: 7, y: 6 });
+
+    await g.scene.loadMap("map.vila", { entrance: "bosque" }); // (32,11)
     await walk(g, "right", 1);
     expect(g.where()).toMatchObject({ map: "map.bosque", x: 1, y: 15 });
     await g.scene.loadMap("map.bosque", { entrance: "clareira" }); // (38,8)
@@ -101,7 +123,7 @@ describe("portas (F0-12) e mundo da demo", () => {
     expect(g.where()).toMatchObject({ map: "map.bosque", x: 38, y: 8 });
     await g.scene.loadMap("map.bosque", { entrance: "vila" }); // (1,15)
     await walk(g, "left", 1);
-    expect(g.where()).toMatchObject({ map: "map.vila", x: 30, y: 9 });
+    expect(g.where()).toMatchObject({ map: "map.vila", x: 32, y: 11 });
   });
 
   it("segurar a tecla depois da porta não anda sem querer", async () => {
@@ -109,13 +131,13 @@ describe("portas (F0-12) e mundo da demo", () => {
     g.input.press("down");
     await g.tick(4 * 16);
     await g.settle();
-    await g.tick(60); // continua segurando "baixo" por 1 s depois de chegar na vila
-    expect(g.where()).toMatchObject({ map: "map.vila", x: 6, y: 7 });
+    await g.tick(60); // continua segurando "baixo" por 1 s depois de chegar ao salão
+    expect(g.where()).toMatchObject({ map: "map.salao", x: 7, y: 4 });
     g.input.release("down");
     await g.tick(); // uma pessoa leva pelo menos um tick para soltar e apertar de novo
     g.input.press("down"); // soltar e apertar de novo: agora anda
     await g.tick(16);
-    expect(g.where()).toMatchObject({ map: "map.vila", x: 6, y: 8 });
+    expect(g.where()).toMatchObject({ map: "map.salao", x: 7, y: 5 });
   });
 
   it("o fade escurece, troca o mapa com a tela preta e clareia", async () => {

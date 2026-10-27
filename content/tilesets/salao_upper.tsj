@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "salao_upper",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 14,
+  "tilecount": 196,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/dining_room_upper.png",
+  "imagewidth": 224,
+  "imageheight": 224,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.salao_upper"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "loja_lower",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 12,
+  "tilecount": 168,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/pizza_shop_lower.png",
+  "imagewidth": 192,
+  "imageheight": 224,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.loja_lower"
+    }
+  ]
+}

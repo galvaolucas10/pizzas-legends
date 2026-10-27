@@ -53,7 +53,7 @@
       "y": 10,
       "kind": "door",
       "toMap": "map.vila",
-      "toEntrance": "despensa"
+      "toEntrance": "salao"
     }
   ]
 }

@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "vila_upper",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 40,
+  "tilecount": 800,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/street_upper.png",
+  "imagewidth": 640,
+  "imageheight": 320,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.vila_upper"
+    }
+  ]
+}

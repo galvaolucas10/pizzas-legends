@@ -1,0 +1,22 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.11.0",
+  "name": "estufa_upper",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "columns": 11,
+  "tilecount": 154,
+  "margin": 0,
+  "spacing": 0,
+  "image": "../../public/assets/images/green_kitchen_upper.png",
+  "imagewidth": 176,
+  "imageheight": 224,
+  "properties": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "value": "ts.estufa_upper"
+    }
+  ]
+}

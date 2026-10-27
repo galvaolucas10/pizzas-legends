@@ -631,12 +631,12 @@
             {
               "name": "toMap",
               "type": "string",
-              "value": "map.vila"
+              "value": "map.salao"
             },
             {
               "name": "toEntrance",
               "type": "string",
-              "value": "casa_mestre"
+              "value": "cozinha"
             }
           ]
         },

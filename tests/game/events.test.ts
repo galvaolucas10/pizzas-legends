@@ -114,10 +114,10 @@ describe("behaviorLoop (F0-11)", () => {
   it("trocar de mapa cancela os roteiros do mapa anterior", async () => {
     const { s, run, input } = await scene();
     s.events.runBlocking([{ type: "wait", time: 10_000 }]);
-    await s.loadMap("map.vila", { entrance: "casa_mestre" });
+    await s.loadMap("map.vila", { entrance: "salao" });
     expect(s.events.isBlocking).toBe(false);
     expect(input.activeContext).toBe("world");
-    expect([...s.events.backgroundRunners.keys()]).toEqual(["lia"]);
+    expect([...s.events.backgroundRunners.keys()].sort()).toEqual(["erio", "rita"]);
     run(100);
     expect(s.world.entity("mestre")).toBeUndefined();
   });

@@ -18,5 +18,21 @@
   {
     "id": "npc.rival_ravena",
     "sprite": "img.npc5"
+  },
+  {
+    "id": "npc.erio",
+    "sprite": "img.erio"
+  },
+  {
+    "id": "npc.moradora_rita",
+    "sprite": "img.npc4"
+  },
+  {
+    "id": "npc.seu_tito",
+    "sprite": "img.npc2"
+  },
+  {
+    "id": "npc.garcom_beto",
+    "sprite": "img.npc5"
   }
 ]

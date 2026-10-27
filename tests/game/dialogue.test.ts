@@ -96,13 +96,13 @@ describe("diálogo com NPC (F0-13)", () => {
   });
 
   it("placas e fornos respondem ao confirmar", async () => {
-    const { s, dialogue, tap, tick, world } = await scene("map.vila", "casa_mestre");
-    // Placa "Vila do Forno" em (10,8): o herói fica em (9,8) olhando para a direita.
-    world.player.mover.place(world.grid!, 9, 8, "right");
+    const { s, dialogue, tap, tick, world } = await scene("map.bosque", "vila");
+    // Placa "← Vila do Forno" em (2,14): o herói fica em (2,15) olhando para cima.
+    world.player.mover.place(world.grid!, 2, 15, "up");
     tap("confirm");
     expect(s.events.isBlocking).toBe(true);
     dialogue.complete();
-    expect(dialogue.visibleText).toBe("Vila do Forno. Aqui, todo dia é dia de pizza.");
+    expect(dialogue.visibleText).toBe("← Vila do Forno");
     tap("confirm");
     tick();
     expect(s.events.isBlocking).toBe(false);
