@@ -2,12 +2,16 @@ import type { GameObject } from "./GameObject";
 import { utils } from "./utils";
 
 type Frame = [number, number];
+export type Point = { x: number; y: number };
+
+/** Duração de cada quadro de animação (antes: 9 quadros de tela a 60 Hz ≈ 150 ms). */
+export const DEFAULT_FRAME_DURATION_MS = 150;
 
 export interface SpriteConfig {
   gameObject: GameObject;
   src: string;
   animations?: Record<string, Frame[]>;
-  animationFrameLimit?: number;
+  frameDurationMs?: number;
 }
 
 export class Sprite {
@@ -19,8 +23,8 @@ export class Sprite {
   animations: Record<string, Frame[]>;
   currentAnimation: string;
   currentAnimationFrame: number;
-  animationFrameLimit: number;
-  animationFrameProgress: number;
+  frameDurationMs: number;
+  frameElapsedMs: number;
   gameObject: GameObject;
 
   constructor(config: SpriteConfig) {
@@ -75,8 +79,8 @@ export class Sprite {
     this.currentAnimation = "idle-right"; //config.currentAnimation || "idle-down";
     this.currentAnimationFrame = 0;
 
-    this.animationFrameLimit = config.animationFrameLimit || 8;
-    this.animationFrameProgress = this.animationFrameLimit;
+    this.frameDurationMs = config.frameDurationMs || DEFAULT_FRAME_DURATION_MS;
+    this.frameElapsedMs = 0;
 
     //Reference the game object
     this.gameObject = config.gameObject;
@@ -90,29 +94,26 @@ export class Sprite {
     if (this.currentAnimation !== key) {
       this.currentAnimation = key;
       this.currentAnimationFrame = 0;
-      this.animationFrameProgress = this.animationFrameLimit;
+      this.frameElapsedMs = 0;
     }
   }
 
-  updateAnimationProgress(): void {
-    //Downtick frame progress
-    if (this.animationFrameProgress > 0) {
-      this.animationFrameProgress -= 1;
-      return;
-    }
-
-    //Reset the counter
-    this.animationFrameProgress = this.animationFrameLimit;
-    this.currentAnimationFrame += 1;
-
-    if (this.frame === undefined) {
-      this.currentAnimationFrame = 0;
+  /** Avança a animação pelo tempo do jogo. Chamado no update, nunca no desenho. */
+  update(dt: number): void {
+    this.frameElapsedMs += dt;
+    while (this.frameElapsedMs >= this.frameDurationMs) {
+      this.frameElapsedMs -= this.frameDurationMs;
+      this.currentAnimationFrame += 1;
+      if (this.frame === undefined) {
+        this.currentAnimationFrame = 0;
+      }
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D, cameraPerson: GameObject): void {
-    const x = this.gameObject.x - 8 + utils.withGrid(10.5) - cameraPerson.x;
-    const y = this.gameObject.y - 18 + utils.withGrid(6) - cameraPerson.y;
+  /** Desenha na posição já interpolada do objeto e da câmera. Não altera estado. */
+  draw(ctx: CanvasRenderingContext2D, position: Point, camera: Point): void {
+    const x = position.x - 8 + utils.withGrid(10.5) - camera.x;
+    const y = position.y - 18 + utils.withGrid(6) - camera.y;
 
     if (this.isShadowLoaded) ctx.drawImage(this.shadow, x, y);
 
@@ -121,7 +122,5 @@ export class Sprite {
       const [frameX, frameY] = frame;
       ctx.drawImage(this.image, frameX * 32, frameY * 32, 32, 32, x, y, 32, 32);
     }
-
-    this.updateAnimationProgress();
   }
 }

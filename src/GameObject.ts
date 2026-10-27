@@ -1,5 +1,6 @@
+import { interpolate } from "./engine/interpolate";
 import type { OverworldMap } from "./OverworldMap";
-import { Sprite } from "./Sprite";
+import { Sprite, type Point } from "./Sprite";
 import { utils, type Direction } from "./utils";
 
 export interface BehaviorEvent {
@@ -27,6 +28,9 @@ export class GameObject {
   isMounted: boolean;
   x: number;
   y: number;
+  /** Posição no tick anterior, para interpolar o desenho entre ticks. */
+  prevX: number;
+  prevY: number;
   direction: Direction;
   sprite: Sprite;
   behaviorLoop: BehaviorEvent[];
@@ -37,6 +41,8 @@ export class GameObject {
     this.isMounted = false;
     this.x = config.x || 0;
     this.y = config.y || 0;
+    this.prevX = this.x;
+    this.prevY = this.y;
     this.direction = config.direction || "down";
     this.sprite = new Sprite({
       gameObject: this,
@@ -45,6 +51,20 @@ export class GameObject {
 
     this.behaviorLoop = config.behaviorLoop || [];
     this.behaviorLoopIndex = 0;
+  }
+
+  /** Guarda a posição atual antes de cada tick. */
+  savePrevious(): void {
+    this.prevX = this.x;
+    this.prevY = this.y;
+  }
+
+  /** Posição de desenho entre o tick anterior e o atual, em pixels inteiros. */
+  renderPosition(alpha: number): Point {
+    return {
+      x: interpolate(this.prevX, this.x, alpha),
+      y: interpolate(this.prevY, this.y, alpha),
+    };
   }
 
   mount(map: OverworldMap): void {

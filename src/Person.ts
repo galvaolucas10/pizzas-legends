@@ -41,6 +41,8 @@ export class Person extends GameObject {
           type: "walk",
           direction: state.arrow,
         });
+        // O passo já anda no tick em que começa: 1 tile = 16 ticks (ARCHITECTURE 6.1).
+        if (this.movingProgressRemaining > 0) this.updatePosition();
       }
       this.updateSprite();
     }

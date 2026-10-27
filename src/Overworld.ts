@@ -1,4 +1,5 @@
 import { DirectionInput } from "./DirectionInput";
+import { GameLoop } from "./engine/GameLoop";
 import { OverworldMap, OverworldMaps } from "./OverworldMap";
 
 export class Overworld {
@@ -7,6 +8,7 @@ export class Overworld {
   ctx: CanvasRenderingContext2D;
   map: OverworldMap | null;
   directionInput: DirectionInput;
+  loop: GameLoop;
 
   constructor(config: { element: HTMLElement }) {
     this.element = config.element;
@@ -17,41 +19,49 @@ export class Overworld {
     this.ctx = ctx;
     this.map = null;
     this.directionInput = new DirectionInput();
+    this.loop = new GameLoop({
+      update: (dt) => this.update(dt),
+      render: (alpha) => this.render(alpha),
+    });
   }
 
-  startGameLoop(): void {
-    const step = () => {
-      const map = this.map;
-      const cameraPerson = map?.gameObjects.hero;
-      if (!map || !cameraPerson) return;
+  /** Um tick de lógica (dt fixo de 1/60 s). */
+  update(dt: number): void {
+    const map = this.map;
+    if (!map) return;
 
-      //Clear off the canvas
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-      //Update all objects
-      Object.values(map.gameObjects).forEach((object) => {
-        object.update({
-          arrow: this.directionInput.direction,
-          map,
-        });
+    const objects = Object.values(map.gameObjects);
+    objects.forEach((object) => object.savePrevious());
+    objects.forEach((object) => {
+      object.update({
+        arrow: this.directionInput.direction,
+        map,
       });
+      object.sprite.update(dt);
+    });
+  }
 
-      //Draw Lower layer
-      map.drawLowerImage(this.ctx, cameraPerson);
+  /** Desenho, interpolado entre o tick anterior e o atual. */
+  render(alpha: number): void {
+    const map = this.map;
+    const cameraPerson = map?.gameObjects.hero;
+    if (!map || !cameraPerson) return;
 
-      //Draw Game Objects
-      Object.values(map.gameObjects).forEach((object) => {
-        object.sprite.draw(this.ctx, cameraPerson);
-      });
+    //Clear off the canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      //Draw Upper layer
-      map.drawUpperImage(this.ctx, cameraPerson);
+    const camera = cameraPerson.renderPosition(alpha);
 
-      requestAnimationFrame(() => {
-        step();
-      });
-    };
-    step();
+    //Draw Lower layer
+    map.drawLowerImage(this.ctx, camera);
+
+    //Draw Game Objects
+    Object.values(map.gameObjects).forEach((object) => {
+      object.sprite.draw(this.ctx, object.renderPosition(alpha), camera);
+    });
+
+    //Draw Upper layer
+    map.drawUpperImage(this.ctx, camera);
   }
 
   init(): void {
@@ -62,6 +72,12 @@ export class Overworld {
 
     this.directionInput.init();
 
-    this.startGameLoop();
+    // Aba oculta: para o loop. Ao voltar, recomeça sem "pular" o tempo perdido (ARCHITECTURE 5.3).
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) this.loop.stop();
+      else this.loop.start();
+    });
+
+    this.loop.start();
   }
 }
