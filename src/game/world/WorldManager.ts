@@ -2,7 +2,8 @@ import type { ContentRegistry } from "../../content/registry";
 import type { Direction } from "../../content/schemas/common";
 import type { Condition } from "../../content/schemas/conditions";
 import { isSolid, type MapDef, type MapObject } from "../../content/schemas/map";
-import { evaluateCondition, type ConditionState } from "../../core/conditions";
+import { evaluateCondition, type FlagsOnly } from "../../core/conditions";
+import type { SaveData } from "../../core/types";
 import type { AssetLoader } from "../../engine/assets/AssetLoader";
 import { cameraView, type Point } from "../../engine/Camera";
 import type { ActionReader } from "../../engine/input/InputManager";
@@ -23,8 +24,8 @@ export interface WorldOptions {
   content: ContentRegistry;
   assets: AssetLoader;
   input: ActionReader;
-  /** Estado para `visibleIf` (flags). */
-  state: () => ConditionState;
+  /** Estado para `visibleIf` e falas condicionais (o save, ou só flags nos testes). */
+  state: () => SaveData | FlagsOnly;
 }
 
 /**
@@ -86,7 +87,7 @@ export class WorldManager {
     this.upperCache = buildTileLayerCache(map.upper, map.width, map.height, tilesets);
 
     const state = this.options.state();
-    const visible = (o: MapObject) => !o.visibleIf || evaluateCondition(o.visibleIf, state);
+    const visible = (o: MapObject) => !o.visibleIf || evaluateCondition(o.visibleIf, state, this.content);
     for (const object of map.objects.filter(visible)) {
       if (object.kind === "npc") {
         const npcDef = this.options.content.npcs[object.npcId];
@@ -122,7 +123,7 @@ export class WorldManager {
 
   /** Avalia uma condição de conteúdo com o estado atual (flags). */
   isTrue(condition: Condition | undefined): boolean {
-    return !condition || evaluateCondition(condition, this.options.state());
+    return !condition || evaluateCondition(condition, this.options.state(), this.content);
   }
 
   doorAt(x: number, y: number): DoorObject | undefined {
