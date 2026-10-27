@@ -552,6 +552,25 @@
               "value": "up"
             }
           ]
+        },
+        {
+          "id": 14,
+          "name": "fundos",
+          "type": "",
+          "point": true,
+          "x": 112,
+          "y": 80,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "down"
+            }
+          ]
         }
       ]
     },
@@ -646,6 +665,29 @@
               "name": "toEntrance",
               "type": "string",
               "value": "porta"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "passagem_fundos",
+          "type": "door",
+          "x": 112,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "toMap",
+              "type": "string",
+              "value": "map.despensa"
+            },
+            {
+              "name": "toEntrance",
+              "type": "string",
+              "value": "fundos"
             }
           ]
         }

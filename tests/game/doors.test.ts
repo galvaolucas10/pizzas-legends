@@ -73,6 +73,33 @@ describe("portas (F0-12)", () => {
     expect(g.input.activeContext).toBe("world");
   });
 
+  it("a passagem do fundo da cozinha leva à despensa e volta", async () => {
+    const g = await game();
+    // Da entrada (5,6): direita até (7,5) pela linha 5 e depois para cima, na abertura (7,4).
+    g.input.press("up");
+    await g.tick(16);
+    g.input.release("up");
+    await g.settle();
+    g.input.press("right");
+    await g.tick(2 * 16);
+    g.input.release("right");
+    await g.settle();
+    expect(g.where()).toMatchObject({ map: "map.cozinha_mestre", x: 7, y: 5 });
+    g.input.press("up");
+    await g.tick(16);
+    await g.settle();
+    g.input.release("up");
+    expect(g.where()).toEqual({ map: "map.despensa", x: 4, y: 5, direction: "down" });
+
+    // Na despensa, o vão do fundo (4,4) leva de volta.
+    await g.tick();
+    g.input.press("up");
+    await g.tick(16);
+    await g.settle();
+    g.input.release("up");
+    expect(g.where()).toEqual({ map: "map.cozinha_mestre", x: 7, y: 5, direction: "down" });
+  });
+
   it("segurar a tecla depois da porta não leva de volta sem querer", async () => {
     const g = await game();
     g.input.press("down");

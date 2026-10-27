@@ -44,6 +44,11 @@
       "x": 5,
       "y": 9,
       "direction": "up"
+    },
+    "fundos": {
+      "x": 7,
+      "y": 5,
+      "direction": "down"
     }
   },
   "objects": [
@@ -160,6 +165,14 @@
       "kind": "door",
       "toMap": "map.despensa",
       "toEntrance": "porta"
+    },
+    {
+      "id": "passagem_fundos",
+      "x": 7,
+      "y": 4,
+      "kind": "door",
+      "toMap": "map.despensa",
+      "toEntrance": "fundos"
     }
   ]
 }

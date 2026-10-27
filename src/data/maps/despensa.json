@@ -39,6 +39,11 @@
       "x": 5,
       "y": 9,
       "direction": "up"
+    },
+    "fundos": {
+      "x": 4,
+      "y": 5,
+      "direction": "down"
     }
   },
   "objects": [
@@ -98,6 +103,14 @@
       "kind": "door",
       "toMap": "map.cozinha_mestre",
       "toEntrance": "porta"
+    },
+    {
+      "id": "passagem_fundos",
+      "x": 4,
+      "y": 4,
+      "kind": "door",
+      "toMap": "map.cozinha_mestre",
+      "toEntrance": "fundos"
     }
   ]
 }
