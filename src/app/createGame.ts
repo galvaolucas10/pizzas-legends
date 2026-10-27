@@ -79,8 +79,9 @@ export function createGame(options: GameOptions): GameHandle {
       cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
       await assets.loadBundle(content.assets.bundles.boot ?? []);
-      await world.loadMap(START_MAP, { entrance: START_ENTRANCE });
-      await scenes.push(new WorldScene(world));
+      const worldScene = new WorldScene({ world, input });
+      await worldScene.loadMap(START_MAP, { entrance: START_ENTRANCE });
+      await scenes.push(worldScene);
       loop.start();
     },
     pause() {
