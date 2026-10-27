@@ -53,3 +53,120 @@ export function fakeAssets() {
     isLoaded: () => true,
   } as never;
 }
+
+/** Elemento DOM falso, com o mínimo que as telas usam. */
+export interface FakeElement {
+  tagName: string;
+  className: string;
+  hidden: boolean;
+  textContent: string;
+  children: FakeElement[];
+  parent: FakeElement | null;
+  dataset: Record<string, string>;
+  style: Record<string, string>;
+  attributes: Record<string, string>;
+  [key: string]: unknown;
+}
+
+/** Document falso para testar as telas em Node (sem jsdom). */
+export function fakeDocument(): Document {
+  const make = (tag: string): FakeElement => {
+    const node: FakeElement = {
+      tagName: tag.toUpperCase(),
+      className: "",
+      hidden: false,
+      children: [],
+      parent: null,
+      dataset: {},
+      style: {},
+      attributes: {},
+      value: "",
+      get textContent(): string {
+        return (
+          (this._text as string | undefined) ?? node.children.map((c) => c.textContent).join("")
+        );
+      },
+      set textContent(v: string) {
+        this._text = v;
+        node.children = [];
+      },
+      get childElementCount() {
+        return node.children.length;
+      },
+      classList: {
+        add: (...names: string[]) =>
+          (node.className = `${node.className} ${names.join(" ")}`.trim()),
+        toggle: (name: string, on?: boolean) => {
+          const set = new Set(node.className.split(" ").filter(Boolean));
+          if (on ?? !set.has(name)) set.add(name);
+          else set.delete(name);
+          node.className = [...set].join(" ");
+        },
+        contains: (name: string) => node.className.split(" ").includes(name),
+      },
+      setAttribute: (k: string, v: string) => (node.attributes[k] = v),
+      append: (...items: (FakeElement | string)[]) => {
+        for (const item of items) {
+          const child = typeof item === "string" ? text(item) : item;
+          child.parent = node;
+          node.children.push(child);
+        }
+      },
+      prepend: (...items: FakeElement[]) => {
+        for (const child of items.reverse()) {
+          child.parent = node;
+          node.children.unshift(child);
+        }
+      },
+      replaceChildren: (...items: FakeElement[]) => {
+        node._text = undefined;
+        node.children = [];
+        (node.append as (...i: FakeElement[]) => void)(...items);
+      },
+      remove: () => {
+        if (node.parent) node.parent.children = node.parent.children.filter((c) => c !== node);
+        node.parent = null;
+      },
+      querySelector: () => null,
+      addEventListener: () => {},
+      focus: () => {},
+      select: () => {},
+    };
+    return node;
+  };
+  const text = (value: string): FakeElement => {
+    const node = make("#text");
+    node.textContent = value;
+    return node;
+  };
+  return {
+    createElement: make,
+    createTextNode: text,
+  } as unknown as Document;
+}
+
+/** Junta o texto visível (não escondido) de um elemento falso. */
+export function visibleText(element: unknown): string {
+  const node = element as FakeElement;
+  if (node.hidden) return "";
+  if (node._text !== undefined) return node._text as string;
+  return node.children.map(visibleText).join(" ");
+}
+
+/** Entrada de UI controlada pelo teste: `press` vale para o próximo `handle`. */
+export class FakeUiInput {
+  active = true;
+  pressed = new Set<string>();
+  press(action: string): void {
+    this.pressed.add(action);
+  }
+  wasPressed(action: string): boolean {
+    return this.pressed.has(action);
+  }
+  consume(action: string): void {
+    this.pressed.delete(action);
+  }
+  clear(): void {
+    this.pressed.clear();
+  }
+}

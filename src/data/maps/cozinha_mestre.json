@@ -61,6 +61,57 @@
       "npcId": "npc.mestre_basilio",
       "talking": [
         {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 2
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa3.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa3.2"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 1
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa2.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa2.2"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.etapa2.3"
+            }
+          ]
+        },
+        {
           "events": [
             {
               "type": "face",
@@ -122,6 +173,14 @@
       "kind": "door",
       "toMap": "map.despensa",
       "toEntrance": "fundos"
+    },
+    {
+      "id": "forno",
+      "x": 2,
+      "y": 4,
+      "kind": "oven",
+      "ovenId": "oven.mestre",
+      "draw": true
     }
   ]
 }

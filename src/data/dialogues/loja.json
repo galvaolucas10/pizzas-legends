@@ -1,21 +1,85 @@
 {
   "lia": [
     {
+      "condition": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
       "events": [
-        { "type": "face", "who": "lia", "towards": "player" },
+        {
+          "type": "face",
+          "who": "lia",
+          "towards": "player"
+        },
+        {
+          "type": "message",
+          "speaker": "npc.feirante_lia",
+          "textKey": "dlg.feirante_lia.etapa3.1"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 1
+      },
+      "events": [
+        {
+          "type": "face",
+          "who": "lia",
+          "towards": "player"
+        },
+        {
+          "type": "message",
+          "speaker": "npc.feirante_lia",
+          "textKey": "dlg.feirante_lia.etapa2.1"
+        }
+      ]
+    },
+    {
+      "events": [
+        {
+          "type": "face",
+          "who": "lia",
+          "towards": "player"
+        },
         {
           "type": "message",
           "speaker": "npc.feirante_lia",
           "textKey": "dlg.feirante_lia.padrao.1"
         },
-        { "type": "message", "speaker": "npc.feirante_lia", "textKey": "dlg.feirante_lia.padrao.2" }
+        {
+          "type": "message",
+          "speaker": "npc.feirante_lia",
+          "textKey": "dlg.feirante_lia.padrao.2"
+        }
       ]
     }
   ],
   "lia_rotina": [
-    { "type": "stand", "who": "lia", "direction": "down", "time": 2500 },
-    { "type": "stand", "who": "lia", "direction": "left", "time": 900 },
-    { "type": "stand", "who": "lia", "direction": "down", "time": 1800 },
-    { "type": "stand", "who": "lia", "direction": "right", "time": 900 }
+    {
+      "type": "stand",
+      "who": "lia",
+      "direction": "down",
+      "time": 2500
+    },
+    {
+      "type": "stand",
+      "who": "lia",
+      "direction": "left",
+      "time": 900
+    },
+    {
+      "type": "stand",
+      "who": "lia",
+      "direction": "down",
+      "time": 1800
+    },
+    {
+      "type": "stand",
+      "who": "lia",
+      "direction": "right",
+      "time": 900
+    }
   ]
 }

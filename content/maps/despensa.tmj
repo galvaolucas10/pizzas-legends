@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 102,
   "compressionlevel": -1,
   "properties": [
     {
@@ -657,6 +657,92 @@
               "name": "toEntrance",
               "type": "string",
               "value": "salao"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "rato1",
+          "type": "enemy",
+          "x": 144,
+          "y": 96,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "enemyId",
+              "type": "string",
+              "value": "enemy.rato_despensa"
+            },
+            {
+              "name": "respawn",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "left"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/despensa.json#rato1_rotina"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/despensa.json#ratos_derrota"
+            },
+            {
+              "name": "visibleIf",
+              "type": "string",
+              "value": "etapa1_concluida"
+            }
+          ]
+        },
+        {
+          "id": 101,
+          "name": "rato2",
+          "type": "enemy",
+          "x": 96,
+          "y": 128,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "enemyId",
+              "type": "string",
+              "value": "enemy.rato_despensa"
+            },
+            {
+              "name": "respawn",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "left"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/despensa.json#rato2_rotina"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/despensa.json#ratos_derrota"
+            },
+            {
+              "name": "visibleIf",
+              "type": "string",
+              "value": "etapa1_concluida"
             }
           ]
         }

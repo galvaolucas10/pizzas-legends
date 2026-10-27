@@ -40,6 +40,8 @@ export interface BattleRequest {
   enemyId: string;
   /** Objeto do mapa que iniciou a batalha (inimigo no mapa). */
   source?: string;
+  /** ID do inimigo no mundo, para `defeatedEnemies` (preenchido pela WorldScene). */
+  enemyGlobalId?: string;
 }
 
 export type BattleOutcome = "victory" | "defeat" | "fled";

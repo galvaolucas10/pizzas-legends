@@ -61,6 +61,42 @@
       "npcId": "npc.feirante_lia",
       "talking": [
         {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 2
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "lia",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.feirante_lia",
+              "textKey": "dlg.feirante_lia.etapa3.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 1
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "lia",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.feirante_lia",
+              "textKey": "dlg.feirante_lia.etapa2.1"
+            }
+          ]
+        },
+        {
           "events": [
             {
               "type": "face",

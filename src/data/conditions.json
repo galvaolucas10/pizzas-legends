@@ -1,1 +1,6 @@
-{}
+{
+  "etapa1_concluida": {
+    "quest": "quest.primeiro_desafio",
+    "stepAtLeast": 1
+  }
+}

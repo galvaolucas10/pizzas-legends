@@ -8,10 +8,13 @@ import type { AssetLoader } from "../../engine/assets/AssetLoader";
 import { cameraView, type Point } from "../../engine/Camera";
 import type { ActionReader } from "../../engine/input/InputManager";
 import { buildTileLayerCache, TILE } from "../../engine/render/TileLayerCache";
+import { EnemyActor } from "../entities/EnemyActor";
 import type { Entity, SpriteDef } from "../entities/Entity";
+import { neighbor } from "../entities/GridMover";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { GridOccupancy } from "./GridOccupancy";
+import { drawBrickOven } from "./ovenArt";
 
 export const SHADOW_ID = "img.shadow";
 export const PLAYER_SPRITE_ID = "img.hero";
@@ -19,6 +22,7 @@ export const PLAYER_SPRITE_ID = "img.hero";
 export type Placement = { entrance: string } | { x: number; y: number; direction: Direction };
 
 type DoorObject = Extract<MapObject, { kind: "door" }>;
+type OvenObject = Extract<MapObject, { kind: "oven" }>;
 
 export interface WorldOptions {
   content: ContentRegistry;
@@ -42,6 +46,9 @@ export class WorldManager {
   private doors = new Map<string, DoorObject>();
   /** Objetos sem entidade própria (placa, forno, baú...), por tile. */
   private interactables = new Map<string, MapObject>();
+  private ovens: OvenObject[] = [];
+  /** Relógio do mundo (anima o fogo dos fornos). */
+  private time = 0;
 
   readonly content: ContentRegistry;
 
@@ -62,6 +69,9 @@ export class WorldManager {
       if (object.kind === "npc") {
         const npc = this.options.content.npcs[object.npcId];
         if (npc) ids.push(npc.sprite);
+      } else if (object.kind === "enemy") {
+        const enemy = this.options.content.enemies[object.enemyId];
+        if (enemy) ids.push(enemy.sprite);
       }
     }
     return ids;
@@ -89,6 +99,7 @@ export class WorldManager {
     const state = this.options.state();
     const visible = (o: MapObject) =>
       !o.visibleIf || evaluateCondition(o.visibleIf, state, this.content);
+    const defeated = "world" in state ? state.world.defeatedEnemies : [];
     for (const object of map.objects.filter(visible)) {
       if (object.kind === "npc") {
         const npcDef = this.options.content.npcs[object.npcId];
@@ -96,6 +107,15 @@ export class WorldManager {
         const npc = new Npc(object, this.spriteDef(npcDef.sprite));
         npc.mover.place(grid, object.x, object.y);
         this.entities.push(npc);
+      } else if (object.kind === "enemy") {
+        // Derrotado: fica fora do mapa até o jogador descansar num forno (GDD 9.3).
+        const enemyDef = this.options.content.enemies[object.enemyId];
+        const globalId = `${map.id}/${object.id}`;
+        if (!enemyDef || defeated.includes(globalId) || state.flags[`defeated:${globalId}`])
+          continue;
+        const enemy = new EnemyActor(object, map.id, this.spriteDef(enemyDef.sprite));
+        enemy.mover.place(grid, object.x, object.y);
+        this.entities.push(enemy);
       } else if (object.kind === "door") {
         this.doors.set(`${object.x},${object.y}`, object);
       } else {
@@ -103,6 +123,7 @@ export class WorldManager {
         // aqui eles bloqueiam o tile (se sólidos) e respondem à interação.
         this.interactables.set(`${object.x},${object.y}`, object);
         if (isSolid(object)) grid.reserve(`${map.id}/${object.id}`, object.x, object.y);
+        if (object.kind === "oven") this.ovens.push(object);
       }
     }
 
@@ -116,6 +137,7 @@ export class WorldManager {
     this.entities = [];
     this.doors.clear();
     this.interactables.clear();
+    this.ovens = [];
     this.lowerCache = null;
     this.upperCache = null;
     this.grid = null;
@@ -144,7 +166,46 @@ export class WorldManager {
     return this.entities.find((e) => e.id === id);
   }
 
+  /** Inimigos ativos no mapa. */
+  get enemies(): EnemyActor[] {
+    return this.entities.filter((e): e is EnemyActor => e instanceof EnemyActor);
+  }
+
+  /** Tira uma entidade do mapa (inimigo derrotado), liberando os tiles dela. */
+  removeEntity(entity: Entity): void {
+    this.entities = this.entities.filter((e) => e !== entity);
+    const grid = this.grid;
+    if (!grid) return;
+    for (const [x, y, id] of grid.entries()) if (id === entity.id) grid.release(id, x, y);
+  }
+
+  /**
+   * Onde o jogador reaparece diante de um forno (derrota, GDD 7.6): o primeiro tile livre
+   * ao redor dele, olhando para o forno.
+   */
+  ovenSpot(ovenId: string): { mapId: string; x: number; y: number; direction: Direction } | null {
+    const opposite: Record<Direction, Direction> = {
+      up: "down",
+      down: "up",
+      left: "right",
+      right: "left",
+    };
+    for (const map of Object.values(this.content.maps)) {
+      const oven = map.objects.find((o) => o.kind === "oven" && o.ovenId === ovenId);
+      if (!oven) continue;
+      for (const side of ["down", "left", "right", "up"] as const) {
+        const at = neighbor(oven.x, oven.y, side);
+        const blocked =
+          map.collision[at.y]?.[at.x] !== "." ||
+          map.objects.some((o) => o.x === at.x && o.y === at.y && isSolid(o));
+        if (!blocked) return { mapId: map.id, ...at, direction: opposite[side] };
+      }
+    }
+    return null;
+  }
+
   update(dt: number): void {
+    this.time += dt;
     const grid = this.grid;
     if (!grid) return;
     // O jogador primeiro: ele reserva o tile antes de um NPC no mesmo tick.
@@ -169,6 +230,10 @@ export class WorldManager {
     const assets = this.options.assets;
 
     if (this.lowerCache) ctx.drawImage(this.lowerCache, -camera.x, -camera.y);
+    for (const oven of this.ovens) {
+      if (oven.draw)
+        drawBrickOven(ctx, oven.x * TILE - camera.x, oven.y * TILE - camera.y, this.time);
+    }
 
     // Ordem de desenho (ARCHITECTURE 10.5): sombras, entidades por Y (desempate: id), camada de cima.
     const drawn = this.entities

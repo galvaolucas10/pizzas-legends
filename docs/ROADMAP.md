@@ -311,11 +311,7 @@ F1-01 concluída (27/10/2026): esquemas e conteúdo da demo (dados do GDD) com i
 
 **Em andamento:** Fase 1, seguindo os episódios 11–25 da série do tutorial (batalha, HUD, menu de pausa, progresso, criar pizzas, save, título).
 
-- Feito e testado: F1-02, F1-03, F1-04, F1-05, F1-06, F1-07, F1-10, F1-11, F1-16, F1-20.
-- Handlers de progresso ligados à `GameSession` (`progressHandlers`); `openOven`, `startBattle` e `autosave` esperam as portas do contexto (`EventContext.openOven/startBattle/autosave`), que as cenas dos passos 2–3 vão preencher.
-- Escrito, ainda não ligado ao jogo: `game/battle/BattleController.ts` e `game/oven/OvenController.ts`.
-- Próximos passos, nesta ordem:
-  1. `EnemyActor` no mapa (contato → batalha, atordoamento após fuga, `defeatedEnemies`) (F1-12).
-  2. Cenas e telas: `BattleScene` + UI de batalha com fundos do tutorial (F1-13), cesta (F1-14), derrota → forno (F1-15), forno (F1-08), mochila/menu de pausa (F1-09), HUD com objetivo.
-  3. `SaveSystem` (autosave em troca de mapa e fim de batalha) e `TitleScene` (Novo jogo / Continuar) (F1-17, F1-18).
-  4. Conteúdo das etapas 1–2: forno do Mestre na cozinha, ratos na despensa com `onDefeat`, falas condicionais do Mestre e da Lia (F1-19).
+- Feito e testado: F1-02 a F1-20, exceto as pendências abaixo. Telas jogáveis: título (Novo jogo com nome / Continuar), HUD (nome, nível, PV, objetivo, avisos, "Salvando..."), forno (receitas, coberturas, prévia, preparar, descansar, salvar), menu de pausa (pizzas, ingredientes, missões, status), batalha (cesta, intenção, PV, efeitos, fatias com dano previsto, defender, improvisar, fugir, resumo) e inimigos no mapa (contato → batalha, atordoamento após fuga, derrota → último forno, somem até descansar).
+- Conteúdo das etapas 1–2: forno do Mestre desenhado na cozinha (`draw: true`), dois ratos na despensa (aparecem após a etapa 1; `onDefeat` conta `flag.ratos_derrotados`), falas condicionais do Mestre e da Lia.
+- Pendências da Fase 1: efeito "tampa de forno" na entrada da batalha (hoje é fade), 3 slots de save na tela de título (hoje: manual no slot 1 + automático, e "Continuar" usa o mais recente), opções (velocidade do texto) e revisão de balanceamento da primeira luta (Margherita é do mesmo perfil do rato: a luta leva ~6 turnos).
+- Próximo: Fase 2 (etapas 3–6, árvore de habilidades, coletas, segredos), começando pela F2-09/F2-06.

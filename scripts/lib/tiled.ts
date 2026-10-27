@@ -265,7 +265,8 @@ function convertObject(
     const value = resolveScript(String(script), options, fail);
     if (kind === "npc") result.talking = value;
     else if (kind === "trigger") result.events = value;
-    else fail(`objeto "${object.name}": "script" só vale para npc e trigger`);
+    else if (kind === "enemy") result.onDefeat = value;
+    else fail(`objeto "${object.name}": "script" só vale para npc, enemy e trigger`);
   } else if (kind === "npc") {
     result.talking = [];
   }

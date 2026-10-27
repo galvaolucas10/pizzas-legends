@@ -5,7 +5,7 @@
   "map.cozinha_mestre.name": "Cozinha do Mestre",
   "map.despensa.name": "Despensa da Lia",
   "dlg.mestre_basilio.padrao.1": "Acordou, aprendiz? O forno não espera!",
-  "dlg.mestre_basilio.padrao.2": "A Lia está no mercadinho dela, na loja SHOP da avenida. Saia pelo salão e vá falar com ela.",
+  "dlg.mestre_basilio.padrao.2": "Use o forno de tijolos aqui da cozinha e prepare sua primeira Margherita. Depois a gente conversa!",
   "dlg.lenhador_bento.padrao.1": "Ufa! Cortar lenha o dia todo dá uma fome de lenhador...",
   "dlg.feirante_lia.padrao.1": "Que bom que você veio! Tem ratos roendo os queijos da minha despensa.",
   "dlg.feirante_lia.padrao.2": "A despensa fica nos fundos da cozinha do Mestre. Volte quando ele te ensinar a primeira receita.",
@@ -100,5 +100,15 @@
   "dlg.moradora_rita.padrao.2": "Para o leste fica o Bosque das Ervas. Cuidado com as vespas!",
   "dlg.seu_tito.padrao.1": "Eu venho todo dia ver as plantas da Neon Greens. Relaxa a mente.",
   "dlg.garcom_beto.padrao.1": "Mesa para um? Brincadeira, o Mestre está te esperando na cozinha, lá no fundo.",
-  "dlg.garcom_beto.padrao.2": "A porta de cima leva à cozinha. A de baixo, para a avenida."
+  "dlg.garcom_beto.padrao.2": "A porta de cima leva à cozinha. A de baixo, para a avenida.",
+  "dlg.mestre_basilio.etapa2.1": "Que Margherita cheirosa! Você leva jeito, aprendiz.",
+  "dlg.mestre_basilio.etapa2.2": "A Feirante Lia está com ratos na despensa, logo ali nos fundos da cozinha. Leve suas pizzas!",
+  "dlg.mestre_basilio.etapa2.3": "Dica: na batalha, veja o que o inimigo vai fazer antes de escolher a fatia. E perfil certo dá dano extra!",
+  "dlg.mestre_basilio.etapa3.1": "A Lia me contou dos ratos. Muito bem!",
+  "dlg.mestre_basilio.etapa3.2": "O Bosque das Ervas precisa de ajuda. A Guardiã Sálvia está lá, depois da vila.",
+  "dlg.feirante_lia.etapa2.1": "Você já cozinha? Então me ajude: os ratos estão na despensa, nos fundos da cozinha do Mestre!",
+  "dlg.feirante_lia.etapa3.1": "A despensa está livre! Muito obrigada, aprendiz.",
+  "oven.mestre.name": "Forno do Mestre",
+  "oven.acampamento.name": "Forno de Pedra",
+  "battle.derrota.acordou": "Você acorda diante do forno, de barriga vazia mas inteiro. Prepare mais pizzas e tente de novo!"
 }

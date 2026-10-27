@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 101,
   "compressionlevel": -1,
   "properties": [
     {
@@ -660,6 +660,29 @@
               "name": "toEntrance",
               "type": "string",
               "value": "fundos"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "forno",
+          "type": "oven",
+          "x": 32,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ovenId",
+              "type": "string",
+              "value": "oven.mestre"
+            },
+            {
+              "name": "draw",
+              "type": "bool",
+              "value": true
             }
           ]
         }

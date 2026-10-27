@@ -524,7 +524,7 @@ assets.json + public/assets ─────────────────�
 | Camada de tiles `collision` | qualquer tile = parede; invisível no jogo | `collision` |
 | Camada de objetos `entrances` | pontos; nome = ID da entrada; propriedade `direction` | `entrances` |
 | Camada de objetos `objects` | **classe** do objeto = `kind` (`npc`, `enemy`, `chest`...); nome = ID local; propriedades personalizadas = campos | `objects[]` |
-| Propriedade `script` em NPC/trigger | referência a `src/data/dialogues/<arquivo>.json#<chave>` | `talking` / `events` |
+| Propriedade `script` em NPC/inimigo/trigger | referência a `src/data/dialogues/<arquivo>.json#<chave>` | `talking` / `onDefeat` / `events` |
 | Propriedade `visibleIf` | referência nomeada a uma condição em `src/data/conditions.json` | `visibleIf` |
 | Propriedade `behaviorLoop` em NPC/inimigo | referência a `src/data/dialogues/<arquivo>.json#<chave>` (lista de eventos) | `behaviorLoop` |
 | Propriedade `assetId` no tileset (`.tsj`) | `AssetId` da imagem no manifesto (ex.: `ts.cozinha_mestre_lower`) | `tilesets[].assetId` |

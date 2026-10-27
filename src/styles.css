@@ -101,3 +101,401 @@ body {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* ---------- Peças comuns das telas ---------- */
+
+.ui-root {
+  --u: var(--px);
+  --ink: #3a2418;
+  --paper: #fbf0dc;
+  --accent: #c0392b;
+  --good: #2e7d32;
+  --bad: #b3261e;
+}
+
+.panel {
+  background: var(--paper);
+  border: calc(var(--u) * 2) solid var(--ink);
+  box-shadow: 0 calc(var(--u) * 2) 0 #00000055;
+  padding: calc(var(--u) * 4) calc(var(--u) * 6);
+}
+
+.panel__title {
+  margin: 0 0 calc(var(--u) * 3);
+  font-size: calc(var(--u) * 10);
+  color: var(--accent);
+}
+
+.panel__text {
+  margin: 0 0 calc(var(--u) * 2);
+  white-space: pre-line;
+}
+
+.panel__hint {
+  margin: calc(var(--u) * 2) 0 0;
+  font-size: calc(var(--u) * 6.5);
+  opacity: 0.75;
+  white-space: pre-line;
+}
+
+.panel__note {
+  margin: calc(var(--u) * 2) 0 0;
+  min-height: 1.35em;
+  font-weight: bold;
+  color: var(--bad);
+}
+
+.panel__good,
+.panel__note.panel__good {
+  color: var(--good);
+  font-weight: bold;
+}
+
+.panel__bad {
+  color: var(--bad);
+  font-weight: bold;
+}
+
+.panel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu__item {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--u) * 6);
+  padding: calc(var(--u) * 0.5) calc(var(--u) * 2);
+  white-space: pre;
+}
+
+.menu__item.is-focused {
+  background: #f3d9a9;
+  font-weight: bold;
+}
+
+.menu__item.is-disabled {
+  opacity: 0.45;
+}
+
+.menu__detail,
+.row__detail {
+  font-size: calc(var(--u) * 6.5);
+  opacity: 0.8;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--u) * 4);
+  padding: calc(var(--u) * 0.5) 0;
+  border-bottom: calc(var(--u) * 0.5) dotted #3a241840;
+}
+
+.row__name {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.quest {
+  padding: calc(var(--u) * 1) 0;
+}
+
+.icon {
+  width: calc(var(--u) * 10);
+  height: calc(var(--u) * 10);
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+.chip {
+  display: inline-block;
+  margin: calc(var(--u) * 1) calc(var(--u) * 1) 0 0;
+  padding: 0 calc(var(--u) * 2);
+  font-size: calc(var(--u) * 6);
+  background: #3a2418;
+  color: #fbf0dc;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: calc(var(--u) * 0.5) calc(var(--u) * 6);
+  margin: 0 0 calc(var(--u) * 2);
+}
+
+.stats dt {
+  opacity: 0.75;
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Barra de PV: o número acompanha a cor. */
+.hp {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  font-size: calc(var(--u) * 6.5);
+}
+
+.hp__tag {
+  font-weight: bold;
+}
+
+.hp__track {
+  flex: 1;
+  height: calc(var(--u) * 4);
+  background: #3a2418;
+  border: calc(var(--u) * 1) solid var(--ink);
+}
+
+.hp__fill {
+  height: 100%;
+  background: #5cb85c;
+  transition: width 0.4s steps(8);
+}
+
+.hp__fill[data-level="mid"] {
+  background: #f0ad4e;
+}
+
+.hp__fill[data-level="low"] {
+  background: #d9534f;
+}
+
+.hp__label {
+  min-width: 4.5em;
+  text-align: right;
+}
+
+/* Telas por cima do mapa (forno, menu). */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #00000066;
+}
+
+.oven,
+.pause {
+  width: calc(var(--u) * 340);
+  max-height: calc(var(--u) * 200);
+  overflow: hidden;
+}
+
+.oven__columns {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: calc(var(--u) * 8);
+}
+
+.oven__side {
+  max-height: calc(var(--u) * 130);
+  overflow: hidden;
+  border-left: calc(var(--u) * 1) dashed #3a241860;
+  padding-left: calc(var(--u) * 6);
+}
+
+/* ---------- HUD ---------- */
+
+.hud__status {
+  position: absolute;
+  top: calc(var(--u) * 4);
+  left: calc(var(--u) * 4);
+  width: calc(var(--u) * 110);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+}
+
+.hud__name {
+  font-weight: bold;
+  font-size: calc(var(--u) * 7);
+}
+
+.hud__objective {
+  position: absolute;
+  top: calc(var(--u) * 4);
+  right: calc(var(--u) * 4);
+  max-width: calc(var(--u) * 200);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+  font-size: calc(var(--u) * 6.5);
+}
+
+.hud__toast {
+  position: absolute;
+  top: calc(var(--u) * 34);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: calc(var(--u) * 2) calc(var(--u) * 6);
+  font-weight: bold;
+  color: var(--good);
+}
+
+.hud__save {
+  position: absolute;
+  right: calc(var(--u) * 6);
+  bottom: calc(var(--u) * 4);
+  color: #fff;
+  font-size: calc(var(--u) * 6.5);
+  text-shadow: 0 calc(var(--u) * 1) 0 #000;
+  animation: dialogue-hint 0.8s steps(2) infinite;
+}
+
+/* O HUD some atrás das telas. */
+.hud:has(~ .overlay),
+.hud:has(~ .battle),
+.hud:has(~ .title) {
+  display: none;
+}
+
+/* ---------- Batalha ---------- */
+
+.battle {
+  position: absolute;
+  inset: 0;
+}
+
+.battle__hud {
+  position: absolute;
+  width: calc(var(--u) * 150);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+}
+
+.battle__hud--enemy {
+  top: calc(var(--u) * 6);
+  left: calc(var(--u) * 6);
+}
+
+.battle__hud--player {
+  top: calc(var(--u) * 108);
+  right: calc(var(--u) * 6);
+}
+
+.battle__hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.battle__name {
+  font-weight: bold;
+}
+
+.battle__profile {
+  font-size: calc(var(--u) * 6.5);
+  opacity: 0.8;
+}
+
+.battle__intent {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  margin-top: calc(var(--u) * 2);
+  font-size: calc(var(--u) * 6.5);
+}
+
+.battle__intent:empty {
+  display: none;
+}
+
+.battle__intent-tag {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.battle__menu {
+  position: absolute;
+  right: calc(var(--u) * 8);
+  bottom: calc(var(--u) * 6);
+  min-width: calc(var(--u) * 120);
+  padding: calc(var(--u) * 3) calc(var(--u) * 4);
+  z-index: 2;
+}
+
+.battle__menu[data-kind="slices"] {
+  min-width: calc(var(--u) * 170);
+}
+
+.battle__panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(var(--u) * 260);
+  z-index: 3;
+}
+
+.battle__panel[data-kind="basket"] {
+  width: calc(var(--u) * 300);
+}
+
+/* ---------- Título ---------- */
+
+.title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 8);
+  background:
+    radial-gradient(circle at 50% 35%, #f6c14255, transparent 60%),
+    repeating-linear-gradient(45deg, #a4522f 0 calc(var(--u) * 8), #8e4528 0 calc(var(--u) * 16));
+  pointer-events: auto;
+}
+
+.title__logo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  text-shadow:
+    0 calc(var(--u) * 2) 0 #3a2418,
+    calc(var(--u) * 2) 0 0 #3a2418,
+    calc(var(--u) * -2) 0 0 #3a2418,
+    0 calc(var(--u) * -2) 0 #3a2418;
+}
+
+.title__pizza {
+  font-size: calc(var(--u) * 30);
+  color: #f6c142;
+}
+
+.title__legends {
+  font-size: calc(var(--u) * 20);
+  color: #fff3c4;
+  letter-spacing: calc(var(--u) * 2);
+}
+
+.title__body {
+  min-width: calc(var(--u) * 150);
+}
+
+.title__hint {
+  margin: 0;
+  color: #fff3c4;
+  font-size: calc(var(--u) * 6.5);
+}
+
+.title__input {
+  width: 100%;
+  font: inherit;
+  font-weight: bold;
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  border: calc(var(--u) * 1) solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+}

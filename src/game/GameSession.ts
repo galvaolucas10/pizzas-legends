@@ -3,6 +3,8 @@ import type { Direction } from "../content/schemas/common";
 import { applyBattleResult, restAtOven, type BattleState } from "../core/battle";
 import { cookPizza, type PreparationError } from "../core/cooking";
 import { addIngredients, hasIngredients } from "../core/inventory";
+import { maxHpFor, xpToNextLevel } from "../core/progression";
+import { questStatus } from "../core/conditions";
 import { advanceQuest, currentObjective, updateQuests, type QuestEvent } from "../core/quests";
 import { claimReward } from "../core/rewards";
 import type { PizzaInstance, SaveData } from "../core/types";
@@ -67,6 +69,21 @@ export class GameSession {
 
   get objective(): string | null {
     return currentObjective(this.current, this.content);
+  }
+
+  /** PV máximo do personagem ativo (fora da batalha o PV está sempre cheio, GDD 7.6). */
+  get maxHp(): number {
+    return maxHpFor(this.current.characters[0]?.level ?? 1, this.content);
+  }
+
+  /** XP que falta para o próximo nível (null no nível máximo). */
+  get xpToNextLevel(): number | null {
+    return xpToNextLevel(this.current, this.content);
+  }
+
+  /** Status de uma missão, incluindo "disponível"/"indisponível" antes de começar. */
+  questStatus(questId: string): string {
+    return questStatus(this.current, questId, this.content);
   }
 
   /** Executa um comando. Se falhar, nada muda e o erro volta tipado. */

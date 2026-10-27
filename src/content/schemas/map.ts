@@ -54,7 +54,13 @@ export const MapObjectSchema = z.discriminatedUnion("kind", [
     behaviorLoop: z.array(GameEventSchema).optional(),
     onDefeat: z.array(GameEventSchema).optional(),
   }),
-  z.strictObject({ ...base, kind: z.literal("oven"), ovenId: OvenIdSchema }),
+  z.strictObject({
+    ...base,
+    kind: z.literal("oven"),
+    ovenId: OvenIdSchema,
+    /** Desenha um forno de tijolos (para mapas cuja arte não tem forno). */
+    draw: z.boolean().optional(),
+  }),
   z.strictObject({ ...base, kind: z.literal("chest"), rewardId: RewardIdSchema }),
   z.strictObject({
     ...base,
