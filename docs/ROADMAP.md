@@ -88,14 +88,14 @@ Fase 4  Expansão orientada por feedback   (direções, não planejada em tarefa
 
 ### M0 — critérios de saída
 
-- [ ] Aplicação abre sem erros no console.
-- [ ] Protagonista anda nas quatro direções e respeita paredes e NPCs.
-- [ ] NPCs parados e com comportamento funcionam sem interrupções.
-- [ ] Movimento com velocidade igual em 60 Hz e 144 Hz.
-- [ ] Mapas carregam sem erros de renderização.
-- [ ] Transição entre os dois mapas funciona nos dois sentidos.
-- [ ] Ao menos um NPC abre e fecha diálogo.
-- [ ] CI verde; mapas vindos do Tiled.
+- [x] Aplicação abre sem erros no console.
+- [x] Protagonista anda nas quatro direções e respeita paredes e NPCs.
+- [x] NPCs parados e com comportamento funcionam sem interrupções.
+- [x] Movimento com velocidade igual em 60 Hz e 144 Hz.
+- [x] Mapas carregam sem erros de renderização.
+- [x] Transição entre os dois mapas funciona nos dois sentidos.
+- [x] Ao menos um NPC abre e fecha diálogo.
+- [x] CI verde; mapas vindos do Tiled.
 
 ---
 
@@ -303,4 +303,6 @@ F2-09 (mapas) e F2-16 (assets) correm em paralelo desde o início da Fase 2
 
 ## 11. Próxima ação
 
-F0-01 a F0-04 concluídas (27/10/2026). Próxima: **F0-05** (`InputManager` com ações, contextos e liberação em `blur`).
+**Fase 0 concluída (27/10/2026): marco M0 atingido.** F0-01 a F0-15 entregues; a ARCHITECTURE 24 está cumprida até o passo 9.
+
+Próxima: **F1-01** (esquemas Zod do restante do conteúdo do DATA_MODELS 3 e integridade referencial completa).

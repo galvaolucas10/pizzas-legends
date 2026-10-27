@@ -447,7 +447,7 @@ Não adicionar mecânicas de retenção baseadas em fricção artificial, press�
 | `TECHNICAL_SPEC.md` | Requisitos funcionais/não funcionais e critérios de aceite | **Dispensado:** coberto por GDD, DATA_MODELS, ARCHITECTURE e ROADMAP |
 | `DATA_MODELS.md` | Esquemas de mapas, personagens, missões, receitas e saves | Criado (v0.1) |
 | `ROADMAP.md` | Marcos, entregas, dependências e checklists de desenvolvimento | Criado (v0.1) |
-| `ASSETS_AND_LICENSES.md` | Fonte, licença, autoria e substituições de cada recurso | A criar (F0-15) |
+| `ASSETS_AND_LICENSES.md` | Fonte, licença, autoria e substituições de cada recurso | Criado (F0-15) |
 | `TEST_PLAN.md` | Testes unitários, integração, regressão e playtest | A criar (F3-05) |
 | `DATABASE.md` | **Somente quando Supabase entrar em escopo:** tabelas, RLS, políticas, sincronização | Futuro |
 
