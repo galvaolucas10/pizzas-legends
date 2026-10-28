@@ -562,3 +562,6 @@ body {
 .touch-orders {
   right: calc(var(--px) * 52);
 }
+.touch-menu[hidden] {
+  display: none;
+}

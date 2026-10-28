@@ -108,6 +108,8 @@ export function createGame(options: GameOptions): GameHandle {
 
   // Ferramentas de depuração: só em dev (carregadas no start; o build de produção não as inclui).
   let debug: DebugHooks | null = null;
+  /** Mostra/esconde os botões de toque (Menu, Pedidos) conforme o que está na tela. */
+  let syncTouchButtons: (() => void) | null = null;
   let lastUpdateMs = 0;
 
   const loop = new GameLoop({
@@ -116,6 +118,7 @@ export function createGame(options: GameOptions): GameHandle {
       input.poll();
       debug?.tick(lastUpdateMs);
       scenes.update(dt);
+      syncTouchButtons?.();
       if (playing) unsavedPlayMs += dt;
       lastUpdateMs = performance.now() - startedAt;
     },
@@ -302,6 +305,13 @@ export function createGame(options: GameOptions): GameHandle {
       });
       container.append(ordersButton);
       cleanups.push(() => ordersButton.remove());
+      // Os botões só aparecem andando pelo mapa: com fala, menu ou forno abertos, não cobrem nada.
+      syncTouchButtons = () => {
+        const hide = !playing || input.activeContext !== "world";
+        menuButton.hidden = hide;
+        ordersButton.hidden = hide;
+      };
+      cleanups.push(() => (syncTouchButtons = null));
 
       // ---------- Título (F1-18): Novo jogo / Continuar ----------
       let worldOnStack = false;
