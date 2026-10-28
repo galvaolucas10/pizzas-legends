@@ -5,6 +5,11 @@ export type NpcObject = Extract<MapObject, { kind: "npc" }>;
 
 /** NPC do mapa: falas (talking) e rotina (behaviorLoop), executadas pelo EventSystem. */
 export class Npc extends Entity {
+  /** Balão acima da cabeça (ex.: "!" quer pedir, "$" quer pagar). */
+  bubble: { text: string; color: string } | null = null;
+  /** Fora de cena (ex.: motoboy entregando): não aparece e não conversa. */
+  hidden = false;
+
   constructor(
     readonly def: NpcObject,
     sprite: SpriteDef,

@@ -1,5 +1,6 @@
 import type { ContentRegistry } from "../content/registry";
 import { addIngredients } from "./inventory";
+import { addCoins } from "./shop";
 import { grantXp } from "./progression";
 import { withCharacter, type SaveData } from "./types";
 
@@ -26,6 +27,7 @@ export function claimReward(
   let next: SaveData = { ...save, flags: { ...save.flags, [rewardId]: true } };
   for (const flag of reward.setFlags ?? []) next.flags[flag] = true;
   if (reward.ingredients) next = addIngredients(next, reward.ingredients, content);
+  if (reward.coins) next = addCoins(next, reward.coins, content);
   if (reward.recipes?.length) {
     next = withCharacter(next, (c) => ({
       ...c,

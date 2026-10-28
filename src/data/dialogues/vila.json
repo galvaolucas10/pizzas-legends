@@ -38,10 +38,23 @@
     }
   ],
   "rita_rotina": [
-    { "type": "stand", "who": "rita", "direction": "down", "time": 2200 },
-    { "type": "walk", "who": "rita", "direction": "down" },
-    { "type": "stand", "who": "rita", "direction": "left", "time": 1600 },
-    { "type": "walk", "who": "rita", "direction": "up" },
-    { "type": "stand", "who": "rita", "direction": "right", "time": 1400 }
+    { "type": "walk", "who": "rita", "direction": "left" },
+    { "type": "walk", "who": "rita", "direction": "left" },
+    { "type": "stand", "who": "rita", "direction": "down", "time": 1600 },
+    { "type": "walk", "who": "rita", "direction": "right" },
+    { "type": "walk", "who": "rita", "direction": "right" },
+    { "type": "walk", "who": "rita", "direction": "right" },
+    { "type": "walk", "who": "rita", "direction": "right" },
+    { "type": "stand", "who": "rita", "direction": "up", "time": 1600 },
+    { "type": "walk", "who": "rita", "direction": "left" },
+    { "type": "walk", "who": "rita", "direction": "left" },
+    { "type": "stand", "who": "rita", "direction": "down", "time": 2000 }
+  ],
+  "motoboy": [
+    {
+      "events": [
+        { "type": "message", "speaker": "npc.motoboy_dudu", "textKey": "motoboy.sem_pedido" }
+      ]
+    }
   ]
 }

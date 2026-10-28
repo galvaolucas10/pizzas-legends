@@ -1,0 +1,98 @@
+[
+  {
+    "id": "rato1",
+    "x": 9,
+    "y": 6,
+    "direction": "left",
+    "visibleIf": {
+      "quest": "quest.primeiro_desafio",
+      "stepAtLeast": 1
+    },
+    "kind": "enemy",
+    "enemyId": "enemy.rato_despensa",
+    "respawn": "rest",
+    "behaviorLoop": [
+      {
+        "type": "walk",
+        "who": "rato1",
+        "direction": "right"
+      },
+      {
+        "type": "stand",
+        "who": "rato1",
+        "direction": "right",
+        "time": 900
+      },
+      {
+        "type": "walk",
+        "who": "rato1",
+        "direction": "left"
+      },
+      {
+        "type": "stand",
+        "who": "rato1",
+        "direction": "left",
+        "time": 1300
+      }
+    ],
+    "onDefeat": [
+      {
+        "type": "incrementFlag",
+        "flag": "flag.ratos_derrotados"
+      }
+    ]
+  },
+  {
+    "id": "rato2",
+    "x": 6,
+    "y": 8,
+    "direction": "left",
+    "visibleIf": {
+      "quest": "quest.primeiro_desafio",
+      "stepAtLeast": 1
+    },
+    "kind": "enemy",
+    "enemyId": "enemy.rato_despensa",
+    "respawn": "rest",
+    "behaviorLoop": [
+      {
+        "type": "walk",
+        "who": "rato2",
+        "direction": "right"
+      },
+      {
+        "type": "walk",
+        "who": "rato2",
+        "direction": "right"
+      },
+      {
+        "type": "stand",
+        "who": "rato2",
+        "direction": "down",
+        "time": 1100
+      },
+      {
+        "type": "walk",
+        "who": "rato2",
+        "direction": "left"
+      },
+      {
+        "type": "walk",
+        "who": "rato2",
+        "direction": "left"
+      },
+      {
+        "type": "stand",
+        "who": "rato2",
+        "direction": "up",
+        "time": 800
+      }
+    ],
+    "onDefeat": [
+      {
+        "type": "incrementFlag",
+        "flag": "flag.ratos_derrotados"
+      }
+    ]
+  }
+]

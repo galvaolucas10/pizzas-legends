@@ -11,8 +11,11 @@ describe("GameSession (F1-03)", () => {
   it("comando inválido não altera o estado e devolve o erro tipado", () => {
     const s = session();
     const before = s.state;
-    const result = s.dispatch({ type: "cookPizza", recipeId: "rec.brasa", ingredientIds: [] });
-    expect(result).toEqual({ ok: false, error: { kind: "recipeUnknown", recipeId: "rec.brasa" } });
+    const result = s.dispatch({ type: "cookPizza", recipeId: "rec.defumada", ingredientIds: [] });
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: "recipeUnknown", recipeId: "rec.defumada" },
+    });
     expect(s.state).toBe(before);
   });
 
@@ -31,16 +34,17 @@ describe("GameSession (F1-03)", () => {
     expect(s.state.quests["quest.primeiro_desafio"]!.step).toBe(1);
     expect(seen).toContain("questStepCompleted");
     expect(seen).toContain("itemsGained"); // recompensa da etapa 1
-    expect(seen).toContain("objetivo:quest.primeiro_desafio.etapa2");
+    expect(seen).toContain("objetivo:quest.primeiro_desafio.clientes_a");
   });
 
-  it("incrementFlag alimenta contadores das missões (2 ratos → etapa 2)", () => {
+  it("incrementFlag alimenta contadores das missões (2 clientes)", () => {
     const s = session();
     s.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });
-    s.dispatch({ type: "incrementFlag", flag: "flag.ratos_derrotados", by: 1 });
+    s.dispatch({ type: "incrementFlag", flag: "flag.clientes_a", by: 1 });
     expect(s.state.quests["quest.primeiro_desafio"]!.step).toBe(1);
-    s.dispatch({ type: "incrementFlag", flag: "flag.ratos_derrotados", by: 1 });
+    s.dispatch({ type: "incrementFlag", flag: "flag.clientes_a", by: 1 });
     expect(s.state.quests["quest.primeiro_desafio"]!.step).toBe(2);
+
     expect(s.state.characters[0]!.knownRecipes).toContain("rec.quatro_queijos");
   });
 

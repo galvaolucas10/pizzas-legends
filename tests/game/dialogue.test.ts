@@ -95,24 +95,17 @@ describe("diálogo com NPC (F0-13)", () => {
     expect(s.events.isBlocking).toBe(true);
   });
 
-  it("placas e fornos respondem ao confirmar", async () => {
-    const { s, dialogue, tap, tick, world } = await scene("map.bosque", "vila");
-    // Placa "← Vila do Forno" em (2,14): o herói fica em (2,15) olhando para cima.
-    world.player.mover.place(world.grid!, 2, 15, "up");
+  it("fornos respondem ao confirmar", async () => {
+    const { s, dialogue, tap, tick, world } = await scene("map.estufa", "rua");
+    // Fogão da estufa em (3,4): o herói fica em (3,5) olhando para cima.
+    world.player.mover.place(world.grid!, 3, 5, "up");
     tap("confirm");
     expect(s.events.isBlocking).toBe(true);
     dialogue.complete();
-    expect(dialogue.visibleText).toBe("← Vila do Forno");
+    expect(dialogue.visibleText).toContain("O forno está quente");
     tap("confirm");
     tick();
     expect(s.events.isBlocking).toBe(false);
-
-    const bosque = await scene("map.bosque", "vila");
-    // Forno do acampamento em (12,22): o herói fica em (12,21) olhando para baixo.
-    bosque.world.player.mover.place(bosque.world.grid!, 12, 21, "down");
-    bosque.tap("confirm");
-    bosque.dialogue.complete();
-    expect(bosque.dialogue.visibleText).toContain("O forno está quente");
   });
 
   it("confirmar olhando para o nada não abre diálogo", async () => {

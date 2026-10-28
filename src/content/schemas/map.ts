@@ -11,6 +11,7 @@ import {
   RewardIdSchema,
   TextKeySchema,
   TileSchema,
+  FlagIdSchema,
 } from "./common";
 import { ConditionSchema } from "./conditions";
 import { GameEventSchema } from "./events";
@@ -67,8 +68,11 @@ export const MapObjectSchema = z.discriminatedUnion("kind", [
     kind: z.literal("harvest"),
     ingredientId: IngredientIdSchema,
     count: z.number().int().min(1),
-    renew: z.enum(["rest", "never"]),
+    /** "rest": volta ao descansar; "visit": volta a cada visita ao mapa; "never": uma vez só. */
+    renew: z.enum(["rest", "visit", "never"]),
     rewardId: RewardIdSchema.optional(),
+    /** Contador de colheitas (ex.: atividade da horta): +1 a cada colheita. */
+    countFlag: FlagIdSchema.optional(),
   }),
   z.strictObject({ ...base, kind: z.literal("sign"), textKey: TextKeySchema }),
   z.strictObject({

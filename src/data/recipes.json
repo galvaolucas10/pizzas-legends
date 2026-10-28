@@ -6,12 +6,30 @@
     "baseSlices": 4,
     "toppingSlots": 1,
     "requirements": [
-      { "kind": "category", "category": "massa", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.molho_tomate", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.mussarela", "count": 1 }
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      }
     ],
-    "sliceAction": { "damage": 0.7, "heal": 0.6, "cleanseNegative": 1 },
-    "unlock": { "kind": "start" }
+    "sliceAction": {
+      "damage": 0.7,
+      "heal": 0.6,
+      "cleanseNegative": 1
+    },
+    "unlock": {
+      "kind": "start"
+    }
   },
   {
     "id": "rec.quatro_queijos",
@@ -20,11 +38,25 @@
     "baseSlices": 3,
     "toppingSlots": 1,
     "requirements": [
-      { "kind": "category", "category": "massa", "count": 1 },
-      { "kind": "category", "category": "queijo", "count": 2, "distinct": true }
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "category",
+        "category": "queijo",
+        "count": 2,
+        "distinct": true
+      }
     ],
-    "sliceAction": { "damage": 0.7, "shield": 1 },
-    "unlock": { "kind": "reward", "rewardId": "rew.primeiro_desafio_etapa2" }
+    "sliceAction": {
+      "damage": 0.7,
+      "shield": 1
+    },
+    "unlock": {
+      "kind": "start"
+    }
   },
   {
     "id": "rec.brasa",
@@ -33,15 +65,34 @@
     "baseSlices": 4,
     "toppingSlots": 1,
     "requirements": [
-      { "kind": "category", "category": "massa", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.molho_apimentado", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.mussarela", "count": 1 }
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_apimentado",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      }
     ],
     "sliceAction": {
       "damage": 1,
-      "applyStatus": [{ "status": "status.queimadura", "target": "opponent" }]
+      "applyStatus": [
+        {
+          "status": "status.queimadura",
+          "target": "opponent"
+        }
+      ]
     },
-    "unlock": { "kind": "reward", "rewardId": "rew.primeiro_desafio_etapa3" }
+    "unlock": {
+      "kind": "start"
+    }
   },
   {
     "id": "rec.defumada",
@@ -50,14 +101,34 @@
     "baseSlices": 4,
     "toppingSlots": 1,
     "requirements": [
-      { "kind": "category", "category": "massa", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.molho_tomate", "count": 1 },
-      { "kind": "ingredient", "ingredientId": "ing.queijo_defumado", "count": 1 }
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.queijo_defumado",
+        "count": 1
+      }
     ],
     "sliceAction": {
       "damage": 0.8,
-      "applyStatus": [{ "status": "status.enfraquecido", "target": "opponent" }]
+      "applyStatus": [
+        {
+          "status": "status.enfraquecido",
+          "target": "opponent"
+        }
+      ]
     },
-    "unlock": { "kind": "skill", "skillId": "skill.defumacao" }
+    "unlock": {
+      "kind": "skill",
+      "skillId": "skill.defumacao"
+    }
   }
 ]

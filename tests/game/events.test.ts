@@ -35,24 +35,25 @@ async function scene(mapId = "map.cozinha_mestre", entrance = "inicio") {
 }
 
 describe("behaviorLoop (F0-11)", () => {
-  it("o Mestre gira pela rotina de 'stand' no tempo do jogo", async () => {
-    const { s, run } = await scene();
+  it("o Mestre começa parado e depois anda pela cozinha, voltando ao lugar", async () => {
+    const { s, run, tile, warnings } = await scene();
     const mestre = s.world.entity("mestre")!;
     run(100);
-    expect(mestre.mover.direction).toBe("left"); // 0–800 ms
-    run(800);
-    expect(mestre.mover.direction).toBe("up"); // 800–1600 ms
-    run(800);
-    expect(mestre.mover.direction).toBe("right"); // 1600–2800 ms
-    run(1200);
-    expect(mestre.mover.direction).toBe("up"); // 2800–3100 ms
-    run(300);
-    expect(mestre.mover.direction).toBe("left"); // recomeça o laço
+    expect(tile("mestre")).toEqual([7, 9]); // 0–1500 ms parado, olhando para a esquerda
+    expect(mestre.mover.direction).toBe("left");
+    const seen = new Set<string>();
+    for (let t = 0; t < 120; t++) {
+      run(100);
+      seen.add(tile("mestre").join(","));
+    }
+    expect(warnings).toEqual([]);
+    // Anda 2 tiles para a direita e volta, sempre na mesma linha.
+    expect(seen).toEqual(new Set(["7,9", "8,9", "9,9"]));
   });
 
-  it("o Bento patrulha no bosque e volta ao início, sem interrupções", async () => {
-    const { run, tile, warnings } = await scene("map.bosque", "vila");
-    expect(tile("bento")).toEqual([7, 22]);
+  it("o Bento patrulha na praça e volta ao início, sem interrupções", async () => {
+    const { run, tile, warnings } = await scene("map.praca", "vila");
+    expect(tile("bento")).toEqual([11, 12]);
     // 4 passos de 16 ticks + 2,7 s parado ≈ 3,8 s por volta.
     const seen = new Set<string>();
     for (let t = 0; t < 120; t++) {
@@ -61,32 +62,31 @@ describe("behaviorLoop (F0-11)", () => {
     }
     expect(warnings).toEqual([]);
     // Anda 2 tiles para a direita e volta, sempre na mesma linha.
-    expect(seen).toEqual(new Set(["7,22", "8,22", "9,22"]));
+    expect(seen).toEqual(new Set(["11,12", "12,12", "13,12"]));
   });
 
   it("walk bloqueado espera e tenta de novo (segundo plano não desiste)", async () => {
-    const { s, run, tile } = await scene("map.bosque", "vila");
-    // O herói fica no caminho do Bento: (8,22) é o primeiro passo dele (para a direita).
-    s.world.player.mover.place(s.world.grid!, 8, 22);
+    const { s, run, tile } = await scene("map.praca", "vila");
+    // O herói fica no caminho do Bento: (12,12) é o primeiro passo dele (para a direita).
+    s.world.player.mover.place(s.world.grid!, 12, 12);
     run(3000);
-    expect(tile("bento")).toEqual([7, 22]);
-    s.world.player.mover.place(s.world.grid!, 1, 15);
+    expect(tile("bento")).toEqual([11, 12]);
+    s.world.player.mover.place(s.world.grid!, 7, 15);
     run(100); // liberado: o passo começa no tick seguinte
-    expect(tile("bento")).toEqual([8, 22]);
+    expect(tile("bento")).toEqual([12, 12]);
   });
 
   it("cenas bloqueantes pausam as rotinas e tomam o contexto de entrada", async () => {
-    const { s, input, run } = await scene();
-    const mestre = s.world.entity("mestre")!;
+    const { s, input, run, tile } = await scene();
     s.events.runBlocking([{ type: "wait", time: 2000 }]);
     expect(input.activeContext).toBe("dialogue");
-    run(1000);
-    expect(mestre.mover.direction).toBe("left"); // rotina pausada: não virou para cima
-    run(1100);
+    run(1900);
+    expect(tile("mestre")).toEqual([7, 9]); // rotina pausada: não saiu do lugar
+    run(200);
     expect(s.events.isBlocking).toBe(false);
     expect(input.activeContext).toBe("world");
-    run(900);
-    expect(mestre.mover.direction).toBe("up"); // rotina retomada de onde parou
+    run(2000);
+    expect(tile("mestre")).not.toEqual([7, 9]); // rotina retomada: começou a andar
   });
 
   it("walk numa cena bloqueante tem tempo-limite de 3 s", async () => {

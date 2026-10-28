@@ -20,7 +20,6 @@
   {
     "id": "rew.primeiro_desafio_etapa2",
     "xp": 40,
-    "recipes": ["rec.quatro_queijos"],
     "ingredients": [
       {
         "ingredientId": "ing.queijo_cabra",
@@ -43,7 +42,6 @@
   {
     "id": "rew.primeiro_desafio_etapa3",
     "xp": 50,
-    "recipes": ["rec.brasa"],
     "ingredients": [
       {
         "ingredientId": "ing.molho_apimentado",
@@ -117,26 +115,13 @@
     ]
   },
   {
-    "id": "rew.bau_sotao",
-    "xp": 15,
-    "ingredients": [
-      {
-        "ingredientId": "ing.linguica",
-        "count": 2
-      }
-    ]
+    "id": "rew.horta_colheita",
+    "coins": 20,
+    "xp": 15
   },
   {
-    "id": "rew.bau_vila",
-    "ingredients": [
-      {
-        "ingredientId": "ing.farinha",
-        "count": 2
-      },
-      {
-        "ingredientId": "ing.molho_tomate",
-        "count": 1
-      }
-    ]
+    "id": "rew.horta_pizza",
+    "coins": 30,
+    "xp": 20
   }
 ]

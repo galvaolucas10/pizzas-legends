@@ -1,7 +1,7 @@
 import type { ContentRegistry } from "../../content/registry";
 import type { Skill } from "../../content/schemas/gameplay";
 import { PROFILE_NAMES } from "../../game/battle/BattleController";
-import type { GameSession, SkillError } from "../../game/GameSession";
+import type { GameSession, ShopError, SkillError } from "../../game/GameSession";
 import { Menu, type MenuItem, type UiInput } from "../components/Menu";
 import { h } from "../dom";
 
@@ -13,6 +13,8 @@ export interface PauseMenuOptions {
   input: UiInput;
   /** URL de um ícone do manifesto (ou null). */
   iconUrl(assetId: string): string | null;
+  /** Abre direto na loja (mercadinho da Lia); Esc fecha. */
+  shopOnly?: { title: string };
 }
 
 const QUEST_STATUS: Record<string, string> = {
@@ -25,8 +27,9 @@ const QUEST_STATUS: Record<string, string> = {
 
 const TIER_NAMES = ["", "I", "II", "III"] as const;
 
-/** Posição de "Habilidades" no menu principal (para voltar com o foco nela). */
+/** Posições no menu principal (para voltar com o foco nelas). */
 const SKILLS_PAGE = 2;
+const SHOP_PAGE = 5;
 
 /**
  * Menu de pausa (F1-09, F2-03, GDD 11.2): mochila (pizzas e ingredientes), árvore de
@@ -60,7 +63,8 @@ export class PauseMenu {
     this.root.append(box);
     o.root.append(this.root);
     this.menu.onRefuse = (reason) => this.note(reason);
-    this.showMain();
+    if (o.shopOnly) this.showShop();
+    else this.showMain();
   }
 
   private text(key: string): string {
@@ -86,6 +90,12 @@ export class PauseMenu {
       },
       { label: "Missões (guia)", paint: () => this.paintQuests() },
       { label: "Status", paint: () => this.paintStatus() },
+      {
+        label: "Loja",
+        detail: `${this.o.session.coins} moedas`,
+        paint: () => this.paintShopIntro(),
+        onSelect: () => this.showShop(),
+      },
     ];
     this.menu.onFocus = (_item, index) => pages[index]?.paint();
     this.menu.onCancel = () => (this.done = true);
@@ -147,6 +157,93 @@ export class PauseMenu {
       list.append(li);
     }
     this.side.replaceChildren(list);
+  }
+
+  // ---------- Loja ----------
+
+  private ingredientRow(id: string): HTMLElement {
+    const doc = this.o.doc;
+    const name = h(doc, "span", "row__name");
+    const url = this.o.iconUrl(`icon.${id.replace(/^ing./, "ing_")}`);
+    if (url) {
+      const img = h(doc, "img", "icon");
+      img.src = url;
+      img.alt = "";
+      name.append(img);
+    }
+    name.append(doc.createTextNode(this.text(`${id}.name`)));
+    return name;
+  }
+
+  private paintShopIntro(): void {
+    const doc = this.o.doc;
+    this.side.replaceChildren(
+      h(doc, "p", "panel__text", `Você tem ${this.o.session.coins} moedas.`),
+      h(doc, "p", "panel__text", "Compre ingredientes para preparar pizzas no forno."),
+      h(doc, "p", "panel__hint", "Ganhe moedas vencendo batalhas e abrindo baús."),
+    );
+  }
+
+  private shopErrorText(error: ShopError): string {
+    switch (error.kind) {
+      case "notEnoughCoins":
+        return `Moedas insuficientes: custa ${error.need}, você tem ${error.have}.`;
+      case "stackFull":
+        return `Você já tem o máximo (${error.max}).`;
+      case "notForSale":
+        return "Esse item não está à venda.";
+    }
+  }
+
+  private showShop(focus = 0): void {
+    const { session } = this.o;
+    const items = session.shopItems();
+    const shopOnly = this.o.shopOnly;
+    this.titleEl.textContent = `${shopOnly?.title ?? "Loja"} · ${session.coins} moedas`;
+    this.menu.onCancel = shopOnly ? () => (this.done = true) : () => this.showMain(SHOP_PAGE);
+    this.menu.onFocus = (_item, index) => {
+      const item = items[index];
+      if (item) this.paintShopItem(item.ingredientId, item.price);
+    };
+    this.menu.setItems(
+      [
+        ...items.map(({ ingredientId, price }, index) => ({
+          label: this.text(`${ingredientId}.name`),
+          detail: `${price} moedas`,
+          disabled: session.coins < price,
+          reason: `Moedas insuficientes: custa ${price}, você tem ${session.coins}.`,
+          onSelect: () => {
+            const r = session.dispatch({ type: "buyIngredient", ingredientId, count: 1 });
+            if (r.ok) this.note(`Comprou 1 ${this.text(`${ingredientId}.name`)}!`, true);
+            else this.note(this.shopErrorText(r.error as ShopError));
+            this.showShop(index);
+          },
+        })),
+        // Sair/voltar na própria lista (no celular não tem Esc).
+        {
+          label: shopOnly ? "Sair" : "Voltar",
+          onSelect: shopOnly ? () => (this.done = true) : () => this.showMain(SHOP_PAGE),
+        },
+      ],
+      focus,
+    );
+  }
+
+  private paintShopItem(ingredientId: string, price: number): void {
+    const doc = this.o.doc;
+    const { session, content } = this.o;
+    const ing = content.ingredients[ingredientId];
+    const stats = h(doc, "dl", "stats");
+    const add = (label: string, value: string) =>
+      stats.append(h(doc, "dt", "", label), h(doc, "dd", "", value));
+    add("Preço", `${price} moedas`);
+    add("Na mochila", `${session.state.inventory.ingredients[ingredientId] ?? 0}`);
+    if (ing) add("Tipo", CATEGORY_LABELS[ing.category] ?? ing.category);
+    this.side.replaceChildren(
+      this.ingredientRow(ingredientId),
+      stats,
+      h(doc, "p", "panel__hint", `Você tem ${session.coins} moedas · Enter compra 1`),
+    );
   }
 
   // ---------- Habilidades (F2-03) ----------
@@ -372,3 +469,10 @@ export class PauseMenu {
     this.root.remove();
   }
 }
+
+const CATEGORY_LABELS: Record<string, string> = {
+  massa: "Massa",
+  molho: "Molho",
+  queijo: "Queijo",
+  cobertura: "Cobertura (opcional)",
+};

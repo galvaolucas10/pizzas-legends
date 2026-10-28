@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 106,
   "compressionlevel": -1,
   "properties": [
     {
@@ -1073,6 +1073,229 @@
               "name": "behaviorLoop",
               "type": "string",
               "value": "dialogues/praca.json#tito_rotina"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "bento",
+          "type": "npc",
+          "x": 176,
+          "y": 192,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "npcId",
+              "type": "string",
+              "value": "npc.lenhador_bento"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "left"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/praca.json#bento"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/praca.json#bento_rotina"
+            }
+          ]
+        },
+        {
+          "id": 101,
+          "name": "horta1",
+          "type": "harvest",
+          "x": 16,
+          "y": 144,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.manjericao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "visit"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "countFlag",
+              "type": "string",
+              "value": "flag.colheitas_neon"
+            }
+          ]
+        },
+        {
+          "id": 102,
+          "name": "horta2",
+          "type": "harvest",
+          "x": 16,
+          "y": 192,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.cogumelo"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "visit"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "countFlag",
+              "type": "string",
+              "value": "flag.colheitas_neon"
+            }
+          ]
+        },
+        {
+          "id": 103,
+          "name": "horta3",
+          "type": "harvest",
+          "x": 112,
+          "y": 144,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.manjericao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "visit"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "countFlag",
+              "type": "string",
+              "value": "flag.colheitas_neon"
+            }
+          ]
+        },
+        {
+          "id": 104,
+          "name": "horta4",
+          "type": "harvest",
+          "x": 224,
+          "y": 160,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.cogumelo"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "visit"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "countFlag",
+              "type": "string",
+              "value": "flag.colheitas_neon"
+            }
+          ]
+        },
+        {
+          "id": 105,
+          "name": "horta5",
+          "type": "harvest",
+          "x": 224,
+          "y": 208,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.manjericao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "visit"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "countFlag",
+              "type": "string",
+              "value": "flag.colheitas_neon"
             }
           ]
         }

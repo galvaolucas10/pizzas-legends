@@ -179,11 +179,60 @@
       ]
     },
     {
-      "id": "bau_salao",
-      "x": 12,
-      "y": 10,
-      "kind": "chest",
-      "rewardId": "rew.bau_sotao"
+      "id": "nina",
+      "x": 9,
+      "y": 5,
+      "direction": "down",
+      "kind": "npc",
+      "npcId": "npc.funcionaria_nina",
+      "talking": [
+        {
+          "condition": {
+            "flag": "flag.nina_folga"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "nina",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.funcionaria_nina",
+              "textKey": "dlg.nina.comecar.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.funcionaria_nina",
+              "textKey": "dlg.nina.comecar.2"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.nina_folga",
+              "value": false
+            }
+          ]
+        },
+        {
+          "events": [
+            {
+              "type": "face",
+              "who": "nina",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.funcionaria_nina",
+              "textKey": "dlg.nina.parar.1"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.nina_folga",
+              "value": true
+            }
+          ]
+        }
+      ]
     }
   ]
 }

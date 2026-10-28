@@ -36,6 +36,11 @@ export class GridOccupancy {
     return true;
   }
 
+  /** Ocupa o tile mesmo sendo parede (ex.: cliente sentado numa cadeira). */
+  claim(entityId: string, x: number, y: number): void {
+    this.occupants.set(key(x, y), entityId);
+  }
+
   release(entityId: string, x: number, y: number): void {
     if (this.occupants.get(key(x, y)) === entityId) this.occupants.delete(key(x, y));
   }

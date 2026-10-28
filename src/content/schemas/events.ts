@@ -22,7 +22,7 @@ export type GameEvent =
   | { type: "stand"; who: string; direction: Direction; time: number }
   | { type: "face"; who: string; towards: "player" | Direction }
   | { type: "wait"; time: number }
-  | { type: "message"; speaker?: string; textKey: string }
+  | { type: "message"; speaker?: string; textKey: string; vars?: Record<string, string> }
   | { type: "choice"; textKey: string; options: { textKey: string; events: GameEvent[] }[] }
   | { type: "claimReward"; rewardId: string }
   | { type: "setFlag"; flag: string; value?: boolean | number }
@@ -40,6 +40,7 @@ export type GameEvent =
     }
   | { type: "changeMap"; mapId: string; entrance: string }
   | { type: "openOven"; ovenId: string }
+  | { type: "openShop" }
   | { type: "rest"; ovenId: string }
   | { type: "autosave" }
   | { type: "endDemo" };
@@ -68,6 +69,8 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.lazy(() => {
       type: z.literal("message"),
       speaker: NpcIdSchema.optional(),
       textKey: TextKeySchema,
+      /** Troca {nome} no texto pelo valor (falas montadas pelo jogo, ex.: pedido online). */
+      vars: z.record(z.string(), z.string()).optional(),
     }),
     z.strictObject({
       type: z.literal("choice"),
@@ -118,6 +121,7 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.lazy(() => {
     }),
     z.strictObject({ type: z.literal("changeMap"), mapId: MapIdSchema, entrance: z.string() }),
     z.strictObject({ type: z.literal("openOven"), ovenId: OvenIdSchema }),
+    z.strictObject({ type: z.literal("openShop") }),
     z.strictObject({ type: z.literal("rest"), ovenId: OvenIdSchema }),
     z.strictObject({ type: z.literal("autosave") }),
     z.strictObject({ type: z.literal("endDemo") }),

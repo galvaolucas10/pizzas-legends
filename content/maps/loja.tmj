@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 101,
   "compressionlevel": -1,
   "properties": [
     {
@@ -671,6 +671,34 @@
               "name": "behaviorLoop",
               "type": "string",
               "value": "dialogues/loja.json#lia_rotina"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "rosa",
+          "type": "npc",
+          "x": 144,
+          "y": 160,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "npcId",
+              "type": "string",
+              "value": "npc.dona_rosa"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "left"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/loja.json#rosa"
             }
           ]
         }

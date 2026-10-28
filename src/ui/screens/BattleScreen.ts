@@ -272,7 +272,8 @@ export class BattleScreen {
     const lines: HTMLElement[] = [];
     if (summary.phase === "victory") {
       lines.push(h(doc, "h2", "panel__title", "Vitória!"));
-      lines.push(h(doc, "p", "panel__text", `+${summary.xp} XP`));
+      const coins = summary.coins ? ` · +${summary.coins} moedas` : "";
+      lines.push(h(doc, "p", "panel__text", `+${summary.xp} XP${coins}`));
       if (summary.levelUp)
         lines.push(
           h(doc, "p", "panel__text panel__good", `Subiu para o nível ${summary.levelUp}!`),

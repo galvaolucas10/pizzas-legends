@@ -6,6 +6,13 @@ const canvas = container?.querySelector<HTMLCanvasElement>(".game-canvas");
 if (!container || !canvas)
   throw new Error("Elementos .game-container/.game-canvas não encontrados");
 
+// Jogo instalável (PWA): o service worker guarda os arquivos para abrir sem internet.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch((error: unknown) => {
+    console.warn("[pwa] service worker não registrado", error);
+  });
+}
+
 createGame({ canvas, container })
   .start()
   .catch((error: unknown) => {

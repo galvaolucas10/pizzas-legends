@@ -27,35 +27,47 @@ function tick(screen: { update(dt: number): void }, input: FakeUiInput, action?:
   screen.update(1000 / 60);
 }
 
+/** Abre "Mais opções" na tela simples do forno (fica logo acima de "Sair", no fim). */
+function openMoreOptions(oven: OvenScreen, input: FakeUiInput) {
+  tick(oven, input, "up"); // Sair
+  tick(oven, input, "up"); // Mais opções
+  tick(oven, input, "confirm");
+  expect(oven.currentPage).toBe("main");
+}
+
+/** Espera a pizza sair do forno na tela simples. */
+function waitCooking(oven: OvenScreen) {
+  for (let i = 0; i < 200 && oven.currentPage === "cooking"; i++) oven.update(1000 / 60);
+}
+
 describe("tela do forno (F1-08)", () => {
-  it("prepara uma Margherita pelo menu e a missão avança", () => {
+  it("tela simples: escolhe a pizza, 'fazendo...', pronta; a missão avança", () => {
     const { session, doc, root, input, ui } = setup();
     const oven = new OvenScreen({
       doc,
       root,
       session,
       content: C,
-      ovenId: "oven.mestre",
+      ovenId: "oven.balcao",
       input: ui,
     });
-    expect(oven.currentPage).toBe("main");
-    tick(oven, input, "confirm"); // Preparar pizza
-    expect(oven.currentPage).toBe("recipes");
-    expect(visibleText(root)).toContain("Qualidade"); // prévia antes de confirmar
+    expect(oven.currentPage).toBe("quick");
+    expect(visibleText(root)).toContain("Margherita");
+    expect(visibleText(root)).not.toContain("Defumada"); // só as que dá para fazer
     tick(oven, input, "confirm"); // Margherita
-    expect(oven.currentPage).toBe("recipe");
-    tick(oven, input, "confirm"); // Preparar!
+    expect(oven.currentPage).toBe("cooking");
+    expect(visibleText(root)).toContain("Fazendo a Margherita");
+    expect(session.state.inventory.pizzas).toHaveLength(0); // ainda no forno
+    waitCooking(oven);
+    expect(oven.currentPage).toBe("quick");
     expect(session.state.inventory.pizzas).toHaveLength(1);
     expect(session.state.quests["quest.primeiro_desafio"]!.step).toBe(1);
     expect(visibleText(root)).toContain("Margherita pronta");
-    // Esc volta às receitas, ao menu principal e fecha.
-    tick(oven, input, "cancel");
-    tick(oven, input, "cancel");
-    tick(oven, input, "cancel");
+    tick(oven, input, "cancel"); // Esc fecha
     expect(oven.done).toBe(true);
   });
 
-  it("receita sem ingredientes fica desabilitada e explica o motivo", () => {
+  it("faltando ingrediente, compra sozinho e prepara", () => {
     const { session, doc, root, input, ui } = setup();
     session.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });
     session.dispatch({
@@ -67,13 +79,46 @@ describe("tela do forno (F1-08)", () => {
       root,
       session,
       content: C,
-      ovenId: "oven.mestre",
+      ovenId: "oven.balcao",
       input: ui,
     });
+    expect(visibleText(root)).toMatch(/compra \d+ moedas/);
+    const pizzas = session.state.inventory.pizzas.length;
+    const coins = session.coins;
     tick(oven, input, "confirm");
-    tick(oven, input, "confirm"); // tenta a Margherita
+    waitCooking(oven);
+    expect(session.state.inventory.pizzas).toHaveLength(pizzas + 1);
+    expect(session.coins).toBeLessThan(coins);
+  });
+
+  it("'Mais opções' guarda a tela completa: prévia, como fazer e comprar o que falta", () => {
+    const { session, doc, root, input, ui } = setup();
+    session.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });
+    session.dispatch({
+      type: "takeIngredients",
+      items: [{ ingredientId: "ing.farinha", count: 3 }],
+    });
+    const oven = new OvenScreen({
+      doc,
+      root,
+      session,
+      content: C,
+      ovenId: "oven.balcao",
+      input: ui,
+    });
+    openMoreOptions(oven, input);
+    tick(oven, input, "confirm"); // Preparar pizza (tela completa)
     expect(oven.currentPage).toBe("recipes");
+    tick(oven, input, "confirm"); // abre a Margherita
+    expect(oven.currentPage).toBe("recipe");
+    expect(visibleText(root)).toMatch(/✗ Massa/);
     expect(visibleText(root)).toMatch(/Falta/);
+    const pizzas = session.state.inventory.pizzas.length;
+    tick(oven, input, "confirm"); // o cursor começa em "Comprar o que falta e preparar"
+    expect(session.state.inventory.pizzas).toHaveLength(pizzas + 1);
+    tick(oven, input, "down");
+    tick(oven, input, "up");
+    expect(visibleText(root)).toContain("Qualidade"); // prévia antes de confirmar
   });
 });
 
@@ -264,6 +309,7 @@ describe("forno: transformar ingredientes (F2-02)", () => {
       ovenId: "oven.mestre",
       input: ui,
     });
+    openMoreOptions(oven, input);
     tick(oven, input, "down");
     tick(oven, input, "confirm"); // Transformar ingredientes
     expect(oven.currentPage).toBe("convert");
@@ -285,6 +331,7 @@ describe("forno: transformar ingredientes (F2-02)", () => {
       ovenId: "oven.mestre",
       input: ui,
     });
+    openMoreOptions(again, input);
     tick(again, input, "down");
     tick(again, input, "confirm");
     tick(again, input, "down"); // Defumar queijo

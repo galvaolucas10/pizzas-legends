@@ -78,6 +78,114 @@
       "npcId": "npc.seu_tito",
       "talking": [
         {
+          "condition": {
+            "flag": "flag.tito_pizza"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "tito",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.seu_tito",
+              "textKey": "dlg.tito.horta.depois"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.horta_neon",
+            "stepAtLeast": 2
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "tito",
+              "towards": "player"
+            },
+            {
+              "type": "if",
+              "condition": {
+                "hasPizza": {}
+              },
+              "then": [
+                {
+                  "type": "takePizza",
+                  "filter": {}
+                },
+                {
+                  "type": "message",
+                  "speaker": "npc.seu_tito",
+                  "textKey": "dlg.tito.horta.pizza"
+                },
+                {
+                  "type": "setFlag",
+                  "flag": "flag.tito_pizza"
+                }
+              ],
+              "else": [
+                {
+                  "type": "message",
+                  "speaker": "npc.seu_tito",
+                  "textKey": "dlg.tito.horta.pede_pizza"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.horta_neon",
+            "stepAtLeast": 1
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "tito",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.seu_tito",
+              "textKey": "dlg.tito.horta.colher"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.horta_neon",
+            "status": "available"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "tito",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.seu_tito",
+              "textKey": "dlg.tito.horta.convite.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.seu_tito",
+              "textKey": "dlg.tito.horta.convite.2"
+            },
+            {
+              "type": "advanceQuest",
+              "questId": "quest.horta_neon",
+              "toStep": 0
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.tito_horta"
+            }
+          ]
+        },
+        {
           "events": [
             {
               "type": "face",
@@ -136,6 +244,223 @@
           "time": 1800
         }
       ]
+    },
+    {
+      "id": "bento",
+      "x": 11,
+      "y": 12,
+      "direction": "left",
+      "kind": "npc",
+      "npcId": "npc.lenhador_bento",
+      "talking": [
+        {
+          "condition": {
+            "any": [
+              {
+                "quest": "quest.pedido_lenhador",
+                "status": "completed"
+              },
+              {
+                "quest": "quest.pedido_lenhador",
+                "status": "rewarded"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.depois.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.pedido_lenhador",
+            "status": "active"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "if",
+              "condition": {
+                "hasPizza": {
+                  "minQuality": 4
+                }
+              },
+              "then": [
+                {
+                  "type": "takePizza",
+                  "filter": {
+                    "minQuality": 4
+                  }
+                },
+                {
+                  "type": "message",
+                  "speaker": "npc.lenhador_bento",
+                  "textKey": "dlg.lenhador_bento.entregue.1"
+                },
+                {
+                  "type": "setFlag",
+                  "flag": "flag.pizza_entregue_bento"
+                }
+              ],
+              "else": [
+                {
+                  "type": "message",
+                  "speaker": "npc.lenhador_bento",
+                  "textKey": "dlg.lenhador_bento.esperando.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.pedido_lenhador",
+            "status": "available"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.pedido.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.pedido.2"
+            },
+            {
+              "type": "advanceQuest",
+              "questId": "quest.pedido_lenhador",
+              "toStep": 0
+            }
+          ]
+        },
+        {
+          "events": [
+            {
+              "type": "face",
+              "who": "bento",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.padrao.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.lenhador_bento",
+              "textKey": "dlg.lenhador_bento.padrao.2"
+            }
+          ]
+        }
+      ],
+      "behaviorLoop": [
+        {
+          "type": "walk",
+          "who": "bento",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "bento",
+          "direction": "right"
+        },
+        {
+          "type": "stand",
+          "who": "bento",
+          "direction": "down",
+          "time": 1500
+        },
+        {
+          "type": "walk",
+          "who": "bento",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "bento",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "bento",
+          "direction": "left",
+          "time": 1200
+        }
+      ]
+    },
+    {
+      "id": "horta1",
+      "x": 1,
+      "y": 9,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.manjericao",
+      "count": 2,
+      "renew": "visit",
+      "countFlag": "flag.colheitas_neon"
+    },
+    {
+      "id": "horta2",
+      "x": 1,
+      "y": 12,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.cogumelo",
+      "count": 1,
+      "renew": "visit",
+      "countFlag": "flag.colheitas_neon"
+    },
+    {
+      "id": "horta3",
+      "x": 7,
+      "y": 9,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.manjericao",
+      "count": 2,
+      "renew": "visit",
+      "countFlag": "flag.colheitas_neon"
+    },
+    {
+      "id": "horta4",
+      "x": 14,
+      "y": 10,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.cogumelo",
+      "count": 1,
+      "renew": "visit",
+      "countFlag": "flag.colheitas_neon"
+    },
+    {
+      "id": "horta5",
+      "x": 14,
+      "y": 13,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.manjericao",
+      "count": 2,
+      "renew": "visit",
+      "countFlag": "flag.colheitas_neon"
     }
   ]
 }

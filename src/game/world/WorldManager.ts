@@ -12,10 +12,11 @@ import { buildTileLayerCache, TILE } from "../../engine/render/TileLayerCache";
 import { EnemyActor } from "../entities/EnemyActor";
 import type { Entity, SpriteDef } from "../entities/Entity";
 import { neighbor } from "../entities/GridMover";
-import { Npc } from "../entities/Npc";
+import { Npc, type NpcObject } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { GridOccupancy } from "./GridOccupancy";
 import { drawChest, drawHarvest } from "./gatherArt";
+import { drawGuideArrows, guidePath, type GuideTarget } from "./guidePath";
 import { drawBrickOven } from "./ovenArt";
 
 export const SHADOW_ID = "img.shadow";
@@ -55,6 +56,12 @@ export class WorldManager {
   private pickups: (HarvestObject | ChestObject)[] = [];
   /** Relógio do mundo (anima o fogo dos fornos). */
   private time = 0;
+  /** Desenhos extras no chão do mapa (carros, moto), por cima do chão e embaixo das pessoas. */
+  decorations: ((ctx: CanvasRenderingContext2D, camera: Point, timeMs: number) => void)[] = [];
+  /** Posições de um alvo de grupo da seta (ex.: "@clientes"), fornecidas pela cena. */
+  guideGroup: ((id: string) => Point[] | null) | null = null;
+  /** Caminho da seta no chão (null = sem seta). */
+  guide: Point[] | null = null;
 
   readonly content: ContentRegistry;
 
@@ -80,6 +87,13 @@ export class WorldManager {
         if (enemy) ids.push(enemy.sprite);
       }
     }
+    // Clientes do restaurante aparecem durante o jogo: as imagens vêm junto com o salão.
+    const restaurant = this.options.content.balance.restaurant;
+    const salons = [
+      restaurant?.mapId,
+      ...(this.options.content.balance.extraRestaurants ?? []).map((r) => r.mapId),
+    ];
+    if (restaurant && salons.includes(map.id)) ids.push(...restaurant.sprites);
     return ids;
   }
 
@@ -160,6 +174,7 @@ export class WorldManager {
       count: object.count,
       renew: object.renew,
       ...(object.rewardId ? { rewardId: object.rewardId } : {}),
+      ...(object.countFlag ? { countFlag: object.countFlag } : {}),
     };
   }
 
@@ -232,6 +247,54 @@ export class WorldManager {
     return null;
   }
 
+  /** Recalcula a seta no chão até o alvo da missão (null apaga a seta). */
+  updateGuide(target: GuideTarget | null): void {
+    const map = this.map;
+    if (!map || !target) {
+      this.guide = null;
+      return;
+    }
+    const p = this.player.mover;
+    this.guide = guidePath(
+      map,
+      this.options.content.maps,
+      { x: p.tileX, y: p.tileY },
+      target,
+      (id) => {
+        if (id.startsWith("@")) return this.guideGroup?.(id) ?? null;
+        const object = map.objects.find((o) => o.id === id);
+        // Quem já deixou de valer (ex.: cliente atendido) só sai do mapa na próxima visita,
+        // mas a seta já para de apontar para ele.
+        if (
+          object?.visibleIf &&
+          !evaluateCondition(object.visibleIf, this.options.state(), this.content)
+        )
+          return null;
+        if (object?.kind !== "npc" && object?.kind !== "enemy") return undefined;
+        const entity = this.entities.find((e) => e.id === id);
+        return entity ? { x: entity.mover.tileX, y: entity.mover.tileY } : null;
+      },
+    );
+  }
+
+  /** Põe o NPC no lugar dele; numa cadeira (parede), ocupa o tile mesmo assim. */
+  /** Põe o NPC sentado no tile; numa cadeira (parede), ocupa o tile mesmo assim. */
+  sit(npc: Npc, x: number, y: number, direction: Direction): void {
+    const grid = this.grid;
+    if (!grid) return;
+    grid.release(npc.id, npc.mover.tileX, npc.mover.tileY);
+    npc.mover.place(grid, x, y, direction);
+    if (grid.isWall(x, y)) grid.claim(npc.id, x, y);
+  }
+
+  /** Cria um NPC no mapa atual (ex.: cliente do restaurante). */
+  addNpc(def: NpcObject, imageId: string): Npc {
+    const npc = new Npc(def, this.spriteDef(imageId));
+    if (this.grid) npc.mover.place(this.grid, def.x, def.y, def.direction ?? "down");
+    this.entities.push(npc);
+    return npc;
+  }
+
   update(dt: number): void {
     this.time += dt;
     const grid = this.grid;
@@ -269,6 +332,13 @@ export class WorldManager {
       else drawHarvest(ctx, x, y, p.ingredientId, this.isTaken(p), this.time);
     }
 
+    for (const draw of this.decorations) draw(ctx, camera, this.time);
+
+    if (this.guide?.length) {
+      const p = this.player.mover;
+      drawGuideArrows(ctx, this.guide, { x: p.tileX, y: p.tileY }, TILE, camera, this.time);
+    }
+
     // Ordem de desenho (ARCHITECTURE 10.5): sombras, entidades por Y (desempate: id), camada de cima.
     const drawn = this.entities
       .map((entity) => {
@@ -276,10 +346,23 @@ export class WorldManager {
         return { entity, at: { x: at.x - camera.x, y: at.y - camera.y } };
       })
       .sort((a, b) => a.at.y - b.at.y || (a.entity.id < b.entity.id ? -1 : 1));
-    for (const { entity, at } of drawn) entity.drawShadow(ctx, assets, at);
-    for (const { entity, at } of drawn) entity.draw(ctx, assets, at);
+    const visible = (e: Entity) => !(e instanceof Npc && e.hidden);
+    for (const { entity, at } of drawn) if (visible(entity)) entity.drawShadow(ctx, assets, at);
+    // Pizza na mão: com pizza na mochila, o jogador aparece carregando (atrás dele se olha para cima).
+    const state = this.options.state();
+    const carrying = "inventory" in state ? state.inventory.pizzas.length : 0;
+    for (const { entity, at } of drawn) {
+      const holding = carrying > 0 && entity === this.player;
+      const behind = this.player.mover.direction === "up";
+      if (holding && behind) drawCarriedPizzas(ctx, at, "up", carrying);
+      if (visible(entity)) entity.draw(ctx, assets, at);
+      if (holding && !behind) drawCarriedPizzas(ctx, at, this.player.mover.direction, carrying);
+    }
 
     if (this.upperCache) ctx.drawImage(this.upperCache, -camera.x, -camera.y);
+    for (const { entity, at } of drawn) {
+      if (entity instanceof Npc && entity.bubble) drawBubble(ctx, at, entity.bubble, this.time);
+    }
   }
 
   private resolve(
@@ -305,4 +388,70 @@ export class WorldManager {
       shadowId: SHADOW_ID,
     };
   }
+}
+
+/** Balão acima da cabeça de um NPC (pedido, comendo, pagar). */
+function drawBubble(
+  ctx: CanvasRenderingContext2D,
+  at: Point,
+  bubble: { text: string; color: string },
+  timeMs: number,
+): void {
+  ctx.save();
+  ctx.font = "bold 8px monospace";
+  const w = Math.max(10, Math.ceil(ctx.measureText(bubble.text).width) + 6);
+  const h = 11;
+  const bob = Math.round(Math.sin(timeMs / 250));
+  const x = Math.round(at.x + TILE / 2 - w / 2);
+  const y = Math.round(at.y - 20 + bob);
+  ctx.fillStyle = "#fffaf0";
+  ctx.strokeStyle = "#3a2418";
+  ctx.lineWidth = 1;
+  ctx.fillRect(x + 0.5, y + 0.5, w, h);
+  ctx.strokeRect(x + 0.5, y + 0.5, w, h);
+  ctx.fillRect(x + w / 2 - 1, y + h, 3, 2); // pontinha
+  ctx.fillStyle = bubble.color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(bubble.text, x + w / 2 + 0.5, y + h / 2 + 1);
+  ctx.restore();
+}
+
+/** Pizzas nas mãos do jogador (até 2 empilhadas), na frente do corpo conforme a direção. */
+function drawCarriedPizzas(
+  ctx: CanvasRenderingContext2D,
+  at: Point,
+  direction: Direction,
+  count: number,
+): void {
+  const offset: Record<Direction, [number, number]> = {
+    down: [8, 9],
+    up: [8, 3],
+    left: [2, 7],
+    right: [14, 7],
+  };
+  const [dx, dy] = offset[direction];
+  for (let i = Math.min(count, 2) - 1; i >= 0; i--) {
+    drawPizza(ctx, Math.round(at.x + dx), Math.round(at.y + dy - i * 2));
+  }
+}
+
+/** Pizza pequena em pixel art (borda, molho e queijo), centrada em (cx, cy). */
+function drawPizza(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+  ctx.save();
+  ctx.fillStyle = "#7a4a1a"; // contorno
+  ctx.fillRect(cx - 4, cy - 2, 9, 5);
+  ctx.fillRect(cx - 3, cy - 3, 7, 7);
+  ctx.fillStyle = "#e3a857"; // borda da massa
+  ctx.fillRect(cx - 3, cy - 2, 7, 5);
+  ctx.fillRect(cx - 2, cy - 3 + 1, 5, 5);
+  ctx.fillStyle = "#d2452b"; // molho
+  ctx.fillRect(cx - 2, cy - 1, 5, 3);
+  ctx.fillStyle = "#ffe08a"; // queijo
+  ctx.fillRect(cx - 1, cy - 1, 1, 1);
+  ctx.fillRect(cx + 1, cy, 1, 1);
+  ctx.fillRect(cx, cy + 1, 1, 1);
+  ctx.fillStyle = "#3c8a3c"; // manjericão
+  ctx.fillRect(cx + 1, cy - 1, 1, 1);
+  ctx.restore();
 }

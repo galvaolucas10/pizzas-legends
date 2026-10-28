@@ -63,8 +63,10 @@ export interface HarvestSpot {
   globalId: string;
   ingredientId: string;
   count: number;
-  /** "rest": volta ao descansar num forno; "never": coleta única (segredos). */
-  renew: "rest" | "never";
+  /** "rest": volta ao descansar; "visit": volta a cada visita ao mapa; "never": coleta única. */
+  renew: "rest" | "visit" | "never";
+  /** Contador de colheitas (+1 a cada colheita). */
+  countFlag?: string;
   /** Coleta especial: o pacote de recompensa é o que o jogador recebe (com XP). */
   rewardId?: string;
 }
@@ -92,6 +94,10 @@ export function harvest(
       ...save,
       world: { ...save.world, harvested: [...save.world.harvested, spot.globalId] },
     };
+  }
+  if (spot.countFlag) {
+    const n = Number(next.flags[spot.countFlag] ?? 0) + 1;
+    next = { ...next, flags: { ...next.flags, [spot.countFlag]: n } };
   }
   if (spot.rewardId) return claimReward(next, spot.rewardId, content).save;
   return addIngredients(next, [{ ingredientId: spot.ingredientId, count: spot.count }], content);

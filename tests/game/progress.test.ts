@@ -78,9 +78,9 @@ describe("eventos de progresso (F1-05)", () => {
       recipeId: "rec.margherita",
       ingredientIds: MARGHERITA,
     });
-    play([{ type: "incrementFlag", flag: "flag.ratos_derrotados", by: 2 }]);
+    play([{ type: "incrementFlag", flag: "flag.clientes_a", by: 2 }]);
     expect(session.state.quests["quest.primeiro_desafio"]!.step).toBe(2);
-    expect(objectives.at(-1)).toBe("quest.primeiro_desafio.etapa3");
+    expect(objectives.at(-1)).toBe("quest.primeiro_desafio.etapa2");
   });
 
   it("if escolhe o ramo pela condição e roda os aninhados no mesmo tick", async () => {

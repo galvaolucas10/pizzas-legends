@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 105,
   "compressionlevel": -1,
   "properties": [
     {
@@ -596,6 +596,103 @@
               "name": "toEntrance",
               "type": "string",
               "value": "estufa"
+            }
+          ]
+        },
+        {
+          "id": 101,
+          "name": "ravena",
+          "type": "npc",
+          "x": 128,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "npcId",
+              "type": "string",
+              "value": "npc.rival_ravena"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "down"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/estufa.json#ravena"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/estufa.json#ravena_rotina"
+            }
+          ]
+        },
+        {
+          "id": 102,
+          "name": "fogao1",
+          "type": "oven",
+          "x": 48,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ovenId",
+              "type": "string",
+              "value": "oven.estufa"
+            }
+          ]
+        },
+        {
+          "id": 103,
+          "name": "fogao2",
+          "type": "oven",
+          "x": 64,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ovenId",
+              "type": "string",
+              "value": "oven.estufa"
+            }
+          ]
+        },
+        {
+          "id": 104,
+          "name": "leo",
+          "type": "npc",
+          "x": 96,
+          "y": 80,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "npcId",
+              "type": "string",
+              "value": "npc.garcom_leo"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "down"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/estufa.json#leo"
             }
           ]
         }

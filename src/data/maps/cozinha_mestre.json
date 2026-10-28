@@ -62,8 +62,107 @@
       "talking": [
         {
           "condition": {
+            "all": [
+              {
+                "quest": "quest.primeiro_desafio",
+                "stepAtLeast": 1
+              },
+              {
+                "not": {
+                  "quest": "quest.primeiro_desafio",
+                  "stepAtLeast": 2
+                }
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes_a.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes.2"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "all": [
+              {
+                "quest": "quest.primeiro_desafio",
+                "stepAtLeast": 3
+              },
+              {
+                "not": {
+                  "quest": "quest.primeiro_desafio",
+                  "stepAtLeast": 4
+                }
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes_b.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes.2"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "all": [
+              {
+                "quest": "quest.primeiro_desafio",
+                "stepAtLeast": 5
+              },
+              {
+                "not": {
+                  "quest": "quest.primeiro_desafio",
+                  "stepAtLeast": 6
+                }
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes_c.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.clientes.2"
+            }
+          ]
+        },
+        {
+          "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 6
+            "stepAtLeast": 8
           },
           "events": [
             {
@@ -81,7 +180,7 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 5
+            "stepAtLeast": 7
           },
           "events": [
             {
@@ -108,7 +207,7 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 4
+            "stepAtLeast": 6
           },
           "events": [
             {
@@ -126,7 +225,7 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 3
+            "stepAtLeast": 4
           },
           "events": [
             {
@@ -158,7 +257,7 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 2
+            "stepAtLeast": 3
           },
           "events": [
             {
@@ -231,25 +330,45 @@
           "type": "stand",
           "who": "mestre",
           "direction": "left",
-          "time": 800
+          "time": 1500
+        },
+        {
+          "type": "walk",
+          "who": "mestre",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "mestre",
+          "direction": "right"
         },
         {
           "type": "stand",
           "who": "mestre",
           "direction": "up",
-          "time": 800
+          "time": 1600
         },
         {
           "type": "stand",
           "who": "mestre",
-          "direction": "right",
-          "time": 1200
+          "direction": "down",
+          "time": 900
+        },
+        {
+          "type": "walk",
+          "who": "mestre",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "mestre",
+          "direction": "left"
         },
         {
           "type": "stand",
           "who": "mestre",
           "direction": "up",
-          "time": 300
+          "time": 900
         }
       ]
     },

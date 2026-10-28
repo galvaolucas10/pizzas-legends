@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   AssetIdSchema,
+  DirectionSchema,
   EnemyIdSchema,
   FlagIdSchema,
   idOf,
@@ -10,6 +11,7 @@ import {
   RewardIdSchema,
   SkillIdSchema,
   TextKeySchema,
+  MapIdSchema,
 } from "./common";
 import { ConditionSchema } from "./conditions";
 
@@ -64,6 +66,128 @@ export const BalanceSchema = z.strictObject({
    * básica, o jogador recebe o que falta deste kit (nunca fica sem como continuar).
    */
   restKit: z.array(ItemCountSchema).optional(),
+  /**
+   * Restaurante: clientes chegam pela porta, sentam, pedem uma pizza (receita que o jogador
+   * conhece), comem e pagam. `countFlags`: contadores das etapas de "atender clientes".
+   */
+  restaurant: z
+    .strictObject({
+      mapId: MapIdSchema,
+      door: z.string().min(1),
+      seats: z
+        .array(
+          z.strictObject({
+            x: z.number().int().min(0),
+            y: z.number().int().min(0),
+            direction: DirectionSchema,
+          }),
+        )
+        .min(1),
+      maxCustomers: count,
+      firstArrivalMs: z.number().int().min(0),
+      arrivalEveryMs: z.number().int().min(0),
+      eatMs: z.number().int().min(0),
+      payCoins: z.number().int().min(0),
+      payXp: z.number().int().min(0),
+      sprites: z.array(z.string().min(1)).min(1),
+      countFlags: z.array(FlagIdSchema),
+      /**
+       * Funcionária (NPC do mapa com este id): atende sozinha, mesmo com o jogador em outro
+       * mapa, a não ser que `offFlag` (folga) esteja ligada. Fica com `cut` moedas de cada
+       * cliente; o resto é do jogador.
+       */
+      employee: z
+        .strictObject({
+          id: z.string().min(1),
+          offFlag: FlagIdSchema,
+          home: z.strictObject({ x: z.number().int(), y: z.number().int() }),
+          kitchen: z.strictObject({ x: z.number().int(), y: z.number().int() }),
+          cut: z.number().int().min(0),
+          cookMs: z.number().int().min(0),
+          actionMs: z.number().int().min(0),
+          awayStepMs: z.number().int().min(0),
+        })
+        .optional(),
+    })
+    .optional(),
+  /**
+   * Avenida: carros andando nas faixas (só cenário) e o motoboy que leva os pedidos online.
+   * Faixas em pixels de jogo (y do centro); `park` é onde a moto fica estacionada.
+   */
+  avenue: z
+    .strictObject({
+      mapId: MapIdSchema,
+      /** Onde a pista começa e termina (x em pixels de jogo): carros e moto só aparecem ali. */
+      road: z.strictObject({ fromX: z.number(), toX: z.number() }),
+      lanes: z
+        .array(
+          z.strictObject({
+            y: z.number(),
+            direction: z.union([z.literal(1), z.literal(-1)]),
+            speed: z.number().positive(),
+          }),
+        )
+        .min(1),
+      carsPerLane: z.number().int().min(0),
+      motoboy: z.string().min(1),
+      park: z.strictObject({ x: z.number().int(), y: z.number().int() }),
+      firstOrderMs: z.number().int().min(0),
+      orderEveryMs: z.number().int().min(1),
+      maxOrders: count,
+      rideMs: z.number().int().min(0),
+      pay: z.number().int().min(0),
+      xp: z.number().int().min(0),
+      addresses: z.array(z.string().min(1)).min(1),
+      /** Garçom que faz as pizzas dos pedidos online e leva ao motoboy (fica com `cut`). */
+      helper: z
+        .strictObject({ cookMs: z.number().int().min(0), cut: z.number().int().min(0) })
+        .optional(),
+    })
+    .optional(),
+  /**
+   * Outros salões com clientes (ex.: a cozinha verde): mesmas regras e pagamento do
+   * `restaurant`, com mapa, porta e lugares próprios. Sem funcionária: quem atende é o jogador.
+   */
+  extraRestaurants: z
+    .array(
+      z.strictObject({
+        mapId: MapIdSchema,
+        door: z.string().min(1),
+        seats: z
+          .array(
+            z.strictObject({
+              x: z.number().int().min(0),
+              y: z.number().int().min(0),
+              direction: DirectionSchema,
+            }),
+          )
+          .min(1),
+        maxCustomers: count,
+        /** Funcionário deste salão (mesmo formato de restaurant.employee). */
+        employee: z
+          .strictObject({
+            id: z.string().min(1),
+            offFlag: FlagIdSchema,
+            home: z.strictObject({ x: z.number().int(), y: z.number().int() }),
+            kitchen: z.strictObject({ x: z.number().int(), y: z.number().int() }),
+            cut: z.number().int().min(0),
+            cookMs: z.number().int().min(0),
+            actionMs: z.number().int().min(0),
+            awayStepMs: z.number().int().min(0),
+          })
+          .optional(),
+      }),
+    )
+    .optional(),
+  /** Loja do menu (Tab → Loja): moedas iniciais, moedas por vitória e preço de cada ingrediente. */
+  shop: z
+    .strictObject({
+      startingCoins: z.number().int().min(0),
+      /** Moedas por vitória = XP do inimigo × este fator (arredondado para baixo, mínimo 1). */
+      coinsPerEnemyXp: z.number().min(0),
+      prices: z.record(z.string(), z.number().int().min(1)),
+    })
+    .optional(),
 });
 export type Balance = z.infer<typeof BalanceSchema>;
 
@@ -273,6 +397,7 @@ export const RewardSchema = z
     id: RewardIdSchema,
     xp: z.number().int().min(0).optional(),
     skillPoints: z.number().int().min(0).optional(),
+    coins: z.number().int().min(0).optional(),
     ingredients: z.array(ItemCountSchema).optional(),
     recipes: z.array(RecipeIdSchema).optional(),
     setFlags: z.array(FlagIdSchema).optional(),
@@ -280,7 +405,12 @@ export const RewardSchema = z
   .refine(
     (r) =>
       Boolean(
-        r.xp || r.skillPoints || r.ingredients?.length || r.recipes?.length || r.setFlags?.length,
+        r.xp ||
+        r.skillPoints ||
+        r.coins ||
+        r.ingredients?.length ||
+        r.recipes?.length ||
+        r.setFlags?.length,
       ),
     "recompensa vazia",
   );
@@ -291,12 +421,25 @@ export const QuestSchema = z.strictObject({
   id: QuestIdSchema,
   kind: z.enum(["main", "side"]),
   availableWhen: ConditionSchema.optional(),
+  /** Entre as missões secundárias, a de número maior é guiada primeiro pela seta. */
+  guidePriority: z.number().int().optional(),
   steps: z
     .array(
       z.strictObject({
         objectiveKey: TextKeySchema,
         completeWhen: ConditionSchema,
         rewardId: RewardIdSchema.optional(),
+        /** Onde ir (seta no chão): o mapa e os objetos-alvo; a seta leva ao mais próximo. */
+        guide: z
+          .strictObject({
+            mapId: MapIdSchema,
+            targets: z.array(z.string().min(1)).min(1),
+            /** A etapa pede pizzas (batalha, cliente, entrega): sem nenhuma, a seta vai ao forno. */
+            needsPizza: z.boolean().optional(),
+            /** Quem se enfrenta na etapa (o balcão sugere a pizza forte contra ele). */
+            enemyId: EnemyIdSchema.optional(),
+          })
+          .optional(),
       }),
     )
     .min(1),

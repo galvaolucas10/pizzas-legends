@@ -5,7 +5,7 @@
   },
   "etapa2_concluida": {
     "quest": "quest.primeiro_desafio",
-    "stepAtLeast": 2
+    "stepAtLeast": 3
   },
   "ponte_fechada": {
     "not": {

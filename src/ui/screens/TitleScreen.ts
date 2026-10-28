@@ -83,11 +83,21 @@ export class TitleScreen {
     field.maxLength = this.o.maxNameLength;
     field.value = "Nico";
     field.setAttribute("aria-label", "Nome do aprendiz");
+    const start = () => {
+      if (this.done) return;
+      this.done = true;
+      this.o.onNewGame(field.value.trim() || "Nico");
+    };
+    const startButton = h(doc, "button", "title__button", "Começar");
+    startButton.type = "button";
+    startButton.addEventListener("click", start);
+    const backButton = h(doc, "button", "title__button title__button--back", "Voltar");
+    backButton.type = "button";
+    backButton.addEventListener("click", () => this.showMenu());
     field.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        this.done = true;
-        this.o.onNewGame(field.value.trim() || "Nico");
+        start();
       } else if (e.key === "Escape") {
         e.preventDefault();
         this.showMenu();
@@ -97,8 +107,10 @@ export class TitleScreen {
     this.body.replaceChildren(
       h(doc, "p", "panel__text", "Qual é o nome do aprendiz?"),
       field,
+      h(doc, "div", "title__buttons"),
       h(doc, "p", "panel__hint", "Enter confirma · Esc volta"),
     );
+    this.body.querySelector(".title__buttons")?.append(startButton, backButton);
     field.focus();
     field.select();
   }

@@ -94,10 +94,11 @@ export const dialogueHandlers: HandlerTable = {
       ctx.warn(`message "${event.textKey}" sem caixa de diálogo`);
       return DONE;
     }
-    dialogue.show(
-      ctx.text(event.textKey),
-      event.speaker ? ctx.text(`${event.speaker}.name`) : undefined,
-    );
+    let text = ctx.text(event.textKey);
+    for (const [name, value] of Object.entries(event.vars ?? {})) {
+      text = text.split(`{${name}}`).join(value);
+    }
+    dialogue.show(text, event.speaker ? ctx.text(`${event.speaker}.name`) : undefined);
     return {
       update(dt) {
         dialogue.update(dt);
@@ -223,6 +224,19 @@ export const progressHandlers: HandlerTable = {
     }
     return awaitThen<void>(
       (done) => open(event.ovenId, () => done()),
+      () => undefined,
+      sub,
+    );
+  },
+
+  openShop(_event, ctx, sub) {
+    const open = ctx.openShop;
+    if (!open) {
+      ctx.warn("openShop sem tela de loja");
+      return DONE;
+    }
+    return awaitThen<void>(
+      (done) => open(() => done()),
       () => undefined,
       sub,
     );

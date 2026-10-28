@@ -6,6 +6,7 @@ import { AssetLoader } from "../engine/assets/AssetLoader";
 import { GameLoop } from "../engine/GameLoop";
 import { InputManager } from "../engine/input/InputManager";
 import { attachKeyboard } from "../engine/input/KeyboardSource";
+import { TILE } from "../engine/render/TileLayerCache";
 import { attachScreenScaler, VIEW_H, VIEW_W } from "../engine/render/viewport";
 import { SceneStack } from "../engine/SceneStack";
 import type { BattleOutcome, BattleRequest } from "../game/events/EventRunner";
@@ -211,6 +212,16 @@ export function createGame(options: GameOptions): GameHandle {
                 content,
                 ovenId,
                 input: input.reader("menu"),
+                orders: () => {
+                  // Pedidos do salão (null = a Nina cuida) + pedidos online do motoboy.
+                  const salon = worldScene.restaurant ? worldScene.restaurant.pendingOrders() : [];
+                  const online = [
+                    ...(worldScene.avenue?.pendingOrders() ?? []),
+                    ...worldScene.restaurants.slice(1).flatMap((r) => r.pendingOrders() ?? []),
+                  ];
+                  if (salon === null) return online.length ? online : null;
+                  return [...salon, ...online];
+                },
                 save: () => {
                   const work = saves.saveManual();
                   hud?.saving(work);
@@ -220,6 +231,23 @@ export function createGame(options: GameOptions): GameHandle {
             onClose,
           ),
         autosave: () => void saves.autosave(),
+        openShop: (onClose) =>
+          pushOverlay(
+            scenes,
+            input,
+            "menu",
+            () =>
+              new PauseMenu({
+                doc,
+                root: ui.element,
+                session,
+                content,
+                input: input.reader("menu"),
+                iconUrl,
+                shopOnly: { title: "Mercadinho da Lia" },
+              }),
+            onClose,
+          ),
         openMenu: () =>
           pushOverlay(scenes, input, "menu", () => {
             const menu = new PauseMenu({
@@ -234,6 +262,21 @@ export function createGame(options: GameOptions): GameHandle {
           }),
         onMapLoaded: () => void saves.autosave(),
       });
+      cleanups.push(attachMouse(container, canvas, input, world, worldScene));
+      // Celular: sem teclado, um botão na tela abre o menu (o mesmo do Tab).
+      const menuButton = document.createElement("button");
+      menuButton.type = "button";
+      menuButton.className = "touch-menu";
+      menuButton.textContent = "☰ Menu";
+      menuButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (input.activeContext !== "world") return;
+        input.press("menu");
+        input.release("menu");
+      });
+      menuButton.addEventListener("pointerdown", (e) => e.stopPropagation());
+      container.append(menuButton);
+      cleanups.push(() => menuButton.remove());
 
       // ---------- Título (F1-18): Novo jogo / Continuar ----------
       let worldOnStack = false;
@@ -303,5 +346,48 @@ export function createGame(options: GameOptions): GameHandle {
       cleanups.forEach((cleanup) => cleanup());
       cleanups.length = 0;
     },
+  };
+}
+
+/**
+ * Mouse: clique esquerdo no mapa anda (ou vai até quem foi clicado e interage); clique na
+ * caixa de diálogo passa a fala; botão direito é "voltar". Os itens de menu tratam o próprio clique.
+ */
+function attachMouse(
+  container: HTMLElement,
+  canvas: HTMLCanvasElement,
+  input: InputManager,
+  world: WorldManager,
+  scene: WorldScene,
+): () => void {
+  const tap = (action: "confirm" | "cancel") => {
+    input.press(action);
+    input.release(action);
+  };
+  const onPointerDown = (e: PointerEvent) => {
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement | null;
+    if (target?.closest(".menu, input, button, .debug-panel")) return;
+    if (target?.closest(".dialogue") || input.activeContext === "dialogue") {
+      tap("confirm");
+      return;
+    }
+    if (input.activeContext !== "world") return;
+    const rect = canvas.getBoundingClientRect();
+    const gx = ((e.clientX - rect.left) / rect.width) * VIEW_W;
+    const gy = ((e.clientY - rect.top) / rect.height) * VIEW_H;
+    if (gx < 0 || gy < 0 || gx >= VIEW_W || gy >= VIEW_H) return;
+    const camera = world.camera(1);
+    scene.clickTile(Math.floor((gx + camera.x) / TILE), Math.floor((gy + camera.y) / TILE));
+  };
+  const onContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    tap("cancel");
+  };
+  container.addEventListener("pointerdown", onPointerDown);
+  container.addEventListener("contextmenu", onContextMenu);
+  return () => {
+    container.removeEventListener("pointerdown", onPointerDown);
+    container.removeEventListener("contextmenu", onContextMenu);
   };
 }

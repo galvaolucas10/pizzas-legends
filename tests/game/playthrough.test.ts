@@ -30,6 +30,40 @@ function cook(s: GameSession, recipeId: string, n: number): void {
   }
 }
 
+/** Ingredientes de cada receita, para comprar na loja quando faltar. */
+const SHOPPING: Record<string, string[]> = {
+  "rec.margherita": ["ing.farinha", "ing.molho_tomate", "ing.mussarela"],
+  "rec.quatro_queijos": ["ing.farinha", "ing.mussarela", "ing.queijo_cabra"],
+  "rec.brasa": ["ing.farinha", "ing.molho_apimentado", "ing.mussarela"],
+};
+
+/** Atende um cliente como o restaurante: entrega a pizza pedida (prepara ou compra se faltar) e recebe. */
+function serve(s: GameSession, recipeId: string): void {
+  const has = () => s.state.inventory.pizzas.find((p) => p.recipeId === recipeId);
+  if (!has()) cook(s, recipeId, 1);
+  if (!has()) {
+    for (const ingredientId of SHOPPING[recipeId]!)
+      s.dispatch({ type: "buyIngredient", ingredientId, count: 1 });
+    cook(s, recipeId, 1);
+  }
+  const pizza = has();
+  expect(pizza, `sem ${recipeId}`).toBeDefined();
+  s.dispatch({ type: "takePizza", pizzaId: pizza!.id });
+  s.dispatch({ type: "customerPaid" });
+}
+
+/** Deixa uma pizza da receita pronta na mochila (prepara; compra o que faltar). */
+function serveReady(s: GameSession, recipeId: string): void {
+  const has = () => s.state.inventory.pizzas.some((p) => p.recipeId === recipeId);
+  if (!has()) cook(s, recipeId, 1);
+  if (!has()) {
+    for (const ingredientId of SHOPPING[recipeId]!)
+      s.dispatch({ type: "buyIngredient", ingredientId, count: 1 });
+    cook(s, recipeId, 1);
+  }
+  expect(has(), `sem ${recipeId}`).toBe(true);
+}
+
 function suggest(s: GameSession, recipeId: string): string[] {
   return suggestIngredients(s.state as SaveData, recipeId, C);
 }
@@ -39,41 +73,30 @@ describe("jogada completa da demo", () => {
     const s = new GameSession(C, newGame(C, { name: "Nico", seed: 42 }));
     cook(s, "rec.margherita", 1);
     expect(s.state.quests[Q]!.step).toBe(1);
-    cook(s, "rec.margherita", 3);
-    for (let i = 0; i < 2; i++) {
-      expect(fight(s, "enemy.rato_despensa")).toBe("victory");
-      s.dispatch({ type: "incrementFlag", flag: "flag.ratos_derrotados", by: 1 });
-    }
+    serve(s, "rec.margherita");
+    serve(s, "rec.margherita");
     expect(s.state.quests[Q]!.step).toBe(2);
-    cook(s, "rec.margherita", 4);
-    cook(s, "rec.quatro_queijos", 4);
-    for (let i = 0; i < 3; i++) {
-      const r = fight(s, "enemy.vespa_pimenta");
-      expect(r).toBe("victory");
-      s.dispatch({ type: "incrementFlag", flag: "flag.vespas_derrotadas", by: 1 });
-      cook(s, "rec.margherita", 2);
-    }
+    // Nível 3: Quatro Queijos e Brasa (compra o que faltar).
+    serveReady(s, "rec.quatro_queijos");
+    serveReady(s, "rec.brasa");
     expect(s.state.quests[Q]!.step).toBe(3);
+    serve(s, "rec.quatro_queijos");
+    serve(s, "rec.margherita");
+    expect(s.state.quests[Q]!.step).toBe(4);
+    expect(s.state.flags["flag.ponte_aberta"]).toBe(true);
     s.dispatch({ type: "setFlag", flag: "flag.mestre_explicou_arvore", value: true });
-    cook(s, "rec.quatro_queijos", 4);
-    cook(s, "rec.margherita", 4);
-    cook(s, "rec.brasa", 4);
-    const snapshot = {
-      level: s.state.characters[0]!.level,
-      pizzas: s.state.inventory.pizzas.map((p) => `${p.recipeId}:Q${p.quality}`),
-      stock: s.state.inventory.ingredients,
-    };
-    const pick = (r: string, n: number) =>
-      s.state.inventory.pizzas
-        .filter((p) => p.recipeId === r)
-        .slice(0, n)
-        .map((p) => p.id);
-    // Cesta como o guia sugere: Quatro Queijos (fase Defumado) + Margherita (fase Picante).
-    const result = fight(s, "enemy.rival_ravena", [
-      ...pick("rec.quatro_queijos", 2),
-      ...pick("rec.margherita", 2),
-    ]);
-    expect({ result, ...snapshot }).toMatchObject({ result: "victory" });
+    expect(s.state.quests[Q]!.step).toBe(5);
+    serve(s, "rec.brasa");
+    serve(s, "rec.margherita");
+    expect(s.state.quests[Q]!.step).toBe(6);
+    // Nível 7: a Ravena prova uma pizza (como na fala dela).
+    serveReady(s, "rec.margherita");
+    const pizza = s.state.inventory.pizzas[0]!;
+    s.dispatch({ type: "takePizza", pizzaId: pizza.id });
+    s.dispatch({ type: "setFlag", flag: "flag.ravena_derrotada", value: true });
+    expect(s.state.quests[Q]!.step).toBe(7);
+    s.dispatch({ type: "setFlag", flag: "flag.voltou_vila", value: true });
+    expect(s.questStatus(Q)).toMatch(/completed|rewarded/);
   });
 
   it("o pedido do Lenhador é possível: Quatro Queijos + Azeite Dourado chega à qualidade 4", () => {

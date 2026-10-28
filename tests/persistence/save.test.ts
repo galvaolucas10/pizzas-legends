@@ -138,3 +138,55 @@ describe("save local (F1-16, DATA_MODELS 7.2 e 8.2)", () => {
     expect(loaded.status === "ok" && loaded.file.data.characters[0]!.level).toBe(1);
   });
 });
+
+describe("migração v4 (clientes no salão, sem vespas)", () => {
+  it("renumera a etapa da missão principal", async () => {
+    const { migrate } = await import("../../src/persistence/migrations");
+    const at = (step: number) =>
+      (
+        migrate({ quests: { "quest.primeiro_desafio": { status: "active", step } } }, 3) as {
+          quests: Record<string, { step: number }>;
+        }
+      ).quests["quest.primeiro_desafio"]!.step;
+    // Antigas: 0 pizza, 1 ratos, 2 vespas, 3 mestre, 4 ravena, 5 voltar.
+    expect([0, 1, 2, 3, 4, 5].map(at)).toEqual([0, 2, 3, 4, 6, 7]);
+  });
+});
+
+describe("migração v5 (sem bosque e clareira)", () => {
+  it("quem estava no bosque volta para a cozinha; forno da clareira vira o da estufa", async () => {
+    const { migrate } = await import("../../src/persistence/migrations");
+    const out = migrate(
+      {
+        world: {
+          mapId: "map.bosque",
+          position: { x: 3, y: 3, direction: "up" },
+          lastOvenId: "oven.clareira",
+          defeatedEnemies: ["map.bosque/fungo1", "map.despensa/rato1"],
+          harvested: ["map.bosque/manjericao1"],
+        },
+      },
+      4,
+    ) as { world: Record<string, unknown> };
+    expect(out.world).toEqual({
+      mapId: "map.cozinha_mestre",
+      position: { x: 5, y: 6, direction: "down" },
+      lastOvenId: "oven.estufa",
+      defeatedEnemies: ["map.despensa/rato1"],
+      harvested: [],
+    });
+  });
+});
+
+describe("migração v7 (sem o nível do garçom)", () => {
+  it("quem estava no nível do Erio (antes o 2º) continua nele (agora o 1º)", async () => {
+    const { migrate } = await import("../../src/persistence/migrations");
+    const at = (step: number) =>
+      (
+        migrate({ quests: { "quest.desafios": { status: "active", step } } }, 6) as {
+          quests: Record<string, { step: number }>;
+        }
+      ).quests["quest.desafios"]!.step;
+    expect([0, 1, 2, 3].map(at)).toEqual([0, 0, 1, 2]);
+  });
+});

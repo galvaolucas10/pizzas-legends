@@ -57,11 +57,6 @@
       "x": 25,
       "y": 6,
       "direction": "down"
-    },
-    "bosque": {
-      "x": 32,
-      "y": 11,
-      "direction": "left"
     }
   },
   "objects": [
@@ -87,14 +82,6 @@
       "y": 5,
       "kind": "door",
       "toMap": "map.praca",
-      "toEntrance": "vila"
-    },
-    {
-      "id": "saida_bosque",
-      "x": 33,
-      "y": 11,
-      "kind": "door",
-      "toMap": "map.bosque",
       "toEntrance": "vila"
     },
     {
@@ -210,41 +197,83 @@
       ],
       "behaviorLoop": [
         {
-          "type": "stand",
+          "type": "walk",
           "who": "rita",
-          "direction": "down",
-          "time": 2200
+          "direction": "left"
         },
         {
           "type": "walk",
           "who": "rita",
-          "direction": "down"
+          "direction": "left"
         },
         {
           "type": "stand",
           "who": "rita",
-          "direction": "left",
+          "direction": "down",
           "time": 1600
         },
         {
           "type": "walk",
           "who": "rita",
-          "direction": "up"
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "rita",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "rita",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "rita",
+          "direction": "right"
         },
         {
           "type": "stand",
           "who": "rita",
-          "direction": "right",
-          "time": 1400
+          "direction": "up",
+          "time": 1600
+        },
+        {
+          "type": "walk",
+          "who": "rita",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "rita",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "rita",
+          "direction": "down",
+          "time": 2000
         }
       ]
     },
     {
-      "id": "bau_vila",
-      "x": 4,
+      "id": "motoboy",
+      "x": 8,
       "y": 10,
-      "kind": "chest",
-      "rewardId": "rew.bau_vila"
+      "direction": "down",
+      "kind": "npc",
+      "npcId": "npc.motoboy_dudu",
+      "talking": [
+        {
+          "events": [
+            {
+              "type": "message",
+              "speaker": "npc.motoboy_dudu",
+              "textKey": "motoboy.sem_pedido"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

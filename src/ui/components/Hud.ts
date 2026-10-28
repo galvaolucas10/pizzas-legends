@@ -45,6 +45,7 @@ export class Hud {
           items.map((i) => `+${i.count} ${this.text(`${i.ingredientId}.name`)}`).join(" · "),
         ),
       ),
+      s.on("notice", (message) => this.toast(message)),
       s.on("skillLearned", (id) => this.toast(`Nova habilidade: ${this.text(`${id}.name`)}!`)),
       s.on("recipeLearned", (id) => this.toast(`Nova receita: ${this.text(`${id}.name`)}!`)),
       s.on("questEvent", (e) => {
@@ -63,14 +64,24 @@ export class Hud {
     if (!char) return;
     const toNext = this.session.xpToNextLevel;
     const xp = toNext === null ? "nível máximo" : `${char.xp}/${char.xp + toNext} XP`;
-    this.nameEl.textContent = `${char.name} · Nv ${char.level} · ${xp}`;
+    this.nameEl.textContent = `${char.name} · Nv ${char.level} · ${xp} · ${this.session.coins} moedas`;
     this.hp.set(this.session.maxHp, this.session.maxHp);
-    const objective = this.session.objective;
-    const progress = this.session.objectiveProgress;
+    // O HUD mostra o foco (para onde a seta leva): com a Nina cuidando dos clientes,
+    // é o próximo desafio; a linha do salão lembra que a etapa de clientes anda sozinha.
+    const focus = this.session.focus;
+    const progress = focus ? this.session.stepProgress(focus.questId) : null;
     const count = progress ? ` (${progress.done}/${progress.total})` : "";
-    this.objectiveEl.hidden = !objective;
-    this.objectiveEl.textContent = objective
-      ? `◆ ${this.text(objective)}${count}
+    const main = this.session.objectiveProgress;
+    const salon = this.session.customersDelegated
+      ? `
+Salão: a Nina está atendendo os clientes${main ? ` (${main.done}/${main.total})` : ""}`
+      : "";
+    const oven = this.session.needsPizzas
+      ? "\n→ Sem pizzas: prepare algumas no forno primeiro (a seta leva até lá)"
+      : "";
+    this.objectiveEl.hidden = !focus;
+    this.objectiveEl.textContent = focus
+      ? `◆ ${this.text(focus.objectiveKey)}${count}${oven}${salon}
 Tab: menu → Missões para o passo a passo`
       : "";
   }

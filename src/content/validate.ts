@@ -97,6 +97,31 @@ export function validateContent(content: ContentRegistry): string[] {
   for (const item of b.restKit ?? []) {
     ref(content.ingredients, item.ingredientId, "ingrediente", "balance.json#restKit");
   }
+  if (b.avenue) {
+    const map = content.maps[b.avenue.mapId];
+    if (!map) fail("balance.json#avenue", `mapa inexistente "${b.avenue.mapId}"`);
+    else if (!map.objects.some((o) => o.kind === "npc" && o.id === b.avenue!.motoboy))
+      fail("balance.json#avenue", `motoboy "${b.avenue.motoboy}" não está em ${b.avenue.mapId}`);
+  }
+  for (const extra of b.extraRestaurants ?? []) {
+    const map = content.maps[extra.mapId];
+    if (!map) fail("balance.json#extraRestaurants", `mapa inexistente "${extra.mapId}"`);
+    else if (!map.objects.some((o) => o.kind === "door" && o.id === extra.door))
+      fail("balance.json#extraRestaurants", `porta "${extra.door}" não existe em ${extra.mapId}`);
+  }
+  if (b.restaurant) {
+    const r = b.restaurant;
+    const map = content.maps[r.mapId];
+    if (!map) fail("balance.json#restaurant", `mapa inexistente "${r.mapId}"`);
+    else if (!map.objects.some((o) => o.kind === "door" && o.id === r.door))
+      fail("balance.json#restaurant", `porta "${r.door}" não existe em ${r.mapId}`);
+    for (const id of r.sprites) image(id, "balance.json#restaurant");
+    if (r.employee && map && !map.objects.some((o) => o.kind === "npc" && o.id === r.employee!.id))
+      fail("balance.json#restaurant", `funcionária "${r.employee.id}" não está em ${r.mapId}`);
+  }
+  for (const ingredientId of Object.keys(b.shop?.prices ?? {})) {
+    ref(content.ingredients, ingredientId, "ingrediente", "balance.json#shop.prices");
+  }
   if (b.xpTable[0] !== 0) fail("balance.json", "xpTable deve começar em 0 (nível 1)");
   if (b.xpTable.some((xp, i) => i > 0 && xp <= b.xpTable[i - 1]!)) {
     fail("balance.json", "xpTable deve ser estritamente crescente");
@@ -246,6 +271,16 @@ export function validateContent(content: ContentRegistry): string[] {
       if (!hasText(step.objectiveKey)) fail(where, `texto inexistente "${step.objectiveKey}"`);
       checkCondition(step.completeWhen, where);
       if (step.rewardId) ref(content.rewards, step.rewardId, "recompensa", where);
+      if (step.guide) {
+        if (step.guide.enemyId) ref(content.enemies, step.guide.enemyId, "inimigo", where);
+        const map = content.maps[step.guide.mapId];
+        if (!map) fail(where, `guia: mapa inexistente "${step.guide.mapId}"`);
+        for (const id of step.guide.targets) {
+          if (id.startsWith("@")) continue; // alvo especial (ex.: @clientes do restaurante)
+          if (map && !map.objects.some((o) => o.id === id))
+            fail(where, `guia: objeto "${id}" não existe em ${map.id}`);
+        }
+      }
     });
   }
   for (const char of Object.values(content.characters)) {
@@ -275,7 +310,9 @@ export function validateContent(content: ContentRegistry): string[] {
     for (const object of map.objects) {
       if (object.kind !== "oven") continue;
       const other = ovens.get(object.ovenId);
-      if (other) fail(map.id, `forno "${object.ovenId}" repetido (já existe em ${other})`);
+      // Um forno grande (ex.: balcão de 3 tiles) repete o id no mesmo mapa; em outro mapa, não.
+      if (other && other !== map.id)
+        fail(map.id, `forno "${object.ovenId}" repetido (já existe em ${other})`);
       ovens.set(object.ovenId, map.id);
     }
   }
@@ -424,6 +461,8 @@ const WALL_ALLOWED: ReadonlySet<MapObject["kind"]> = new Set([
   "trigger",
   // Fornos costumam ser parte da arte (balcão, fogão): ficam sobre a colisão e respondem ao lado.
   "oven",
+  // Coletas em canteiros (a planta é parte da arte): também respondem ao lado.
+  "harvest",
 ]);
 
 function isFree(map: MapDef, x: number, y: number): boolean {

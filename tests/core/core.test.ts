@@ -56,14 +56,14 @@ describe("rng (F1-02)", () => {
 });
 
 describe("novo jogo (F1-02)", () => {
-  it("começa no nível 1 com a Margherita, ingredientes iniciais e a missão principal ativa", () => {
+  it("começa no nível 1 com 3 receitas, ingredientes iniciais e a missão principal ativa", () => {
     const save = fresh();
     const char = activeCharacter(save);
     expect([char.name, char.level, char.xp, char.knownRecipes]).toEqual([
       "Nico",
       1,
       0,
-      ["rec.margherita"],
+      ["rec.margherita", "rec.quatro_queijos", "rec.brasa"],
     ]);
     expect(save.inventory.ingredients).toEqual({
       "ing.farinha": 1,
@@ -195,7 +195,7 @@ describe("missões (F1-05)", () => {
     expect(result.save.quests["quest.primeiro_desafio"]).toEqual({ status: "active", step: 1 });
     expect(result.save.inventory.ingredients["ing.farinha"]).toBe(3);
     expect(result.events.map((e) => e.type)).toContain("questStepCompleted");
-    expect(currentObjective(result.save, C)).toBe("quest.primeiro_desafio.etapa2");
+    expect(currentObjective(result.save, C)).toBe("quest.primeiro_desafio.clientes_a");
     // Rodar de novo não entrega nada a mais.
     expect(updateQuests(result.save, C).save).toEqual(result.save);
   });
@@ -284,9 +284,9 @@ describe("preparo (F1-07, GDD 5.4)", () => {
   it("todos os erros de preparo", () => {
     const save = fresh();
     const char = activeCharacter(save);
-    expect(previewPizza("rec.brasa", [], char, C)).toEqual({
+    expect(previewPizza("rec.defumada", [], char, C)).toEqual({
       kind: "recipeUnknown",
-      recipeId: "rec.brasa",
+      recipeId: "rec.defumada",
     });
     expect(previewPizza("rec.margherita", ["ing.farinha", "ing.mussarela"], char, C)).toEqual({
       kind: "missingIngredient",
@@ -447,10 +447,10 @@ describe("nunca travar sem ingredientes", () => {
 });
 
 describe("contagem do objetivo", () => {
-  it("mostra quantos ratos faltam na etapa 2", () => {
+  it("mostra quantos clientes faltam na etapa 2", () => {
     let save = advanceQuest(fresh(), "quest.primeiro_desafio", 1).save;
     expect(objectiveProgress(save, C)).toEqual({ done: 0, total: 2 });
-    save = { ...save, flags: { ...save.flags, "flag.ratos_derrotados": 1 } };
+    save = { ...save, flags: { ...save.flags, "flag.clientes_a": 1 } };
     expect(objectiveProgress(save, C)).toEqual({ done: 1, total: 2 });
     expect(objectiveProgress(fresh(), C)).toBeNull(); // etapa 1 não tem contagem
   });

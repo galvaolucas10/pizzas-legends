@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 101,
+  "nextobjectid": 108,
   "compressionlevel": -1,
   "properties": [
     {
@@ -801,20 +801,30 @@
           ]
         },
         {
-          "id": 100,
-          "name": "bau_salao",
-          "type": "chest",
-          "x": 192,
-          "y": 160,
+          "id": 107,
+          "name": "nina",
+          "type": "npc",
+          "x": 144,
+          "y": 80,
           "width": 16,
           "height": 16,
           "rotation": 0,
           "visible": true,
           "properties": [
             {
-              "name": "rewardId",
+              "name": "npcId",
               "type": "string",
-              "value": "rew.bau_sotao"
+              "value": "npc.funcionaria_nina"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "down"
+            },
+            {
+              "name": "script",
+              "type": "string",
+              "value": "dialogues/salao.json#nina"
             }
           ]
         }

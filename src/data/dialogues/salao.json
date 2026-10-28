@@ -25,5 +25,23 @@
     { "type": "walk", "who": "garcom", "direction": "left" },
     { "type": "walk", "who": "garcom", "direction": "left" },
     { "type": "stand", "who": "garcom", "direction": "up", "time": 1500 }
+  ],
+  "nina": [
+    {
+      "condition": { "flag": "flag.nina_folga" },
+      "events": [
+        { "type": "face", "who": "nina", "towards": "player" },
+        { "type": "message", "speaker": "npc.funcionaria_nina", "textKey": "dlg.nina.comecar.1" },
+        { "type": "message", "speaker": "npc.funcionaria_nina", "textKey": "dlg.nina.comecar.2" },
+        { "type": "setFlag", "flag": "flag.nina_folga", "value": false }
+      ]
+    },
+    {
+      "events": [
+        { "type": "face", "who": "nina", "towards": "player" },
+        { "type": "message", "speaker": "npc.funcionaria_nina", "textKey": "dlg.nina.parar.1" },
+        { "type": "setFlag", "flag": "flag.nina_folga", "value": true }
+      ]
+    }
   ]
 }

@@ -1,5 +1,6 @@
 import type { ContentRegistry } from "../content/registry";
-import { evaluateCondition } from "./conditions";
+import { evaluateCondition, questStatus } from "./conditions";
+import { isEmployeeWorking } from "./restaurant";
 import { claimReward } from "./rewards";
 import type { SaveData } from "./types";
 
@@ -91,6 +92,54 @@ export function currentObjective(save: SaveData, content: ContentRegistry): stri
     if (step) return step.objectiveKey;
   }
   return null;
+}
+
+export interface QuestFocus {
+  questId: string;
+  objectiveKey: string;
+  guide: { mapId: string; targets: string[]; needsPizza?: boolean; enemyId?: string } | null;
+}
+
+/**
+ * Para onde a seta e o HUD levam agora: a missão principal; mas a etapa "atender clientes"
+ * fica com a funcionária quando ela está trabalhando, e então o foco vai para a próxima
+ * missão secundária ativa ou disponível (ex.: os níveis), pela `guidePriority`.
+ */
+export function currentFocus(save: SaveData, content: ContentRegistry): QuestFocus | null {
+  const delegated = isEmployeeWorking(save, content);
+  const candidates = Object.values(content.quests)
+    .map((quest, order) => ({ quest, order, status: questStatus(save, quest.id, content) }))
+    .filter((c) => c.status === "active" || c.status === "available")
+    .sort(
+      (a, b) =>
+        (a.quest.kind === "main" ? 0 : 1) - (b.quest.kind === "main" ? 0 : 1) ||
+        (b.quest.guidePriority ?? 0) - (a.quest.guidePriority ?? 0) ||
+        a.order - b.order,
+    );
+  let fallback: QuestFocus | null = null;
+  for (const { quest, status } of candidates) {
+    const step = quest.steps[status === "active" ? save.quests[quest.id]!.step : 0];
+    if (!step) continue;
+    const focus = { questId: quest.id, objectiveKey: step.objectiveKey, guide: step.guide ?? null };
+    // Missão secundária ainda não começada só entra no foco se tiver para onde guiar.
+    if (status === "available" && !focus.guide) continue;
+    if (delegated && step.guide?.targets.includes("@clientes")) {
+      fallback ??= focus;
+      continue;
+    }
+    return focus;
+  }
+  return fallback;
+}
+
+/** A etapa atual da missão principal é atender clientes e a funcionária está cuidando dela. */
+export function customersDelegated(save: SaveData, content: ContentRegistry): boolean {
+  if (!isEmployeeWorking(save, content)) return false;
+  return Object.values(content.quests).some((quest) => {
+    const state = save.quests[quest.id];
+    if (quest.kind !== "main" || state?.status !== "active") return false;
+    return Boolean(quest.steps[state.step]?.guide?.targets.includes("@clientes"));
+  });
 }
 
 /**

@@ -30,6 +30,8 @@ export interface EventContext {
   isTrue?(condition: Condition): boolean;
   /** Abre a tela do forno; `onClose` é chamado ao sair dela (F1-08). */
   openOven?(ovenId: string, onClose: () => void): void;
+  /** Abre a loja (mercadinho); `onClose` é chamado ao sair dela. */
+  openShop?(onClose: () => void): void;
   /** Empilha a batalha; `onEnd` recebe o resultado quando ela fecha (F1-13). */
   startBattle?(request: BattleRequest, onEnd: (outcome: BattleOutcome) => void): void;
   /** Pede um autosave (o SaveSystem decide como gravar). */

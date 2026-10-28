@@ -5,6 +5,10 @@
     "steps": [
       {
         "objectiveKey": "quest.primeiro_desafio.etapa1",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao2"]
+        },
         "completeWhen": {
           "hasPizza": {
             "recipeId": "rec.margherita"
@@ -13,36 +17,92 @@
         "rewardId": "rew.primeiro_desafio_etapa1"
       },
       {
-        "objectiveKey": "quest.primeiro_desafio.etapa2",
+        "objectiveKey": "quest.primeiro_desafio.clientes_a",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
         "completeWhen": {
-          "flag": "flag.ratos_derrotados",
+          "flag": "flag.clientes_a",
           "atLeast": 2
+        }
+      },
+      {
+        "objectiveKey": "quest.primeiro_desafio.etapa2",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.quatro_queijos"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.brasa"
+              }
+            }
+          ]
         },
         "rewardId": "rew.primeiro_desafio_etapa2"
       },
       {
-        "objectiveKey": "quest.primeiro_desafio.etapa3",
+        "objectiveKey": "quest.primeiro_desafio.clientes_b",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
         "completeWhen": {
-          "flag": "flag.vespas_derrotadas",
-          "atLeast": 3
+          "flag": "flag.clientes_b",
+          "atLeast": 2
         },
         "rewardId": "rew.primeiro_desafio_etapa3"
       },
       {
         "objectiveKey": "quest.primeiro_desafio.etapa4",
+        "guide": {
+          "mapId": "map.cozinha_mestre",
+          "targets": ["mestre"]
+        },
         "completeWhen": {
           "flag": "flag.mestre_explicou_arvore"
         },
         "rewardId": "rew.primeiro_desafio_etapa4"
       },
       {
+        "objectiveKey": "quest.primeiro_desafio.clientes_c",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
+        "completeWhen": {
+          "flag": "flag.clientes_c",
+          "atLeast": 2
+        }
+      },
+      {
         "objectiveKey": "quest.primeiro_desafio.etapa5",
+        "guide": {
+          "mapId": "map.estufa",
+          "targets": ["ravena"],
+          "needsPizza": true
+        },
         "completeWhen": {
           "flag": "flag.ravena_derrotada"
         }
       },
       {
         "objectiveKey": "quest.primeiro_desafio.etapa6",
+        "guide": {
+          "mapId": "map.cozinha_mestre",
+          "targets": ["mestre"]
+        },
         "completeWhen": {
           "flag": "flag.voltou_vila"
         },
@@ -55,15 +115,65 @@
     "kind": "side",
     "availableWhen": {
       "quest": "quest.primeiro_desafio",
-      "stepAtLeast": 2
+      "stepAtLeast": 3
     },
     "steps": [
       {
         "objectiveKey": "quest.pedido_lenhador.etapa1",
+        "guide": {
+          "mapId": "map.praca",
+          "targets": ["bento"],
+          "needsPizza": true
+        },
         "completeWhen": {
           "flag": "flag.pizza_entregue_bento"
         },
         "rewardId": "rew.pedido_lenhador"
+      }
+    ]
+  },
+  {
+    "id": "quest.horta_neon",
+    "kind": "side",
+    "guidePriority": 2,
+    "availableWhen": {
+      "quest": "quest.primeiro_desafio",
+      "stepAtLeast": 1
+    },
+    "steps": [
+      {
+        "objectiveKey": "quest.horta_neon.etapa1",
+        "guide": {
+          "mapId": "map.praca",
+          "targets": ["tito"]
+        },
+        "completeWhen": {
+          "flag": "flag.tito_horta"
+        }
+      },
+      {
+        "objectiveKey": "quest.horta_neon.etapa2",
+        "guide": {
+          "mapId": "map.praca",
+          "targets": ["horta1", "horta2", "horta3", "horta4", "horta5"]
+        },
+        "completeWhen": {
+          "flag": "flag.colheitas_neon",
+          "atLeast": 3
+        },
+        "rewardId": "rew.horta_colheita"
+      },
+      {
+        "objectiveKey": "quest.horta_neon.etapa3",
+        "guide": {
+          "mapId": "map.praca",
+          "targets": ["tito"],
+          "needsPizza": true
+        },
+        "completeWhen": {
+          "flag": "flag.tito_pizza"
+        },
+        "rewardId": "rew.horta_pizza"
       }
     ]
   }

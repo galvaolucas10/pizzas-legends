@@ -69,14 +69,7 @@ export class Menu {
     if (input.wasPressed("down")) return this.move(1);
     if (input.wasPressed("confirm")) {
       input.consume("confirm");
-      const item = this.focused;
-      if (!item) return false;
-      if (item.disabled) {
-        if (item.reason) this.onRefuse?.(item.reason);
-        return true;
-      }
-      item.onSelect?.();
-      return true;
+      return this.choose();
     }
     if (input.wasPressed("cancel") && this.onCancel) {
       input.consume("cancel");
@@ -84,6 +77,26 @@ export class Menu {
       return true;
     }
     return false;
+  }
+
+  /** Escolhe o item em foco (Enter ou clique). */
+  private choose(): boolean {
+    const item = this.focused;
+    if (!item) return false;
+    if (item.disabled) {
+      if (item.reason) this.onRefuse?.(item.reason);
+      return true;
+    }
+    item.onSelect?.();
+    return true;
+  }
+
+  /** Mouse: passar por cima foca o item; clicar escolhe. */
+  private focusAt(i: number): void {
+    if (i === this.index || !this.items[i]) return;
+    this.index = i;
+    this.paint();
+    this.notifyFocus();
   }
 
   private move(delta: number): boolean {
@@ -110,6 +123,12 @@ export class Menu {
         .filter(Boolean)
         .join(" ");
       li.setAttribute("role", "menuitem");
+      li.addEventListener("pointerenter", () => this.focusAt(i));
+      li.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.focusAt(i);
+        this.choose();
+      });
       if (i === this.index) li.setAttribute("aria-current", "true");
       const label = this.doc.createElement("span");
       label.className = "menu__label";

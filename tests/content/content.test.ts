@@ -11,6 +11,15 @@ import { checkAssetFiles } from "../../scripts/lib/checkAssetFiles";
 function sample(): RawContent {
   const raw = structuredClone(bundledContent());
   raw.npcs = [...(raw.npcs as unknown[]), { id: "npc.teste", sprite: "img.npc1" }];
+  // Os mapas de verdade são trocados abaixo: os guias (seta no chão) apontariam para eles.
+  raw.quests = (raw.quests as { steps: { guide?: unknown }[] }[]).map((q) => ({
+    ...q,
+    steps: q.steps.map(({ guide: _guide, ...step }) => step),
+  }));
+  // O salão e a avenida de verdade não estão nesta amostra.
+  delete (raw.balance as { restaurant?: unknown }).restaurant;
+  delete (raw.balance as { avenue?: unknown }).avenue;
+  delete (raw.balance as { extraRestaurants?: unknown }).extraRestaurants;
   raw.locale = {
     ...(raw.locale as Record<string, string>),
     "npc.teste.name": "Teste",
@@ -202,14 +211,10 @@ describe("mapas da demo (F0-08)", () => {
         "map.vila → map.salao#rua",
         "map.vila → map.loja#rua",
         "map.vila → map.praca#vila",
-        "map.vila → map.bosque#vila",
         "map.loja → map.vila#loja",
         "map.praca → map.estufa#rua",
         "map.praca → map.vila#praca",
         "map.estufa → map.praca#estufa",
-        "map.bosque → map.vila#bosque",
-        "map.bosque → map.clareira#bosque",
-        "map.clareira → map.bosque#clareira",
       ].sort(),
     );
   });

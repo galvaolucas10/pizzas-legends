@@ -18,17 +18,22 @@ import {
   type SkillError,
 } from "../core/progression";
 
-export type { SkillError };
+export type { ShopError, SkillError };
 import { questStatus } from "../core/conditions";
 import {
   advanceQuest,
+  currentFocus,
   currentObjective,
+  customersDelegated,
   objectiveProgress,
   stepProgress,
   updateQuests,
   type QuestEvent,
+  type QuestFocus,
 } from "../core/quests";
+import { payCustomer, payOnlineOrder } from "../core/restaurant";
 import { claimReward } from "../core/rewards";
+import { buyIngredient, coins, shopItems, type ShopError } from "../core/shop";
 import type { PizzaInstance, SaveData } from "../core/types";
 import { Signals } from "./signals";
 
@@ -49,12 +54,17 @@ export type Command =
   | { type: "harvest"; spot: HarvestSpot }
   | { type: "openChest"; rewardId: string }
   | { type: "setBasket"; pizzaIds: string[] }
+  | { type: "buyIngredient"; ingredientId: string; count: number }
+  | { type: "customerPaid"; byEmployee?: boolean }
+  | { type: "onlinePaid"; byHelper?: boolean }
+  | { type: "regrowHarvest"; globalIds: string[] }
   | { type: "addPlayTime"; ms: number };
 
 export type CommandError =
   | PreparationError
   | SkillError
   | ConversionError
+  | ShopError
   | { kind: "alreadyTaken" }
   | { kind: "notEnoughIngredients" }
   | { kind: "pizzaNotFound"; pizzaId: string };
@@ -65,6 +75,7 @@ export type CommandResult =
       pizza?: PizzaInstance;
       drops?: { ingredientId: string; count: number }[];
       xp?: number;
+      coins?: number;
     }
   | { ok: false; error: CommandError };
 
@@ -76,6 +87,8 @@ export interface SessionSignals extends Record<string, unknown> {
   skillLearned: string;
   questEvent: QuestEvent;
   objectiveChanged: string | null;
+  /** Aviso curto para o HUD (ex.: a funcionária recebeu de um cliente). */
+  notice: string;
   /** Marca o save como "sujo": o SaveSystem decide quando gravar. */
   dirty: void;
 }
@@ -103,6 +116,42 @@ export class GameSession {
     return currentObjective(this.current, this.content);
   }
 
+  /** Para onde a seta no chão aponta (etapa atual da missão), se houver. */
+  get guide(): { mapId: string; targets: string[] } | null {
+    const guide = currentFocus(this.current, this.content)?.guide ?? null;
+    if (guide && this.needsPizzas) return this.ovenGuide() ?? guide;
+    return guide;
+  }
+
+  /** O próximo desafio pede pizzas e a mochila está sem nenhuma: primeiro, o forno. */
+  get needsPizzas(): boolean {
+    const guide = currentFocus(this.current, this.content)?.guide;
+    return Boolean(guide?.needsPizza) && this.current.inventory.pizzas.length === 0;
+  }
+
+  /** Guia até o balcão das pizzas (ou, sem ele, o último forno usado). */
+  private ovenGuide(): { mapId: string; targets: string[] } | null {
+    const wanted = ["oven.balcao", this.current.world.lastOvenId, "oven.mestre"];
+    for (const ovenId of wanted) {
+      for (const map of Object.values(this.content.maps)) {
+        // Um forno pode ocupar vários tiles (balcão): a seta vale para qualquer um deles.
+        const tiles = map.objects.filter((o) => o.kind === "oven" && o.ovenId === ovenId);
+        if (tiles.length) return { mapId: map.id, targets: tiles.map((o) => o.id) };
+      }
+    }
+    return null;
+  }
+
+  /** Missão e etapa para onde a seta e o HUD levam agora (ver currentFocus). */
+  get focus(): QuestFocus | null {
+    return currentFocus(this.current, this.content);
+  }
+
+  /** A funcionária está cuidando da etapa de clientes da missão principal. */
+  get customersDelegated(): boolean {
+    return customersDelegated(this.current, this.content);
+  }
+
   /** Contagem do objetivo atual (ex.: 1 de 2 ratos), se a etapa tiver contagem. */
   get objectiveProgress(): { done: number; total: number } | null {
     return objectiveProgress(this.current, this.content);
@@ -111,6 +160,16 @@ export class GameSession {
   /** Contagem da etapa atual de uma missão, se houver. */
   stepProgress(questId: string): { done: number; total: number } | null {
     return stepProgress(this.current, questId, this.content);
+  }
+
+  /** Moedas para a loja. */
+  get coins(): number {
+    return coins(this.current, this.content);
+  }
+
+  /** Ingredientes à venda e preços. */
+  shopItems(): { ingredientId: string; price: number }[] {
+    return shopItems(this.content);
   }
 
   /** PV máximo do personagem ativo (fora da batalha o PV está sempre cheio, GDD 7.6). */
@@ -203,7 +262,13 @@ export class GameSession {
             },
           };
         }
-        return { ok: true, save: next, drops: outcome.drops, xp: outcome.xp };
+        return {
+          ok: true,
+          save: next,
+          drops: outcome.drops,
+          xp: outcome.xp,
+          coins: outcome.coins,
+        };
       }
       case "rest":
         return { ok: true, save: restAtOven(save, command.ovenId, c) };
@@ -237,6 +302,21 @@ export class GameSession {
         const r = learnSkill(save, command.skillId, c);
         if ("kind" in r) return { ok: false, error: r };
         return { ok: true, save: r };
+      }
+      case "buyIngredient": {
+        const r = buyIngredient(save, command.ingredientId, command.count, c);
+        if ("kind" in r) return { ok: false, error: r };
+        return { ok: true, save: r };
+      }
+      case "customerPaid":
+        return { ok: true, save: payCustomer(save, c, command.byEmployee) };
+      case "onlinePaid":
+        return { ok: true, save: payOnlineOrder(save, c, command.byHelper) };
+      case "regrowHarvest": {
+        const gone = new Set(command.globalIds);
+        const harvested = save.world.harvested.filter((id) => !gone.has(id));
+        if (harvested.length === save.world.harvested.length) return { ok: true, save };
+        return { ok: true, save: { ...save, world: { ...save.world, harvested } } };
       }
       case "setBasket":
         return {
@@ -273,7 +353,8 @@ export class GameSession {
         count: n - (before.inventory.ingredients[ingredientId] ?? 0),
       }))
       .filter((g) => g.count > 0);
-    if (gained.length && command.type !== "takeIngredients") s.emit("itemsGained", gained);
+    if (gained.length && command.type !== "takeIngredients" && command.type !== "buyIngredient")
+      s.emit("itemsGained", gained);
     for (const recipe of charAfter?.knownRecipes ?? []) {
       if (!charBefore?.knownRecipes.includes(recipe)) s.emit("recipeLearned", recipe);
     }

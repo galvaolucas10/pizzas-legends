@@ -3,6 +3,7 @@ import type { BattleActionDef, Enemy, Profile } from "../content/schemas/gamepla
 import { addIngredients, hasIngredients } from "./inventory";
 import { grantXp, maxHpFor } from "./progression";
 import { nextRandom, type RngState } from "./rng";
+import { addCoins, victoryCoins } from "./shop";
 import { activeCharacter, type PizzaInstance, type SaveData, type StatusApplied } from "./types";
 
 /** Batalha por turnos, 1 contra 1 (GDD 7). Tudo puro: estado + escolha + rng → novo estado + log. */
@@ -431,6 +432,8 @@ export interface BattleOutcome {
   save: SaveData;
   drops: { ingredientId: string; count: number }[];
   xp: number;
+  /** Moedas da vitória (loja). */
+  coins: number;
   levelsGained: number;
 }
 
@@ -475,7 +478,7 @@ export function applyBattleResult(
   if (battle.phase !== "victory") {
     if (battle.phase === "defeat") next.stats.battlesLost += 1;
     if (battle.phase === "fled") next.stats.fled += 1;
-    return { save: next, drops: [], xp: 0, levelsGained: 0 };
+    return { save: next, drops: [], xp: 0, coins: 0, levelsGained: 0 };
   }
 
   next.stats.battlesWon += 1;
@@ -489,8 +492,10 @@ export function applyBattleResult(
       drops.push({ ingredientId: drop.ingredientId, count: drop.count });
   }
   next = addIngredients({ ...next, rng }, drops, content);
+  const coins = victoryCoins(enemy.xp, content);
+  next = addCoins(next, coins, content);
   const xp = grantXp(next, enemy.xp, content);
-  return { save: xp.save, drops, xp: enemy.xp, levelsGained: xp.levelsGained };
+  return { save: xp.save, drops, xp: enemy.xp, coins, levelsGained: xp.levelsGained };
 }
 
 /** Descanso no forno (DATA_MODELS 6): inimigos e coletas renováveis voltam; vira ponto de retorno. */

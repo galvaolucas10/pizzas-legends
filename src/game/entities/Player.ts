@@ -16,6 +16,11 @@ export class Player extends Entity {
   hooks: PlayerHooks = {};
   /** Direção ignorada até ser solta (ver lockDirection). */
   private lockedDirection: Direction | null = null;
+  /** Caminho de um clique do mouse: passos a dar. O teclado cancela. */
+  private route: Direction[] = [];
+  private routeBlockedTicks = 0;
+  /** Chamado uma vez quando o caminho do clique termina (ex.: falar com quem foi clicado). */
+  private routeEnd: (() => void) | null = null;
 
   constructor(
     private readonly input: ActionReader,
@@ -24,17 +29,51 @@ export class Player extends Entity {
     super({ ...config, id: PLAYER_ID, solid: true });
   }
 
+  /** Segue um caminho (clique do mouse); `onEnd` roda ao chegar. */
+  setRoute(steps: Direction[], onEnd?: () => void): void {
+    this.route = [...steps];
+    this.routeBlockedTicks = 0;
+    this.routeEnd = onEnd ?? null;
+  }
+
+  clearRoute(): void {
+    this.route = [];
+    this.routeEnd = null;
+  }
+
   protected override think(grid: GridOccupancy): void {
     // Fora do contexto "world" (diálogo, fade) o jogador não decide nada, nem solta a trava.
     if (this.mover.moving || !this.input.active) return;
     if (this.input.wasPressed("confirm")) {
+      this.clearRoute();
       const ahead = this.mover.facingTile;
       this.hooks.onInteract?.(ahead.x, ahead.y);
       return;
     }
     const direction = this.input.direction;
     if (direction !== this.lockedDirection) this.lockedDirection = null;
-    if (direction && !this.lockedDirection) this.mover.tryStep(direction, grid);
+    if (direction) {
+      this.clearRoute();
+      if (!this.lockedDirection) this.mover.tryStep(direction, grid);
+      return;
+    }
+    const next = this.route[0];
+    if (next) {
+      if (this.mover.tryStep(next, grid)) {
+        this.route.shift();
+        this.routeBlockedTicks = 0;
+      } else if (++this.routeBlockedTicks > 45) {
+        this.clearRoute(); // alguém parou no caminho por ~0,75 s: desiste
+      } else {
+        this.mover.direction = next;
+      }
+      return;
+    }
+    const end = this.routeEnd;
+    if (end) {
+      this.routeEnd = null;
+      end();
+    }
   }
 
   /**

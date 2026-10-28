@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { MapObject } from "../../src/content/schemas/map";
 import { newGame } from "../../src/core/newGame";
 import { TICK_MS } from "../../src/engine/GameLoop";
 import { InputManager } from "../../src/engine/input/InputManager";
@@ -7,15 +10,32 @@ import type { BattleOutcome, BattleRequest } from "../../src/game/events/EventRu
 import { GameSession } from "../../src/game/GameSession";
 import { WorldScene } from "../../src/game/scenes/WorldScene";
 import { WorldManager } from "../../src/game/world/WorldManager";
-import { content, fakeAssets, stubDom } from "../helpers";
+import { loadContent } from "../../src/content/registry";
+import { bundledContent } from "../../src/content/sources";
+import { fakeAssets, stubDom } from "../helpers";
 
 beforeEach(() => vi.stubGlobal("document", stubDom().document));
 afterEach(() => vi.unstubAllGlobals());
 
 const MARGHERITA = ["ing.farinha", "ing.molho_tomate", "ing.mussarela"];
 
+/**
+ * O jogo não tem mais lutas no mapa, mas o sistema de inimigos continua no motor: estes testes
+ * colocam os dois ratos antigos (fixture) na despensa só para o teste.
+ */
+function contentWithRats() {
+  const raw = structuredClone(bundledContent());
+  const rats = JSON.parse(
+    readFileSync(join(__dirname, "../fixtures/ratos-despensa.json"), "utf8"),
+  ) as MapObject[];
+  const maps = raw.maps as Record<string, { id: string; objects: MapObject[] }>;
+  const despensa = Object.values(maps).find((m) => m.id === "map.despensa")!;
+  despensa.objects.push(...rats);
+  return loadContent(raw);
+}
+
 async function despensa(options: { afterStep1?: boolean } = {}) {
-  const c = content();
+  const c = contentWithRats();
   const session = new GameSession(c, newGame(c, { name: "Nico", seed: 3 }));
   if (options.afterStep1 ?? true)
     session.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });

@@ -34,5 +34,25 @@
   {
     "id": "npc.garcom_beto",
     "sprite": "img.npc5"
+  },
+  {
+    "id": "npc.dona_rosa",
+    "sprite": "img.npc4"
+  },
+  {
+    "id": "npc.cliente",
+    "sprite": "img.npc1"
+  },
+  {
+    "id": "npc.funcionaria_nina",
+    "sprite": "img.npc3"
+  },
+  {
+    "id": "npc.motoboy_dudu",
+    "sprite": "img.npc2"
+  },
+  {
+    "id": "npc.garcom_leo",
+    "sprite": "img.npc5"
   }
 ]

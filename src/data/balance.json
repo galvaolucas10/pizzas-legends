@@ -1,5 +1,10 @@
 {
-  "rarityValue": { "comum": 1, "incomum": 2, "raro": 3, "lendario": 4 },
+  "rarityValue": {
+    "comum": 1,
+    "incomum": 2,
+    "raro": 3,
+    "lendario": 4
+  },
   "profileBeats": {
     "fresco": "picante",
     "picante": "cremoso",
@@ -8,10 +13,19 @@
   },
   "advantageMultiplier": 1.5,
   "sameProfileMultiplier": 0.75,
-  "potency": { "base": 4, "perQuality": 2 },
-  "slices": { "min": 1, "max": 8 },
+  "potency": {
+    "base": 4,
+    "perQuality": 2
+  },
+  "slices": {
+    "min": 1,
+    "max": 8
+  },
   "xpTable": [0, 60, 150, 280, 450],
-  "maxHp": { "base": 50, "perLevel": 10 },
+  "maxHp": {
+    "base": 50,
+    "perLevel": 10
+  },
   "basketSize": 4,
   "maxPizzas": 12,
   "maxIngredientStack": 99,
@@ -21,8 +35,205 @@
   "firstCookXp": 10,
   "maxLevel": 5,
   "restKit": [
-    { "ingredientId": "ing.farinha", "count": 1 },
-    { "ingredientId": "ing.molho_tomate", "count": 1 },
-    { "ingredientId": "ing.mussarela", "count": 1 }
+    {
+      "ingredientId": "ing.farinha",
+      "count": 1
+    },
+    {
+      "ingredientId": "ing.molho_tomate",
+      "count": 1
+    },
+    {
+      "ingredientId": "ing.mussarela",
+      "count": 1
+    }
+  ],
+  "shop": {
+    "startingCoins": 20,
+    "coinsPerEnemyXp": 0.5,
+    "prices": {
+      "ing.farinha": 3,
+      "ing.molho_tomate": 3,
+      "ing.mussarela": 4,
+      "ing.manjericao": 4,
+      "ing.cogumelo": 4,
+      "ing.massa_fermentada": 8,
+      "ing.molho_apimentado": 8,
+      "ing.queijo_cabra": 8,
+      "ing.queijo_defumado": 8,
+      "ing.linguica": 8
+    }
+  },
+  "restaurant": {
+    "mapId": "map.salao",
+    "door": "saida_rua",
+    "seats": [
+      {
+        "x": 2,
+        "y": 7,
+        "direction": "right"
+      },
+      {
+        "x": 4,
+        "y": 7,
+        "direction": "left"
+      },
+      {
+        "x": 7,
+        "y": 7,
+        "direction": "right"
+      },
+      {
+        "x": 9,
+        "y": 7,
+        "direction": "left"
+      },
+      {
+        "x": 2,
+        "y": 10,
+        "direction": "right"
+      },
+      {
+        "x": 4,
+        "y": 10,
+        "direction": "left"
+      },
+      {
+        "x": 7,
+        "y": 10,
+        "direction": "right"
+      },
+      {
+        "x": 9,
+        "y": 10,
+        "direction": "left"
+      }
+    ],
+    "maxCustomers": 3,
+    "firstArrivalMs": 1500,
+    "arrivalEveryMs": 8000,
+    "eatMs": 5000,
+    "payCoins": 12,
+    "payXp": 10,
+    "sprites": ["img.npc1", "img.npc2", "img.npc3", "img.npc4", "img.erio"],
+    "countFlags": ["flag.clientes_a", "flag.clientes_b", "flag.clientes_c"],
+    "employee": {
+      "id": "nina",
+      "offFlag": "flag.nina_folga",
+      "home": {
+        "x": 9,
+        "y": 5
+      },
+      "kitchen": {
+        "x": 7,
+        "y": 5
+      },
+      "cut": 4,
+      "cookMs": 4000,
+      "actionMs": 600,
+      "awayStepMs": 2500
+    }
+  },
+  "avenue": {
+    "mapId": "map.vila",
+    "road": {
+      "fromX": 64,
+      "toX": 640
+    },
+    "lanes": [
+      {
+        "y": 255,
+        "direction": 1,
+        "speed": 45
+      },
+      {
+        "y": 285,
+        "direction": -1,
+        "speed": 60
+      }
+    ],
+    "carsPerLane": 2,
+    "motoboy": "motoboy",
+    "park": {
+      "x": 9,
+      "y": 10
+    },
+    "firstOrderMs": 12000,
+    "orderEveryMs": 35000,
+    "maxOrders": 3,
+    "rideMs": 8000,
+    "pay": 15,
+    "xp": 8,
+    "addresses": [
+      "Rua das Azeitonas, 12",
+      "Travessa do Orégano, 7",
+      "Av. Calabresa, 300",
+      "Rua do Forno, 45",
+      "Praça Neon, 9"
+    ],
+    "helper": {
+      "cookMs": 6000,
+      "cut": 3
+    }
+  },
+  "extraRestaurants": [
+    {
+      "mapId": "map.estufa",
+      "door": "saida_rua",
+      "seats": [
+        {
+          "x": 3,
+          "y": 7,
+          "direction": "up"
+        },
+        {
+          "x": 4,
+          "y": 7,
+          "direction": "up"
+        },
+        {
+          "x": 6,
+          "y": 7,
+          "direction": "up"
+        },
+        {
+          "x": 2,
+          "y": 9,
+          "direction": "right"
+        },
+        {
+          "x": 4,
+          "y": 9,
+          "direction": "left"
+        },
+        {
+          "x": 7,
+          "y": 10,
+          "direction": "right"
+        },
+        {
+          "x": 9,
+          "y": 10,
+          "direction": "left"
+        }
+      ],
+      "maxCustomers": 2,
+      "employee": {
+        "id": "leo",
+        "offFlag": "flag.leo_folga",
+        "home": {
+          "x": 6,
+          "y": 5
+        },
+        "kitchen": {
+          "x": 4,
+          "y": 5
+        },
+        "cut": 4,
+        "cookMs": 4000,
+        "actionMs": 600,
+        "awayStepMs": 2500
+      }
+    }
   ]
 }

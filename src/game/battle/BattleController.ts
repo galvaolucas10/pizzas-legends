@@ -47,6 +47,7 @@ export interface BattleView {
 export interface BattleEndSummary {
   phase: "victory" | "defeat" | "fled";
   xp: number;
+  coins: number;
   drops: { name: string; count: number }[];
   levelUp: number | null;
 }
@@ -131,6 +132,7 @@ export class BattleController {
     return {
       phase: this.state.phase as BattleEndSummary["phase"],
       xp: result.ok ? (result.xp ?? 0) : 0,
+      coins: result.ok ? (result.coins ?? 0) : 0,
       drops: drops.map((d) => ({ name: this.text(`${d.ingredientId}.name`), count: d.count })),
       levelUp: levelAfter > levelBefore ? levelAfter : null,
     };

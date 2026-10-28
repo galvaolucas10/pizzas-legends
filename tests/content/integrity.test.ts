@@ -64,11 +64,12 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
     it("drop, recompensa e personagem com ingrediente inexistente", () => {
       const text = problemsAfter((raw) => {
         byId(raw.enemies, "enemy.rato_despensa").drops[0].ingredientId = "ing.queijo_lunar";
-        byId(raw.rewards, "rew.bau_vila").ingredients[0].ingredientId = "ing.queijo_lunar";
+        byId(raw.rewards, "rew.primeiro_desafio_etapa1").ingredients[0].ingredientId =
+          "ing.queijo_lunar";
         raw.characters[0].startingIngredients[0].ingredientId = "ing.queijo_lunar";
       });
       expect(text).toContain("enemy.rato_despensa: ingrediente inexistente");
-      expect(text).toContain("rew.bau_vila: ingrediente inexistente");
+      expect(text).toContain("rew.primeiro_desafio_etapa1: ingrediente inexistente");
       expect(text).toContain("char.aprendiz: ingrediente inexistente");
     });
 
@@ -98,7 +99,7 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
             stepAtLeast: 9,
           };
         }),
-      ).toContain('"quest.primeiro_desafio" só tem 6 etapa(s)');
+      ).toContain('"quest.primeiro_desafio" só tem 8 etapa(s)');
     });
 
     it("eventos de mapa citam recompensa, inimigo, missão e forno inexistentes", () => {
@@ -120,7 +121,7 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
       });
       expect(text).toContain('recompensa inexistente "rew.nada"');
       expect(text).toContain('inimigo inexistente "enemy.dragao"');
-      expect(text).toContain('"quest.primeiro_desafio" só tem 6 etapa(s)');
+      expect(text).toContain('"quest.primeiro_desafio" só tem 8 etapa(s)');
       expect(text).toContain('forno inexistente "oven.lua"');
     });
 
@@ -210,7 +211,10 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
   describe("regras entre entidades", () => {
     it("desbloqueio de receita coerente com a recompensa/habilidade", () => {
       const text = problemsAfter((raw) => {
-        byId(raw.rewards, "rew.primeiro_desafio_etapa2").recipes = [];
+        byId(raw.recipes, "rec.quatro_queijos").unlock = {
+          kind: "reward",
+          rewardId: "rew.primeiro_desafio_etapa2",
+        };
         byId(raw.skills.skills, "skill.defumacao").effects = [
           { type: "unlockConversion", conversionId: "conv.defumacao" },
         ];

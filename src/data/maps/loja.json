@@ -63,7 +63,7 @@
         {
           "condition": {
             "quest": "quest.primeiro_desafio",
-            "stepAtLeast": 2
+            "stepAtLeast": 3
           },
           "events": [
             {
@@ -75,6 +75,9 @@
               "type": "message",
               "speaker": "npc.feirante_lia",
               "textKey": "dlg.feirante_lia.etapa3.1"
+            },
+            {
+              "type": "openShop"
             }
           ]
         },
@@ -93,6 +96,9 @@
               "type": "message",
               "speaker": "npc.feirante_lia",
               "textKey": "dlg.feirante_lia.etapa2.1"
+            },
+            {
+              "type": "openShop"
             }
           ]
         },
@@ -109,9 +115,7 @@
               "textKey": "dlg.feirante_lia.padrao.1"
             },
             {
-              "type": "message",
-              "speaker": "npc.feirante_lia",
-              "textKey": "dlg.feirante_lia.padrao.2"
+              "type": "openShop"
             }
           ]
         }
@@ -121,25 +125,99 @@
           "type": "stand",
           "who": "lia",
           "direction": "down",
-          "time": 2500
+          "time": 2200
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "up"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "right"
         },
         {
           "type": "stand",
           "who": "lia",
-          "direction": "left",
-          "time": 900
+          "direction": "up",
+          "time": 1400
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "left"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "left"
+        },
+        {
+          "type": "stand",
+          "who": "lia",
+          "direction": "up",
+          "time": 1400
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "right"
+        },
+        {
+          "type": "walk",
+          "who": "lia",
+          "direction": "down"
         },
         {
           "type": "stand",
           "who": "lia",
           "direction": "down",
           "time": 1800
-        },
+        }
+      ]
+    },
+    {
+      "id": "rosa",
+      "x": 9,
+      "y": 10,
+      "direction": "left",
+      "kind": "npc",
+      "npcId": "npc.dona_rosa",
+      "talking": [
         {
-          "type": "stand",
-          "who": "lia",
-          "direction": "right",
-          "time": 900
+          "events": [
+            {
+              "type": "face",
+              "who": "rosa",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.dona_rosa",
+              "textKey": "dlg.rosa.nivel.padrao"
+            }
+          ]
         }
       ]
     }

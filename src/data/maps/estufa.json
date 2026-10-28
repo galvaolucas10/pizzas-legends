@@ -51,6 +51,194 @@
       "kind": "door",
       "toMap": "map.praca",
       "toEntrance": "estufa"
+    },
+    {
+      "id": "ravena",
+      "x": 8,
+      "y": 7,
+      "direction": "down",
+      "kind": "npc",
+      "npcId": "npc.rival_ravena",
+      "talking": [
+        {
+          "condition": {
+            "flag": "flag.ravena_derrotada"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "ravena",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.rival_ravena",
+              "textKey": "dlg.rival_ravena.depois.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "quest": "quest.primeiro_desafio",
+            "stepAtLeast": 6
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "ravena",
+              "towards": "player"
+            },
+            {
+              "type": "if",
+              "condition": {
+                "hasPizza": {}
+              },
+              "then": [
+                {
+                  "type": "message",
+                  "speaker": "npc.rival_ravena",
+                  "textKey": "dlg.rival_ravena.prova.1"
+                },
+                {
+                  "type": "takePizza",
+                  "filter": {}
+                },
+                {
+                  "type": "message",
+                  "speaker": "npc.rival_ravena",
+                  "textKey": "dlg.rival_ravena.vitoria.1"
+                },
+                {
+                  "type": "message",
+                  "speaker": "npc.rival_ravena",
+                  "textKey": "dlg.rival_ravena.vitoria.2"
+                },
+                {
+                  "type": "setFlag",
+                  "flag": "flag.ravena_derrotada"
+                }
+              ],
+              "else": [
+                {
+                  "type": "message",
+                  "speaker": "npc.rival_ravena",
+                  "textKey": "dlg.rival_ravena.desafio.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "events": [
+            {
+              "type": "face",
+              "who": "ravena",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.rival_ravena",
+              "textKey": "dlg.rival_ravena.padrao.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.rival_ravena",
+              "textKey": "dlg.rival_ravena.padrao.2"
+            }
+          ]
+        }
+      ],
+      "behaviorLoop": [
+        {
+          "type": "stand",
+          "who": "ravena",
+          "direction": "down",
+          "time": 2200
+        },
+        {
+          "type": "stand",
+          "who": "ravena",
+          "direction": "left",
+          "time": 1400
+        },
+        {
+          "type": "stand",
+          "who": "ravena",
+          "direction": "down",
+          "time": 1800
+        },
+        {
+          "type": "stand",
+          "who": "ravena",
+          "direction": "right",
+          "time": 1000
+        }
+      ]
+    },
+    {
+      "id": "fogao1",
+      "x": 3,
+      "y": 4,
+      "kind": "oven",
+      "ovenId": "oven.estufa"
+    },
+    {
+      "id": "fogao2",
+      "x": 4,
+      "y": 4,
+      "kind": "oven",
+      "ovenId": "oven.estufa"
+    },
+    {
+      "id": "leo",
+      "x": 6,
+      "y": 5,
+      "direction": "down",
+      "kind": "npc",
+      "npcId": "npc.garcom_leo",
+      "talking": [
+        {
+          "condition": {
+            "flag": "flag.leo_folga"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "leo",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.garcom_leo",
+              "textKey": "dlg.leo.comecar.1"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.leo_folga",
+              "value": false
+            }
+          ]
+        },
+        {
+          "events": [
+            {
+              "type": "face",
+              "who": "leo",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.garcom_leo",
+              "textKey": "dlg.leo.parar.1"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.leo_folga",
+              "value": true
+            }
+          ]
+        }
+      ]
     }
   ]
 }

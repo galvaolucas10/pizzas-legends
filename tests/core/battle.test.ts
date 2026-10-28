@@ -15,7 +15,22 @@ import { newGame } from "../../src/core/newGame";
 import { activeCharacter, withCharacter, type SaveData } from "../../src/core/types";
 import { content } from "../helpers";
 
-const C = content();
+const REAL = content();
+/**
+ * O rato do jogo cai com um golpe (3 PV, sem Ágil). Para testar as mecânicas de batalha
+ * (Ágil, Belisco, várias rodadas) estes testes usam um rato mais forte, com os valores antigos.
+ */
+const C = {
+  ...REAL,
+  enemies: {
+    ...REAL.enemies,
+    "enemy.rato_despensa": {
+      ...REAL.enemies["enemy.rato_despensa"]!,
+      maxHp: 18,
+      traits: [{ type: "agile" as const }],
+    },
+  },
+};
 
 /** Save com pizzas prontas (cada entrada = receita + ingredientes). */
 function saveWith(pizzas: [string, string[]][], seed = 42): SaveData {
@@ -71,6 +86,18 @@ const damageTo = (b: BattleState, target: "player" | "enemy") =>
     .map((e) => (e as { amount: number }).amount);
 
 describe("batalha (F1-10, GDD 7.3–7.5)", () => {
+  it("o rato do jogo cai com um golpe só, antes de morder", () => {
+    const save = saveWith([MARGHERITA]);
+    const battle = createBattle(
+      save,
+      "enemy.rato_despensa",
+      save.inventory.pizzas.map((p) => p.id),
+      REAL,
+    );
+    expect(battle.player.hp).toBe(battle.player.maxHp); // não age primeiro
+    expect(resolveTurn(battle, slice(battle), REAL).phase).toBe("victory");
+  });
+
   it("Ágil: o Rato age antes do jogador no primeiro turno", () => {
     const { battle } = start("enemy.rato_despensa", [MARGHERITA]);
     expect(battle.player.hp).toBe(46); // 50 PV − Mordida (4)

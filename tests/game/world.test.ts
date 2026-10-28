@@ -115,16 +115,16 @@ describe("câmera (ARCHITECTURE 10.4)", () => {
 
 describe("ordem de desenho (ARCHITECTURE 10.5)", () => {
   it("desenha chão, sombras, personagens por Y e depois a camada de cima", async () => {
-    // Bosque, na entrada da vila (1,15): Sálvia em y=10, herói em y=15, Bento em y=22.
-    const { manager } = await world("map.bosque", "vila");
+    // Praça, na porta da estufa (7,6): herói em y=6, Seu Tito e Bento em y=12.
+    const { manager } = await world("map.praca", "estufa");
     dom.calls.length = 0;
     manager.render(dom.ctx, 1);
     const ids = dom.calls.map((c) => (c.image as { id?: string }).id ?? "cache");
     const characters = ids.filter((id) => id.startsWith("img.") && id !== "img.shadow");
     // Quem está mais abaixo é desenhado por cima.
-    expect(characters).toEqual(["img.npc4", "img.hero", "img.npc2"]);
+    expect(characters).toEqual(["img.hero", "img.npc2", "img.npc2"]);
     expect(ids[0]).toBe("cache"); // camada de baixo
-    expect(ids.at(-1)).toBe("cache"); // camada de cima (copas das árvores)
+    expect(ids.at(-1)).toBe("cache"); // camada de cima
     expect(ids.indexOf("img.shadow")).toBeLessThan(ids.indexOf("img.hero"));
   });
 });

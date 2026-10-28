@@ -2,12 +2,8 @@
   {
     "id": "enemy.rato_despensa",
     "profile": "fresco",
-    "maxHp": 18,
-    "traits": [
-      {
-        "type": "agile"
-      }
-    ],
+    "maxHp": 3,
+    "traits": [],
     "canFlee": true,
     "xp": 15,
     "drops": [

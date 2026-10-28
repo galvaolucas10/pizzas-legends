@@ -503,3 +503,59 @@ body {
 .hud__objective {
   white-space: pre-line;
 }
+
+/* Mouse: opções e caixa de diálogo clicáveis. A .ui-root ignora o mouse (o clique passa
+   para o mapa); as opções de menu precisam recebê-lo. */
+.menu__item {
+  pointer-events: auto;
+}
+.menu__item,
+.dialogue {
+  cursor: pointer;
+}
+.menu__item.is-disabled {
+  cursor: not-allowed;
+}
+.title__buttons {
+  display: flex;
+  gap: calc(var(--u) * 6);
+  margin-top: calc(var(--u) * 6);
+}
+.title__button {
+  font: inherit;
+  cursor: pointer;
+  padding: calc(var(--u) * 3) calc(var(--u) * 10);
+  border: calc(var(--u) * 2) solid var(--ink);
+  background: #f2d6a6;
+  color: var(--ink);
+  font-weight: bold;
+}
+.title__button:hover {
+  background: #ffe2a8;
+}
+.title__button--back {
+  background: #efe3cf;
+  font-weight: normal;
+}
+
+/* Celular: botão do menu (o Tab do teclado) no canto de baixo. */
+.touch-menu {
+  position: absolute;
+  right: calc(var(--px) * 4);
+  bottom: calc(var(--px) * 4);
+  z-index: 5;
+  font:
+    bold calc(var(--px) * 8) "Courier New",
+    monospace;
+  padding: calc(var(--px) * 2) calc(var(--px) * 5);
+  border: calc(var(--px) * 1) solid #3a2418;
+  background: #f2d6a6;
+  color: #3a2418;
+  cursor: pointer;
+  opacity: 0.9;
+}
+html,
+body {
+  touch-action: none;
+  overscroll-behavior: none;
+}
