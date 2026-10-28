@@ -65,6 +65,8 @@ Desenhada no próprio projeto pelo script `npm run art` (`scripts/art/`), de for
 | `images/enemy_vespa.png` | `img.enemy_vespa` | Vespa-Pimenta | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
 | `images/enemy_fungo.png` | `img.enemy_fungo` | Fungo Rabugento | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
 | `icons/ing_farinha.png` | `icon.ing_farinha` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
+| `icons/ing_refrigerante.png` | `icon.ing_refrigerante` | Ícone de bebida (latinha) | Gerado por script (sessão de 28/10/2026) | Do projeto | **Autoral** (provisória) |
+| `icons/ing_suco.png` | `icon.ing_suco` | Ícone de bebida (copo de suco) | Gerado por script (sessão de 28/10/2026) | Do projeto | **Autoral** (provisória) |
 | `icons/ing_massa_fermentada.png` | `icon.ing_massa_fermentada` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
 | `icons/ing_molho_tomate.png` | `icon.ing_molho_tomate` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |
 | `icons/ing_molho_apimentado.png` | `icon.ing_molho_apimentado` | Ícone de ingrediente | `scripts/art/icons.ts` | Do projeto | **Autoral** (provisória) |

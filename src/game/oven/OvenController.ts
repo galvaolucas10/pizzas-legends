@@ -430,6 +430,7 @@ const BUY_HINT = ". Compre na Loja (Tab → Loja) ou vença inimigos.";
 
 export const CATEGORY_NAMES: Record<string, string> = {
   massa: "Massa",
+  bebida: "Bebida",
   molho: "Molho",
   queijo: "Queijo",
   cobertura: "Cobertura",

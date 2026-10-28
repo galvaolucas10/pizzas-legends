@@ -19,6 +19,7 @@ import { browserStore, LocalSaveRepository, memoryStore } from "../persistence/S
 import { Hud } from "../ui/components/Hud";
 import { BattleScreen } from "../ui/screens/BattleScreen";
 import { OvenScreen } from "../ui/screens/OvenScreen";
+import { OrdersScreen } from "../ui/screens/OrdersScreen";
 import { PauseMenu } from "../ui/screens/PauseMenu";
 import { TitleScreen } from "../ui/screens/TitleScreen";
 import { UiRoot } from "../ui/UiRoot";
@@ -277,6 +278,30 @@ export function createGame(options: GameOptions): GameHandle {
       menuButton.addEventListener("pointerdown", (e) => e.stopPropagation());
       container.append(menuButton);
       cleanups.push(() => menuButton.remove());
+      // Pedidos online (entregas): botão no canto que abre a lista.
+      const ordersButton = document.createElement("button");
+      ordersButton.type = "button";
+      ordersButton.className = "touch-menu touch-orders";
+      ordersButton.textContent = "📱 Pedidos";
+      ordersButton.addEventListener("pointerdown", (e) => e.stopPropagation());
+      ordersButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (input.activeContext !== "world") return;
+        pushOverlay(
+          scenes,
+          input,
+          "menu",
+          () =>
+            new OrdersScreen({
+              doc,
+              root: ui.element,
+              input: input.reader("menu"),
+              orders: () => worldScene.avenue?.orderList() ?? [],
+            }),
+        );
+      });
+      container.append(ordersButton);
+      cleanups.push(() => ordersButton.remove());
 
       // ---------- Título (F1-18): Novo jogo / Continuar ----------
       let worldOnStack = false;
@@ -367,7 +392,7 @@ function attachMouse(
   const onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
     const target = e.target as HTMLElement | null;
-    if (target?.closest(".menu, input, button, .debug-panel")) return;
+    if (target?.closest(".menu, input, button, select")) return;
     if (target?.closest(".dialogue") || input.activeContext === "dialogue") {
       tap("confirm");
       return;

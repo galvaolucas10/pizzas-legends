@@ -125,6 +125,11 @@ async function game() {
     if (session.state.inventory.pizzas.some((p) => p.recipeId === recipeId)) return;
     new OvenController(session, c, "oven.balcao").buyMissingAndCook(recipeId);
   };
+  /** Compra a bebida que o cliente pediu, se faltar (como o jogador faria na loja). */
+  const buyDrink = (drinkId: string | null) => {
+    if (drinkId && (session.state.inventory.ingredients[drinkId] ?? 0) < 1)
+      session.dispatch({ type: "buyIngredient", ingredientId: drinkId, count: 1 });
+  };
   const giveNinaDayOff = () =>
     session.dispatch({
       type: "setFlag",
@@ -150,6 +155,7 @@ async function game() {
           if (paying) paid++;
         } else if (c.state === "waiting") {
           prepare(c.recipeId!);
+          buyDrink(c.drinkId);
           interactWith(c.id);
           tick(2);
         }
@@ -173,6 +179,7 @@ async function game() {
     prepare,
     serveCustomers,
     giveNinaDayOff,
+    buyDrink,
     shopsOpened: () => shopsOpened,
     step,
   };
@@ -252,13 +259,21 @@ describe("restaurante do salão", () => {
     expect(g.interactWith(first.id)).toBe(true);
     expect(first.state).toBe("waiting");
     expect(first.recipeId).toBe("rec.margherita");
-    expect(g.interactWith(first.id)).toBe(true); // já tem Margherita na mochila
+    expect(first.drinkId).toBe("ing.refrigerante"); // sorteio fixo: pede refri junto
+    expect(g.interactWith(first.id)).toBe(true); // sem o refri: o cliente avisa e espera
+    expect(first.state).toBe("waiting");
+    g.buyDrink(first.drinkId);
+    expect(g.interactWith(first.id)).toBe(true); // pizza + refri entregues
     expect(first.state).toBe("eating");
     const coins = session.coins;
     g.tick(Math.ceil(session.content.balance.restaurant!.eatMs / 16) + 5);
     expect(first.state).toBe("paying");
     expect(g.interactWith(first.id)).toBe(true);
-    expect(session.coins).toBe(coins + session.content.balance.restaurant!.payCoins);
+    expect(session.coins).toBe(
+      coins +
+        session.content.balance.restaurant!.payCoins +
+        (session.content.balance.restaurant!.drinkCoins ?? 0),
+    );
     expect(session.state.flags["flag.clientes_a"]).toBe(1);
     g.tick(400);
     expect(restaurant.customers.some((c) => c.id === first.id)).toBe(false); // foi embora
@@ -286,7 +301,7 @@ describe("funcionária do salão (Nina)", () => {
     for (let t = 0; t < 6000 && Number(session.state.flags["flag.clientes_total"] ?? 0) < 1; t++)
       g.tick();
     expect(session.state.flags["flag.clientes_total"]).toBe(1);
-    expect(session.coins).toBe(coins + cfg.payCoins - employee.cut);
+    expect(session.coins).toBe(coins + cfg.payCoins - employee.cut + (cfg.drinkCoins ?? 0));
     expect(session.state.characters[0]!.xp).toBe(xp); // XP só para quem atende
 
     // Longe do salão o restaurante continua: o dinheiro entra enquanto o jogador faz desafios.
@@ -360,12 +375,17 @@ describe("cozinha verde (estufa) também tem clientes", () => {
     expect(c.id.startsWith("estufa_")).toBe(true);
     expect(g.interactWith(c.id)).toBe(true); // anota o pedido
     g.prepare(c.recipeId!);
+    g.buyDrink(c.drinkId);
     expect(g.interactWith(c.id)).toBe(true); // entrega
     expect(c.state).toBe("eating");
     const coins = session.coins;
     g.tick(Math.ceil(session.content.balance.restaurant!.eatMs / 16) + 5);
     expect(g.interactWith(c.id)).toBe(true); // recebe
-    expect(session.coins).toBe(coins + session.content.balance.restaurant!.payCoins);
+    expect(session.coins).toBe(
+      coins +
+        session.content.balance.restaurant!.payCoins +
+        (session.content.balance.restaurant!.drinkCoins ?? 0),
+    );
     expect(g.warnings).toEqual([]);
   });
 });

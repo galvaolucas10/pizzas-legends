@@ -559,3 +559,6 @@ body {
   touch-action: none;
   overscroll-behavior: none;
 }
+.touch-orders {
+  right: calc(var(--px) * 52);
+}

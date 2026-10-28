@@ -167,6 +167,24 @@ export class Avenue {
     this.o.session.signals.emit("notice", this.text(key, vars));
   }
 
+  /** Todos os pedidos online: na fila, sendo feito pelo garçom e a caminho com o motoboy. */
+  orderList(): {
+    pizza: string;
+    address: string;
+    status: "esperando" | "preparando" | "a caminho";
+  }[] {
+    const line = (o: OnlineOrder, status: "esperando" | "preparando" | "a caminho") => ({
+      pizza: this.name(o.recipeId),
+      address: o.address,
+      status,
+    });
+    return [
+      ...(this.ride ? [line(this.ride.order, "a caminho")] : []),
+      ...(this.helperTask ? [line(this.helperTask.order, "preparando")] : []),
+      ...this.orders.map((o) => line(o, "esperando")),
+    ];
+  }
+
   /** Pedido que o garçom está preparando agora (se houver). */
   get helperCooking(): OnlineOrder | null {
     return this.helperTask?.order ?? null;

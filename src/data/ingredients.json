@@ -60,7 +60,12 @@
     "category": "cobertura",
     "rarity": "comum",
     "profile": "fresco",
-    "toppingModifiers": [{ "type": "healPerSlice", "value": 2 }],
+    "toppingModifiers": [
+      {
+        "type": "healPerSlice",
+        "value": 2
+      }
+    ],
     "icon": "icon.ing_manjericao"
   },
   {
@@ -68,7 +73,13 @@
     "category": "cobertura",
     "rarity": "comum",
     "profile": "defumado",
-    "toppingModifiers": [{ "type": "statusDuration", "status": "status.enfraquecido", "value": 1 }],
+    "toppingModifiers": [
+      {
+        "type": "statusDuration",
+        "status": "status.enfraquecido",
+        "value": 1
+      }
+    ],
     "icon": "icon.ing_cogumelo"
   },
   {
@@ -76,7 +87,12 @@
     "category": "cobertura",
     "rarity": "incomum",
     "profile": "defumado",
-    "toppingModifiers": [{ "type": "damagePerSlice", "value": 2 }],
+    "toppingModifiers": [
+      {
+        "type": "damagePerSlice",
+        "value": 2
+      }
+    ],
     "icon": "icon.ing_linguica"
   },
   {
@@ -85,8 +101,16 @@
     "rarity": "raro",
     "profile": "picante",
     "toppingModifiers": [
-      { "type": "statusDamage", "status": "status.queimadura", "value": 1 },
-      { "type": "statusDuration", "status": "status.queimadura", "value": 1 }
+      {
+        "type": "statusDamage",
+        "status": "status.queimadura",
+        "value": 1
+      },
+      {
+        "type": "statusDuration",
+        "status": "status.queimadura",
+        "value": 1
+      }
     ],
     "icon": "icon.ing_pimenta_dragao"
   },
@@ -95,7 +119,28 @@
     "category": "cobertura",
     "rarity": "raro",
     "profile": null,
-    "toppingModifiers": [{ "type": "qualityBonus", "value": 1 }],
+    "toppingModifiers": [
+      {
+        "type": "qualityBonus",
+        "value": 1
+      }
+    ],
     "icon": "icon.ing_azeite_dourado"
+  },
+  {
+    "id": "ing.refrigerante",
+    "category": "bebida",
+    "rarity": "comum",
+    "profile": null,
+    "toppingModifiers": [],
+    "icon": "icon.ing_refrigerante"
+  },
+  {
+    "id": "ing.suco",
+    "category": "bebida",
+    "rarity": "comum",
+    "profile": null,
+    "toppingModifiers": [],
+    "icon": "icon.ing_suco"
   }
 ]

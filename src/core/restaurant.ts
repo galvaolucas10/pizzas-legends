@@ -14,10 +14,12 @@ export function payCustomer(
   save: SaveData,
   content: ContentRegistry,
   byEmployee = false,
+  withDrink = false,
 ): SaveData {
   const r = content.balance.restaurant;
   if (!r) return save;
-  let next = addCoins(save, customerCoins(content, byEmployee), content);
+  const drink = withDrink ? (r.drinkCoins ?? 0) : 0;
+  let next = addCoins(save, customerCoins(content, byEmployee) + drink, content);
   const flags = { ...next.flags };
   flags[CUSTOMERS_SERVED_FLAG] = Number(flags[CUSTOMERS_SERVED_FLAG] ?? 0) + 1;
   for (const quest of Object.values(content.quests)) {

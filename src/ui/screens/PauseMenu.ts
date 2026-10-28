@@ -472,6 +472,7 @@ export class PauseMenu {
 
 const CATEGORY_LABELS: Record<string, string> = {
   massa: "Massa",
+  bebida: "Bebida",
   molho: "Molho",
   queijo: "Queijo",
   cobertura: "Cobertura (opcional)",

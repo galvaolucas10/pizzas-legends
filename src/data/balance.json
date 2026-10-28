@@ -61,7 +61,9 @@
       "ing.molho_apimentado": 8,
       "ing.queijo_cabra": 8,
       "ing.queijo_defumado": 8,
-      "ing.linguica": 8
+      "ing.linguica": 8,
+      "ing.refrigerante": 3,
+      "ing.suco": 4
     }
   },
   "restaurant": {
@@ -132,7 +134,10 @@
       "cookMs": 4000,
       "actionMs": 600,
       "awayStepMs": 2500
-    }
+    },
+    "drinks": ["ing.refrigerante", "ing.suco"],
+    "drinkChance": 0.5,
+    "drinkCoins": 4
   },
   "avenue": {
     "mapId": "map.vila",

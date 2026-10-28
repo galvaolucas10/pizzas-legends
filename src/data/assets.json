@@ -250,6 +250,12 @@
         "y": 18
       },
       "animations": "anim.character_32"
+    },
+    "icon.ing_refrigerante": {
+      "src": "icons/ing_refrigerante.png"
+    },
+    "icon.ing_suco": {
+      "src": "icons/ing_suco.png"
     }
   },
   "tilesets": {

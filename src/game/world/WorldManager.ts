@@ -348,15 +348,17 @@ export class WorldManager {
       .sort((a, b) => a.at.y - b.at.y || (a.entity.id < b.entity.id ? -1 : 1));
     const visible = (e: Entity) => !(e instanceof Npc && e.hidden);
     for (const { entity, at } of drawn) if (visible(entity)) entity.drawShadow(ctx, assets, at);
-    // Pizza na mão: com pizza na mochila, o jogador aparece carregando (atrás dele se olha para cima).
+    // Mala de entrega nas costas: com pizza na mochila, o jogador aparece com a bolsa térmica.
+    // Vista de costas (olhando para cima) a mala fica na frente do corpo; nas outras, atrás.
     const state = this.options.state();
     const carrying = "inventory" in state ? state.inventory.pizzas.length : 0;
     for (const { entity, at } of drawn) {
-      const holding = carrying > 0 && entity === this.player;
-      const behind = this.player.mover.direction === "up";
-      if (holding && behind) drawCarriedPizzas(ctx, at, "up", carrying);
+      const withBag = carrying > 0 && entity === this.player;
+      const direction = this.player.mover.direction;
+      const bagInFront = direction === "up";
+      if (withBag && !bagInFront) drawDeliveryBag(ctx, at, direction);
       if (visible(entity)) entity.draw(ctx, assets, at);
-      if (holding && !behind) drawCarriedPizzas(ctx, at, this.player.mover.direction, carrying);
+      if (withBag && bagInFront) drawDeliveryBag(ctx, at, direction);
     }
 
     if (this.upperCache) ctx.drawImage(this.upperCache, -camera.x, -camera.y);
@@ -417,41 +419,36 @@ function drawBubble(
   ctx.restore();
 }
 
-/** Pizzas nas mãos do jogador (até 2 empilhadas), na frente do corpo conforme a direção. */
-function drawCarriedPizzas(
-  ctx: CanvasRenderingContext2D,
-  at: Point,
-  direction: Direction,
-  count: number,
-): void {
+/** Mala térmica de entrega nas costas do jogador (vermelha, com a pizza desenhada). */
+function drawDeliveryBag(ctx: CanvasRenderingContext2D, at: Point, direction: Direction): void {
+  // Centro da mala em relação ao tile do jogador, conforme para onde ele olha.
   const offset: Record<Direction, [number, number]> = {
-    down: [8, 9],
-    up: [8, 3],
-    left: [2, 7],
-    right: [14, 7],
+    up: [8, 3], // de costas: a mala aparece inteira
+    down: [8, 1], // de frente: só a parte de cima aparece atrás da cabeça
+    left: [12, 3], // de lado: a mala fica do lado oposto ao rosto
+    right: [4, 3],
   };
   const [dx, dy] = offset[direction];
-  for (let i = Math.min(count, 2) - 1; i >= 0; i--) {
-    drawPizza(ctx, Math.round(at.x + dx), Math.round(at.y + dy - i * 2));
-  }
-}
-
-/** Pizza pequena em pixel art (borda, molho e queijo), centrada em (cx, cy). */
-function drawPizza(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+  const x = Math.round(at.x + dx - 5);
+  const y = Math.round(at.y + dy - 5);
   ctx.save();
-  ctx.fillStyle = "#7a4a1a"; // contorno
-  ctx.fillRect(cx - 4, cy - 2, 9, 5);
-  ctx.fillRect(cx - 3, cy - 3, 7, 7);
-  ctx.fillStyle = "#e3a857"; // borda da massa
-  ctx.fillRect(cx - 3, cy - 2, 7, 5);
-  ctx.fillRect(cx - 2, cy - 3 + 1, 5, 5);
-  ctx.fillStyle = "#d2452b"; // molho
-  ctx.fillRect(cx - 2, cy - 1, 5, 3);
-  ctx.fillStyle = "#ffe08a"; // queijo
-  ctx.fillRect(cx - 1, cy - 1, 1, 1);
-  ctx.fillRect(cx + 1, cy, 1, 1);
-  ctx.fillRect(cx, cy + 1, 1, 1);
-  ctx.fillStyle = "#3c8a3c"; // manjericão
-  ctx.fillRect(cx + 1, cy - 1, 1, 1);
+  ctx.fillStyle = "#5c0d0d"; // contorno
+  ctx.fillRect(x - 1, y - 1, 12, 11);
+  ctx.fillStyle = "#c0392b"; // corpo da mala
+  ctx.fillRect(x, y, 10, 9);
+  ctx.fillStyle = "#e74c3c"; // tampa
+  ctx.fillRect(x, y, 10, 3);
+  ctx.fillStyle = "#f5f0e6"; // faixa clara
+  ctx.fillRect(x, y + 3, 10, 1);
+  ctx.fillStyle = "#f2c14e"; // logo de pizza
+  ctx.fillRect(x + 3, y + 5, 4, 3);
+  ctx.fillStyle = "#d2452b";
+  ctx.fillRect(x + 4, y + 6, 1, 1);
+  ctx.fillRect(x + 6, y + 5, 1, 1);
+  if (direction === "up") {
+    ctx.fillStyle = "#2b2b2b"; // alças
+    ctx.fillRect(x + 1, y - 2, 1, 2);
+    ctx.fillRect(x + 8, y - 2, 1, 2);
+  }
   ctx.restore();
 }

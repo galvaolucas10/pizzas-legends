@@ -19,7 +19,7 @@ import { ConditionSchema } from "./conditions";
 
 export const ProfileSchema = z.enum(["picante", "cremoso", "defumado", "fresco"]);
 export const RaritySchema = z.enum(["comum", "incomum", "raro", "lendario"]);
-export const IngredientCategorySchema = z.enum(["massa", "molho", "queijo", "cobertura"]);
+export const IngredientCategorySchema = z.enum(["massa", "molho", "queijo", "cobertura", "bebida"]);
 export type Profile = z.infer<typeof ProfileSchema>;
 export type Rarity = z.infer<typeof RaritySchema>;
 
@@ -91,6 +91,10 @@ export const BalanceSchema = z.strictObject({
       payXp: z.number().int().min(0),
       sprites: z.array(z.string().min(1)).min(1),
       countFlags: z.array(FlagIdSchema),
+      /** Bebidas que os clientes podem pedir junto (chance por pedido) e quanto pagam a mais. */
+      drinks: z.array(IngredientIdSchema).optional(),
+      drinkChance: z.number().min(0).max(1).optional(),
+      drinkCoins: z.number().int().min(0).optional(),
       /**
        * Funcionária (NPC do mapa com este id): atende sozinha, mesmo com o jogador em outro
        * mapa, a não ser que `offFlag` (folga) esteja ligada. Fica com `cut` moedas de cada

@@ -116,6 +116,8 @@ export function validateContent(content: ContentRegistry): string[] {
     else if (!map.objects.some((o) => o.kind === "door" && o.id === r.door))
       fail("balance.json#restaurant", `porta "${r.door}" não existe em ${r.mapId}`);
     for (const id of r.sprites) image(id, "balance.json#restaurant");
+    for (const id of r.drinks ?? [])
+      ref(content.ingredients, id, "ingrediente", "balance.json#restaurant");
     if (r.employee && map && !map.objects.some((o) => o.kind === "npc" && o.id === r.employee!.id))
       fail("balance.json#restaurant", `funcionária "${r.employee.id}" não está em ${r.mapId}`);
   }

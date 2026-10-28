@@ -155,14 +155,6 @@
   "dlg.rosa.nivel.padrao": "Vim comprar ingredientes frescos. Na minha idade, ainda faço pizza todo domingo!",
   "npc.dona_rosa.name": "Dona Rosa",
   "npc.cliente.name": "Cliente",
-  "cliente.pedido.rec.margherita": "Boa tarde! Eu quero uma Margherita, por favor.",
-  "cliente.esperando.rec.margherita": "Estou esperando a minha Margherita!",
-  "cliente.pedido.rec.quatro_queijos": "Boa tarde! Eu quero uma Quatro Queijos, por favor.",
-  "cliente.esperando.rec.quatro_queijos": "Estou esperando a minha Quatro Queijos!",
-  "cliente.pedido.rec.brasa": "Boa tarde! Eu quero uma Brasa, por favor.",
-  "cliente.esperando.rec.brasa": "Estou esperando a minha Brasa!",
-  "cliente.pedido.rec.defumada": "Boa tarde! Eu quero uma Defumada, por favor.",
-  "cliente.esperando.rec.defumada": "Estou esperando a minha Defumada!",
   "cliente.entregue": "Hmm, que cheiro bom! Obrigado!",
   "cliente.comendo": "Estou comendo... Já te chamo para pagar!",
   "cliente.paga": "Estava deliciosa! Aqui está o pagamento. Até a próxima!",
@@ -196,5 +188,10 @@
   "dlg.tito.horta.depois": "A horta está linda graças a você. Volte sempre para colher!",
   "npc.garcom_leo.name": "Léo",
   "dlg.leo.parar.1": "Quer atender você mesmo aqui na cozinha verde? Tudo bem, vou tirar uma folga. Me chame quando quiser!",
-  "dlg.leo.comecar.1": "Voltei, chefe! Eu anoto, faço no fogão, entrego e recebo. Fico com 4 moedas de cada cliente."
+  "dlg.leo.comecar.1": "Voltei, chefe! Eu anoto, faço no fogão, entrego e recebo. Fico com 4 moedas de cada cliente.",
+  "ing.refrigerante.name": "Refrigerante",
+  "ing.suco.name": "Suco de Laranja",
+  "cliente.pedido": "Boa tarde! Eu quero uma {pizza}{bebida}, por favor.",
+  "cliente.esperando": "Estou esperando a minha {pizza}{bebida}!",
+  "cliente.falta_bebida": "A pizza chegou, mas falta o meu {bebida}! (Compre na Loja: Tab → Loja, ou no Mercadinho da Lia.)"
 }

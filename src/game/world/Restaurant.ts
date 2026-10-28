@@ -32,9 +32,17 @@ interface Customer {
   seat: number;
   state: CustomerState;
   recipeId: string | null;
+  /** Bebida pedida junto (refri, suco) ou null. */
+  drinkId: string | null;
   /** Tempo de comer que falta (estado "eating"). */
   eatLeftMs: number;
 }
+
+/** Siglas das bebidas no balão do pedido. */
+const DRINK_TAGS: Record<string, string> = {
+  "ing.refrigerante": "Refri",
+  "ing.suco": "Suco",
+};
 
 /** Siglas das pizzas no balão do pedido. */
 const RECIPE_TAGS: Record<string, string> = {
@@ -214,7 +222,7 @@ export class Restaurant {
     if (task.waitMs > 0) return;
     switch (task.kind) {
       case "order":
-        c.recipeId = this.pickRecipe();
+        this.takeOrder(c);
         c.state = "waiting";
         this.paint(c);
         this.task = null;
@@ -233,7 +241,11 @@ export class Restaurant {
         this.task = null;
         break;
       case "collect": {
-        this.o.session.dispatch({ type: "customerPaid", byEmployee: true });
+        this.o.session.dispatch({
+          type: "customerPaid",
+          byEmployee: true,
+          withDrink: Boolean(c.drinkId),
+        });
         const coins = customerCoins(this.o.session.content, true);
         const text = this.o.session.content.locale["nina.recebeu"] ?? "+{coins}";
         this.o.session.signals.emit("notice", text.replace("{coins}", String(coins)));
@@ -278,19 +290,27 @@ export class Restaurant {
     const c = this.customers.find((x) => x.id === id);
     if (!c) return null;
     const say = (textKey: string): GameEvent[] => [
-      { type: "message", speaker: "npc.cliente", textKey },
+      { type: "message", speaker: "npc.cliente", textKey, vars: this.orderVars(c) },
     ];
     const session = this.o.session;
     switch (c.state) {
       case "ordering": {
-        c.recipeId = this.pickRecipe();
+        this.takeOrder(c);
         c.state = "waiting";
         this.paint(c);
-        return say(`cliente.pedido.${c.recipeId}`);
+        return say("cliente.pedido");
       }
       case "waiting": {
         const pizza = session.state.inventory.pizzas.find((p) => p.recipeId === c.recipeId);
-        if (!pizza) return say(`cliente.esperando.${c.recipeId}`);
+        if (!pizza) return say("cliente.esperando");
+        // Bebida: sai da mochila (comprada na loja); sem ela, o cliente avisa onde comprar.
+        if (c.drinkId && (session.state.inventory.ingredients[c.drinkId] ?? 0) < 1)
+          return say("cliente.falta_bebida");
+        if (c.drinkId)
+          session.dispatch({
+            type: "takeIngredients",
+            items: [{ ingredientId: c.drinkId, count: 1 }],
+          });
         session.dispatch({ type: "takePizza", pizzaId: pizza.id });
         c.state = "eating";
         c.eatLeftMs = this.config.eatMs;
@@ -300,7 +320,7 @@ export class Restaurant {
       case "eating":
         return say("cliente.comendo");
       case "paying":
-        session.dispatch({ type: "customerPaid" });
+        session.dispatch({ type: "customerPaid", withDrink: Boolean(c.drinkId) });
         c.state = "leaving";
         this.paint(c);
         return say("cliente.paga");
@@ -353,8 +373,33 @@ export class Restaurant {
     if (!npc) return;
     npc.bubble =
       c.state === "waiting"
-        ? { text: RECIPE_TAGS[c.recipeId ?? ""] ?? "?", color: "#8e3b1a" }
+        ? {
+            text:
+              (RECIPE_TAGS[c.recipeId ?? ""] ?? "?") +
+              (c.drinkId ? `+${DRINK_TAGS[c.drinkId] ?? "Bebida"}` : ""),
+            color: "#8e3b1a",
+          }
         : BUBBLES[c.state];
+  }
+
+  /** Anota o pedido: a pizza e, às vezes, uma bebida. */
+  private takeOrder(c: Customer): void {
+    c.recipeId = this.pickRecipe();
+    const drinks = this.config.drinks ?? [];
+    const chance = this.config.drinkChance ?? 0;
+    c.drinkId =
+      drinks.length && this.random() < chance
+        ? drinks[Math.floor(this.random() * drinks.length)]!
+        : null;
+  }
+
+  /** Textos do pedido: {pizza} e {bebida} (" e um Refrigerante" ou nada). */
+  private orderVars(c: Customer): Record<string, string> {
+    const text = (id: string) => this.o.session.content.locale[`${id}.name`] ?? id;
+    return {
+      pizza: c.recipeId ? text(c.recipeId) : "pizza",
+      bebida: c.drinkId ? ` e um ${text(c.drinkId)}` : "",
+    };
   }
 
   private pickRecipe(): string {
@@ -382,6 +427,7 @@ export class Restaurant {
       seat: free[Math.floor(this.random() * free.length)]!,
       state: "ordering",
       recipeId: null,
+      drinkId: null,
       eatLeftMs: 0,
     });
   }
@@ -403,6 +449,7 @@ export class Restaurant {
       seat,
       state: "arriving",
       recipeId: null,
+      drinkId: null,
       eatLeftMs: 0,
     };
     this.customers.push(c);

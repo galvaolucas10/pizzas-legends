@@ -55,7 +55,7 @@ export type Command =
   | { type: "openChest"; rewardId: string }
   | { type: "setBasket"; pizzaIds: string[] }
   | { type: "buyIngredient"; ingredientId: string; count: number }
-  | { type: "customerPaid"; byEmployee?: boolean }
+  | { type: "customerPaid"; byEmployee?: boolean; withDrink?: boolean }
   | { type: "onlinePaid"; byHelper?: boolean }
   | { type: "regrowHarvest"; globalIds: string[] }
   | { type: "addPlayTime"; ms: number };
@@ -309,7 +309,7 @@ export class GameSession {
         return { ok: true, save: r };
       }
       case "customerPaid":
-        return { ok: true, save: payCustomer(save, c, command.byEmployee) };
+        return { ok: true, save: payCustomer(save, c, command.byEmployee, command.withDrink) };
       case "onlinePaid":
         return { ok: true, save: payOnlineOrder(save, c, command.byHelper) };
       case "regrowHarvest": {
