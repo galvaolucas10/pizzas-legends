@@ -1,6 +1,6 @@
 # Pizza Legends — Modelos de Dados
 
-> **Versão:** 0.1 · **Data:** 27/10/2026 · **Schema de save:** `schemaVersion: 1`
+> **Versão:** 0.1 · **Data:** 27/10/2026 · **Schema de save:** `schemaVersion: 3` (a v2 fez o nível começar em 0; a v3 voltou a começar em 1. As migrações 1 → 2 → 3 se anulam para saves v1)
 > **Base:** [`GAME_DESIGN_DOCUMENT.md`](GAME_DESIGN_DOCUMENT.md) · [`DECISOES_TECNICAS.md`](DECISOES_TECNICAS.md) (ADR-001, ADR-004, ADR-005)
 
 Este documento define **o formato de todos os dados do jogo**: o conteúdo estático (ingredientes, receitas, mapas…), o estado salvo do jogador e as funções puras que os transformam. É o contrato entre os sistemas do motor e a base para o futuro `DATABASE.md`.
@@ -152,8 +152,8 @@ interface Balance {
   sameProfileMultiplier: number;                  // 0.75
   potency: { base: number; perQuality: number };  // P = 4 + 2 × quality
   slices: { min: number; max: number };           // 1..8
-  xpTable: number[];                              // XP acumulado por nível: [0, 60, 150, 280, 450]
-  maxHp: { base: number; perLevel: number };      // 40 + 8 × (level − 1)
+  xpTable: number[];                              // XP total para chegar ao nível n = xpTable[n − 1]: [0, 60, 150, 280, 450]
+  maxHp: { base: number; perLevel: number };      // 50 + 10 × (level − 1)
   basketSize: number;                             // 4
   maxPizzas: number;                              // 12
   maxIngredientStack: number;                     // 99
@@ -836,7 +836,7 @@ Toda regra que altera progresso é uma função **pura**: recebe o estado e o co
 | Preparo | `cookPizza(save, recipeId, ingredientIds, content) -> { save, pizza } \| PreparationError` | Valida requisitos e estoque, consome ingredientes, cria `pz_<n>`, concede XP de primeiro preparo, respeita `maxPizzas` |
 | Conversão | `convertIngredients(save, conversionId, times, content) -> save \| Error` | Exige habilidade e estoque; respeita pilha máxima |
 | Habilidade | `learnSkill(save, skillId, content) -> save \| Error` | Pontos, `requires`, `minLevel`, não repetido |
-| XP | `grantXp(save, amount, content) -> { save, levelsGained }` | Sobe de nível pela `xpTable`, +1 ponto por nível, teto `maxLevel` |
+| XP | `grantXp(save, amount, content) -> { save, levelsGained }` | Sobe de nível pela `xpTable` (começa no nível 1), +1 ponto por nível, teto `maxLevel` |
 | Recompensa | `claimReward(save, rewardId, content) -> { save, granted: boolean }` | Se a flag `rew.<id>` existe, `granted: false` e nada muda |
 | Condição | `evaluateCondition(cond, save, content) -> boolean` | — |
 | Missões | `updateQuests(save, content) -> { save, events }` | Reavalia etapas, aplica recompensas, emite avisos para a interface |

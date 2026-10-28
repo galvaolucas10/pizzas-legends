@@ -1,6 +1,6 @@
 import type { ContentRegistry } from "../content/registry";
 import type { BattleActionDef, Enemy, Profile } from "../content/schemas/gameplay";
-import { addIngredients } from "./inventory";
+import { addIngredients, hasIngredients } from "./inventory";
 import { grantXp, maxHpFor } from "./progression";
 import { nextRandom, type RngState } from "./rng";
 import { activeCharacter, type PizzaInstance, type SaveData, type StatusApplied } from "./types";
@@ -494,9 +494,20 @@ export function applyBattleResult(
 }
 
 /** Descanso no forno (DATA_MODELS 6): inimigos e coletas renováveis voltam; vira ponto de retorno. */
-export function restAtOven(save: SaveData, ovenId: string): SaveData {
-  return {
+export function restAtOven(save: SaveData, ovenId: string, content?: ContentRegistry): SaveData {
+  const rested: SaveData = {
     ...save,
     world: { ...save.world, lastOvenId: ovenId, defeatedEnemies: [], harvested: [] },
   };
+  // Sem pizzas e sem ingredientes para a receita básica: completa o kit (balance.restKit).
+  const kit = content?.balance.restKit ?? [];
+  if (!content || kit.length === 0 || save.inventory.pizzas.length > 0) return rested;
+  if (hasIngredients(save, kit)) return rested;
+  const missing = kit
+    .map((i) => ({
+      ingredientId: i.ingredientId,
+      count: Math.max(0, i.count - (save.inventory.ingredients[i.ingredientId] ?? 0)),
+    }))
+    .filter((i) => i.count > 0);
+  return addIngredients(rested, missing, content);
 }

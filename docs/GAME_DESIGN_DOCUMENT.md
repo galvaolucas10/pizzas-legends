@@ -90,7 +90,7 @@ Ler a intenção do inimigo → escolher fatia (ou Defender) → ver o resultado
 |---|---|---:|---|
 | `nivel` | Nível do personagem | 1 | até 5 na demo |
 | `xp` | Experiência acumulada | 0 | ver tabela 3.3 |
-| `pvMax` | Pontos de vida máximos | 40 | +8 por nível |
+| `pvMax` | Pontos de vida máximos | 50 | +10 por nível |
 | `pontosHabilidade` | Pontos disponíveis para a árvore | 0 | +1 por nível; recompensas de missão |
 | `tamanhoCesta` | Pizzas levadas para a batalha | 4 | fixo na demo |
 
@@ -100,11 +100,13 @@ Ler a intenção do inimigo → escolher fatia (ou Defender) → ver o resultado
 
 | Nível | XP acumulado necessário | PV máx. |
 |---:|---:|---:|
-| 1 | 0 | 40 |
-| 2 | 60 | 48 |
-| 3 | 150 | 56 |
-| 4 | 280 | 64 |
-| 5 (máx. demo) | 450 | 72 |
+| 1 (início) | 0 | 50 |
+| 2 | 60 | 60 |
+| 3 | 150 | 70 |
+| 4 | 280 | 80 |
+| 5 (máx. demo) | 450 | 90 |
+
+PV aumentado em 28/10/2026 (era 40 + 8 por nível) após o playtest: as lutas puniam demais quem ainda está aprendendo os perfis.
 
 Expectativa: o jogador termina a demo no nível 4 ou 5, com 4 a 6 pontos gastos.
 
@@ -182,9 +184,9 @@ Todo ingrediente e toda receita têm um **perfil**. Os perfis definem o tipo de 
 | `ing.queijo_cabra` | Queijo de Cabra | queijo | Incomum | Cremoso | — | Missão da despensa |
 | `ing.queijo_defumado` | Queijo Defumado | queijo | Incomum | Defumado | — | Habilidade *Defumação* |
 | `ing.manjericao` | Manjericão | cobertura | Comum | Fresco | +2 de cura por fatia | Coleta no bosque |
-| `ing.cogumelo` | Cogumelo do Bosque | cobertura | Comum | Defumado | Enfraquecido dura +1 turno | Coleta no bosque, Fungos |
+| `ing.cogumelo` | Cogumelo do Bosque | cobertura | Comum | Defumado | Aplica Enfraquecido por 1 turno (+1 turno se a pizza já aplica) | Coleta no bosque, Fungos |
 | `ing.linguica` | Linguiça Curada | cobertura | Incomum | Defumado | +2 de dano por fatia | Baús, Ratos |
-| `ing.pimenta_dragao` | Pimenta-Dragão | cobertura | Raro | Picante | Queimadura +1 de dano e +1 turno | Segredo do bosque |
+| `ing.pimenta_dragao` | Pimenta-Dragão | cobertura | Raro | Picante | Aplica Queimadura por 1 turno com +1 de dano (+1 turno e +1 de dano se a pizza já aplica) | Segredo do bosque |
 | `ing.azeite_dourado` | Azeite Dourado | cobertura | Raro | — (neutro) | +1 de qualidade na pizza | Missão secundária |
 
 **Regras:**
@@ -275,7 +277,7 @@ Exemplos:
 
 Três ramos com três níveis cada (9 habilidades). Os ramos **Molho** e **Queijo** ficam para depois da demo.
 
-| Ramo | Nível 1 (custo 1) | Nível 2 (custo 1) | Nível 3 (custo 2, exige nível 4) |
+| Ramo | Nível 1 (custo 1) | Nível 2 (custo 1) | Nível 3 (custo 2, exige nível 4 do personagem) |
 |---|---|---|---|
 | **Massa** | **Sova Firme** `skill.sova_firme`: +1 fatia em todas as pizzas | **Fermentação Natural** `skill.fermentacao`: no forno, converte 2 Farinha → 1 Massa Fermentada | **Borda Recheada** `skill.borda_recheada`: a última fatia de cada pizza tem efeito ×1,5 |
 | **Forno** | **Fogo Controlado** `skill.fogo_controlado`: +1 de qualidade em todas as pizzas | **Defumação** `skill.defumacao`: converte 1 Mussarela → 1 Queijo Defumado; desbloqueia a receita Defumada | **Forno a Lenha** `skill.forno_lenha`: permite preparar 2 pizzas da mesma receita de uma vez; a segunda não consome massa |

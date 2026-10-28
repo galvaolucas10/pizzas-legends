@@ -87,4 +87,14 @@ describe("jogada completa da demo", () => {
     });
     expect(r.ok ? r.pizza!.quality : r.error).toBeGreaterThanOrEqual(4);
   });
+
+  it("Ravena: cesta cheia só de Margheritas também vence (não trava quem errou o perfil)", () => {
+    const s = new GameSession(C, newGame(C, { name: "Nico", seed: 7 }));
+    s.dispatch({ type: "claimReward", rewardId: "rew.primeiro_desafio_etapa1" });
+    s.dispatch({ type: "claimReward", rewardId: "rew.primeiro_desafio_etapa2" });
+    cook(s, "rec.margherita", 4);
+    const basket = s.state.inventory.pizzas.map((p) => p.id);
+    expect(basket).toHaveLength(4);
+    expect(fight(s, "enemy.rival_ravena", basket)).toBe("victory");
+  });
 });

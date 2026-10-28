@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 24,
+  "nextobjectid": 31,
   "compressionlevel": -1,
   "properties": [
     {
@@ -4062,6 +4062,252 @@
               "name": "visibleIf",
               "type": "string",
               "value": "ponte_fechada"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "name": "manjericao1",
+          "type": "harvest",
+          "x": 64,
+          "y": 192,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.manjericao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "name": "manjericao2",
+          "type": "harvest",
+          "x": 160,
+          "y": 400,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.manjericao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "name": "cogumelo1",
+          "type": "harvest",
+          "x": 240,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.cogumelo"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "name": "cogumelo2",
+          "type": "harvest",
+          "x": 320,
+          "y": 416,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.cogumelo"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "name": "pimenta_secreta",
+          "type": "harvest",
+          "x": 608,
+          "y": 432,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "ingredientId",
+              "type": "string",
+              "value": "ing.pimenta_dragao"
+            },
+            {
+              "name": "count",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "renew",
+              "type": "string",
+              "value": "never"
+            },
+            {
+              "name": "rewardId",
+              "type": "string",
+              "value": "rew.segredo_pimenta"
+            },
+            {
+              "name": "solid",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "name": "fungo1",
+          "type": "enemy",
+          "x": 128,
+          "y": 304,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "enemyId",
+              "type": "string",
+              "value": "enemy.fungo_rabugento"
+            },
+            {
+              "name": "respawn",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "down"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/bosque.json#fungo1_rotina"
+            },
+            {
+              "name": "visibleIf",
+              "type": "string",
+              "value": "etapa2_concluida"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "name": "fungo2",
+          "type": "enemy",
+          "x": 80,
+          "y": 400,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "enemyId",
+              "type": "string",
+              "value": "enemy.fungo_rabugento"
+            },
+            {
+              "name": "respawn",
+              "type": "string",
+              "value": "rest"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "right"
+            },
+            {
+              "name": "behaviorLoop",
+              "type": "string",
+              "value": "dialogues/bosque.json#fungo2_rotina"
+            },
+            {
+              "name": "visibleIf",
+              "type": "string",
+              "value": "etapa2_concluida"
             }
           ]
         }

@@ -180,10 +180,10 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
   it("fases do inimigo com limiares decrescentes terminando em 0", () => {
     const text = problemsAfter((raw) => {
       const ravena = byId(raw.enemies, "enemy.rival_ravena");
-      ravena.phases[0].untilHpAtOrBelow = 95; // maior que o PV máximo (90)
+      ravena.phases[0].untilHpAtOrBelow = 95; // maior que o PV máximo (80)
       ravena.phases[1].untilHpAtOrBelow = 10; // não termina em 0
     });
-    expect(text).toContain("limiar de PV 95 deve ser menor que 90");
+    expect(text).toContain("limiar de PV 95 deve ser menor que 80");
     expect(text).toContain("a última fase deve terminar em 0 PV");
   });
 
@@ -237,7 +237,7 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
         raw.balance.xpTable = [0, 60, 50];
         raw.balance.profileBeats.fresco = "cremoso";
       });
-      expect(text).toContain("xpTable tem 3 níveis; maxLevel é 5");
+      expect(text).toContain("xpTable tem 3 níveis; com maxLevel 5 deveria ter 5");
       expect(text).toContain("xpTable deve ser estritamente crescente");
       expect(text).toContain("profileBeats deve formar um ciclo");
     });

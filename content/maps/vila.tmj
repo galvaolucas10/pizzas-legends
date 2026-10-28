@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 100,
+  "nextobjectid": 101,
   "compressionlevel": -1,
   "properties": [
     {
@@ -2726,6 +2726,24 @@
               "name": "behaviorLoop",
               "type": "string",
               "value": "dialogues/vila.json#rita_rotina"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "bau_vila",
+          "type": "chest",
+          "x": 64,
+          "y": 160,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "rewardId",
+              "type": "string",
+              "value": "rew.bau_vila"
             }
           ]
         }

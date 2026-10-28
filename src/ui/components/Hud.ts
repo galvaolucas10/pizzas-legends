@@ -35,7 +35,17 @@ export class Hud {
     this.unsubscribe.push(
       s.on("changed", () => this.refresh()),
       s.on("objectiveChanged", () => this.refresh()),
-      s.on("levelUp", (e) => this.toast(`Subiu para o nível ${e.level}!`)),
+      s.on("levelUp", (e) =>
+        this.toast(
+          `Subiu para o nível ${e.level}! +${e.levels} ${e.levels === 1 ? "ponto" : "pontos"} de habilidade (menu → Habilidades)`,
+        ),
+      ),
+      s.on("itemsGained", (items) =>
+        this.toast(
+          items.map((i) => `+${i.count} ${this.text(`${i.ingredientId}.name`)}`).join(" · "),
+        ),
+      ),
+      s.on("skillLearned", (id) => this.toast(`Nova habilidade: ${this.text(`${id}.name`)}!`)),
       s.on("recipeLearned", (id) => this.toast(`Nova receita: ${this.text(`${id}.name`)}!`)),
       s.on("questEvent", (e) => {
         if (e.type === "questStepCompleted") this.toast("Etapa concluída!");
@@ -51,12 +61,16 @@ export class Hud {
   refresh(): void {
     const char = this.session.state.characters[0];
     if (!char) return;
-    this.nameEl.textContent = `${char.name} · Nv ${char.level}`;
+    const toNext = this.session.xpToNextLevel;
+    const xp = toNext === null ? "nível máximo" : `${char.xp}/${char.xp + toNext} XP`;
+    this.nameEl.textContent = `${char.name} · Nv ${char.level} · ${xp}`;
     this.hp.set(this.session.maxHp, this.session.maxHp);
     const objective = this.session.objective;
+    const progress = this.session.objectiveProgress;
+    const count = progress ? ` (${progress.done}/${progress.total})` : "";
     this.objectiveEl.hidden = !objective;
     this.objectiveEl.textContent = objective
-      ? `◆ ${this.text(objective)}
+      ? `◆ ${this.text(objective)}${count}
 Tab: menu → Missões para o passo a passo`
       : "";
   }

@@ -7,8 +7,17 @@ import {
 } from "../../src/core/cooking";
 import { evaluateCondition, questStatus } from "../../src/core/conditions";
 import { newGame } from "../../src/core/newGame";
-import { grantXp, maxHpFor } from "../../src/core/progression";
-import { advanceQuest, currentObjective, updateQuests } from "../../src/core/quests";
+import { grantXp, learnSkill, maxHpFor, skillBlocker } from "../../src/core/progression";
+import {
+  advanceQuest,
+  currentObjective,
+  objectiveProgress,
+  updateQuests,
+} from "../../src/core/quests";
+import { restAtOven } from "../../src/core/battle";
+import { convertIngredients, harvest, maxConversions } from "../../src/core/gathering";
+
+const MARGHERITA_IDS = ["ing.farinha", "ing.molho_tomate", "ing.mussarela"];
 import { claimReward } from "../../src/core/rewards";
 import { createRng, nextRandom, randoms } from "../../src/core/rng";
 import {
@@ -74,8 +83,9 @@ describe("novo jogo (F1-02)", () => {
 });
 
 describe("XP e nível (F1-04, GDD 3.3)", () => {
-  it("segue a curva 0/60/150/280/450 e dá 1 ponto por nível", () => {
+  it("começa no nível 1, segue a curva 0/60/150/280/450 e dá 1 ponto por nível", () => {
     let save = fresh();
+    expect(activeCharacter(save).level).toBe(1);
     save = grantXp(save, 59, C).save;
     expect(activeCharacter(save).level).toBe(1);
     const up = grantXp(save, 1, C);
@@ -88,8 +98,8 @@ describe("XP e nível (F1-04, GDD 3.3)", () => {
     expect([activeCharacter(big.save).level, big.levelsGained]).toEqual([5, 4]); // teto maxLevel
   });
 
-  it("PV máximo: 40 + 8 por nível", () => {
-    expect([1, 2, 5].map((l) => maxHpFor(l, C))).toEqual([40, 48, 72]);
+  it("PV máximo: 50 no nível 1, +10 por nível", () => {
+    expect([1, 2, 5].map((l) => maxHpFor(l, C))).toEqual([50, 60, 90]);
   });
 });
 
@@ -355,5 +365,182 @@ describe("preparo (F1-07, GDD 5.4)", () => {
       "ing.molho_tomate",
       "ing.mussarela",
     ]);
+  });
+});
+
+describe("aprender habilidades (F2-01, DATA_MODELS 6)", () => {
+  const withPoints = (save: SaveData, skillPoints: number, level = 1) =>
+    withCharacter(save, (c) => ({ ...c, skillPoints, level }));
+
+  it("gasta os pontos e adiciona a habilidade", () => {
+    const save = learnSkill(withPoints(fresh(), 2), "skill.sova_firme", C);
+    if ("kind" in save) throw new Error(save.kind);
+    expect(activeCharacter(save).skills).toEqual(["skill.sova_firme"]);
+    expect(activeCharacter(save).skillPoints).toBe(1);
+  });
+
+  it("recusa sem pontos, sem pré-requisito, abaixo do nível mínimo e repetida", () => {
+    expect(learnSkill(fresh(), "skill.sova_firme", C)).toEqual({
+      kind: "notEnoughPoints",
+      need: 1,
+      have: 0,
+    });
+    expect(learnSkill(withPoints(fresh(), 3), "skill.fermentacao", C)).toEqual({
+      kind: "missingRequirement",
+      skillId: "skill.sova_firme",
+    });
+    const tier2 = learn(withPoints(fresh(), 3), "skill.sova_firme", "skill.fermentacao");
+    expect(learnSkill(tier2, "skill.borda_recheada", C)).toEqual({
+      kind: "levelTooLow",
+      minLevel: 4,
+    });
+    expect(learnSkill(tier2, "skill.sova_firme", C)).toEqual({
+      kind: "alreadyLearned",
+      skillId: "skill.sova_firme",
+    });
+    expect(learnSkill(fresh(), "skill.nao_existe", C)).toMatchObject({ kind: "unknownSkill" });
+  });
+
+  it("nível 3 da árvore custa 2 pontos e exige o nível 4", () => {
+    const save = learn(withPoints(fresh(), 1, 4), "skill.mao_generosa", "skill.harmonia");
+    expect(skillBlocker(save, "skill.toque_final", C)).toEqual({
+      kind: "notEnoughPoints",
+      need: 2,
+      have: 1,
+    });
+    const ok = learnSkill(withPoints(save, 2, 4), "skill.toque_final", C);
+    expect("kind" in ok).toBe(false);
+  });
+
+  it("Defumação libera a receita Defumada", () => {
+    const save = learnSkill(
+      learn(withPoints(fresh(), 1), "skill.fogo_controlado"),
+      "skill.defumacao",
+      C,
+    );
+    if ("kind" in save) throw new Error(save.kind);
+    expect(getAvailableRecipes(activeCharacter(save), C)).toContain("rec.defumada");
+  });
+});
+
+describe("nunca travar sem ingredientes", () => {
+  it("descansar sem pizzas e sem ingredientes dá o kit para uma Margherita", () => {
+    const empty: SaveData = {
+      ...fresh(),
+      inventory: { ingredients: {}, pizzas: [], lastBasket: [] },
+    };
+    const rested = restAtOven(empty, "oven.mestre", C);
+    expect(rested.inventory.ingredients).toEqual({
+      "ing.farinha": 1,
+      "ing.molho_tomate": 1,
+      "ing.mussarela": 1,
+    });
+    expect("pizza" in cookPizza(rested, "rec.margherita", MARGHERITA_IDS, C)).toBe(true);
+  });
+
+  it("com pizza na mochila ou ingredientes suficientes, nada é dado", () => {
+    const save = fresh();
+    expect(restAtOven(save, "oven.mestre", C).inventory.ingredients).toEqual(
+      save.inventory.ingredients,
+    );
+  });
+});
+
+describe("contagem do objetivo", () => {
+  it("mostra quantos ratos faltam na etapa 2", () => {
+    let save = advanceQuest(fresh(), "quest.primeiro_desafio", 1).save;
+    expect(objectiveProgress(save, C)).toEqual({ done: 0, total: 2 });
+    save = { ...save, flags: { ...save.flags, "flag.ratos_derrotados": 1 } };
+    expect(objectiveProgress(save, C)).toEqual({ done: 1, total: 2 });
+    expect(objectiveProgress(fresh(), C)).toBeNull(); // etapa 1 não tem contagem
+  });
+});
+
+describe("ingredientes: transformar, colher e baús (F2-02, F2-06)", () => {
+  const stock = (save: SaveData) => save.inventory.ingredients;
+
+  it("Fermentação troca 2 Farinha por 1 Massa Fermentada e exige a habilidade", () => {
+    const save = withStock(fresh(), { "ing.farinha": 5 });
+    expect(convertIngredients(save, "conv.fermentacao", 1, C)).toEqual({
+      kind: "missingSkill",
+      skillId: "skill.fermentacao",
+    });
+    const skilled = learn(save, "skill.sova_firme", "skill.fermentacao");
+    expect(maxConversions(skilled, "conv.fermentacao", C)).toBe(3);
+    const done = convertIngredients(skilled, "conv.fermentacao", 2, C);
+    if ("kind" in done) throw new Error(done.kind);
+    expect(stock(done)["ing.farinha"]).toBe(2);
+    expect(stock(done)["ing.massa_fermentada"]).toBe(2);
+    expect(convertIngredients(skilled, "conv.fermentacao", 4, C)).toMatchObject({
+      kind: "notEnoughIngredients",
+    });
+  });
+
+  it("Defumação faz Queijo Defumado e a pizza Defumada fica possível", () => {
+    const skilled = learn(fresh(), "skill.fogo_controlado", "skill.defumacao");
+    const smoked = convertIngredients(skilled, "conv.defumacao", 1, C);
+    if ("kind" in smoked) throw new Error(smoked.kind);
+    const cooked = cookPizza(
+      smoked,
+      "rec.defumada",
+      ["ing.farinha", "ing.molho_tomate", "ing.queijo_defumado"],
+      C,
+    );
+    expect("pizza" in cooked).toBe(true);
+  });
+
+  it("coleta renovável: uma vez até descansar; coleta única nunca se repete", () => {
+    const herb = {
+      globalId: "map.bosque/manjericao1",
+      ingredientId: "ing.manjericao",
+      count: 2,
+      renew: "rest" as const,
+    };
+    const once = harvest(fresh(), herb, C)!;
+    expect(stock(once)["ing.manjericao"]).toBe(2);
+    expect(harvest(once, herb, C)).toBeNull();
+    const rested = restAtOven(once, "oven.mestre", C);
+    expect(stock(harvest(rested, herb, C)!)["ing.manjericao"]).toBe(4);
+
+    const secret = {
+      globalId: "map.bosque/pimenta_secreta",
+      ingredientId: "ing.pimenta_dragao",
+      count: 1,
+      renew: "never" as const,
+      rewardId: "rew.segredo_pimenta",
+    };
+    const found = harvest(fresh(), secret, C)!;
+    expect(stock(found)["ing.pimenta_dragao"]).toBe(1); // vem só da recompensa, sem dobrar
+    expect(activeCharacter(found).xp).toBe(15);
+    expect(harvest(restAtOven(found, "oven.mestre", C), secret, C)).toBeNull();
+  });
+
+  it("Cogumelo e Pimenta-Dragão funcionam em qualquer pizza", () => {
+    const char = activeCharacter(fresh());
+    const withMushroom = previewPizza(
+      "rec.margherita",
+      [...MARGHERITA_IDS, "ing.cogumelo"],
+      char,
+      C,
+    );
+    if ("kind" in withMushroom) throw new Error(withMushroom.kind);
+    expect(withMushroom.action.applyStatus).toContainEqual({
+      status: "status.enfraquecido",
+      target: "opponent",
+      duration: 1,
+    });
+    const withPepper = previewPizza(
+      "rec.margherita",
+      [...MARGHERITA_IDS, "ing.pimenta_dragao"],
+      char,
+      C,
+    );
+    if ("kind" in withPepper) throw new Error(withPepper.kind);
+    expect(withPepper.action.applyStatus).toContainEqual({
+      status: "status.queimadura",
+      target: "opponent",
+      duration: 1,
+      bonusDamage: 1,
+    });
   });
 });

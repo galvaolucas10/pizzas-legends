@@ -73,7 +73,7 @@ const damageTo = (b: BattleState, target: "player" | "enemy") =>
 describe("batalha (F1-10, GDD 7.3–7.5)", () => {
   it("Ágil: o Rato age antes do jogador no primeiro turno", () => {
     const { battle } = start("enemy.rato_despensa", [MARGHERITA]);
-    expect(battle.player.hp).toBe(36); // Mordida (4)
+    expect(battle.player.hp).toBe(46); // 50 PV − Mordida (4)
     expect(battle.enemy.patternIndex).toBe(1);
   });
 
@@ -100,7 +100,7 @@ describe("batalha (F1-10, GDD 7.3–7.5)", () => {
     battle = resolveTurn(battle, { kind: "defend" }, C);
     expect(damageTo(battle, "player")).toEqual([2]); // floor(5 × 0,5)
     expect(battle.log.some((e) => e.kind === "tick" && e.amount === 2)).toBe(true);
-    expect(battle.player.hp).toBe(40 - 2 - 2);
+    expect(battle.player.hp).toBe(50 - 2 - 2);
   });
 
   it("Preparando dobra a próxima ação (Ferroada 5 → 10)", () => {

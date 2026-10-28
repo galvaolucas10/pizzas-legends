@@ -3,6 +3,7 @@ import type { Direction } from "../../content/schemas/common";
 import type { Condition } from "../../content/schemas/conditions";
 import { isSolid, type MapDef, type MapObject } from "../../content/schemas/map";
 import { evaluateCondition, type FlagsOnly } from "../../core/conditions";
+import { isChestOpen, isHarvested, type HarvestSpot } from "../../core/gathering";
 import type { SaveData } from "../../core/types";
 import type { AssetLoader } from "../../engine/assets/AssetLoader";
 import { cameraView, type Point } from "../../engine/Camera";
@@ -14,6 +15,7 @@ import { neighbor } from "../entities/GridMover";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { GridOccupancy } from "./GridOccupancy";
+import { drawChest, drawHarvest } from "./gatherArt";
 import { drawBrickOven } from "./ovenArt";
 
 export const SHADOW_ID = "img.shadow";
@@ -23,6 +25,8 @@ export type Placement = { entrance: string } | { x: number; y: number; direction
 
 type DoorObject = Extract<MapObject, { kind: "door" }>;
 type OvenObject = Extract<MapObject, { kind: "oven" }>;
+type HarvestObject = Extract<MapObject, { kind: "harvest" }>;
+type ChestObject = Extract<MapObject, { kind: "chest" }>;
 
 export interface WorldOptions {
   content: ContentRegistry;
@@ -47,6 +51,8 @@ export class WorldManager {
   /** Objetos sem entidade própria (placa, forno, baú...), por tile. */
   private interactables = new Map<string, MapObject>();
   private ovens: OvenObject[] = [];
+  /** Coletas e baús do mapa (desenhados em código). */
+  private pickups: (HarvestObject | ChestObject)[] = [];
   /** Relógio do mundo (anima o fogo dos fornos). */
   private time = 0;
 
@@ -124,6 +130,7 @@ export class WorldManager {
         this.interactables.set(`${object.x},${object.y}`, object);
         if (isSolid(object)) grid.reserve(`${map.id}/${object.id}`, object.x, object.y);
         if (object.kind === "oven") this.ovens.push(object);
+        if (object.kind === "harvest" || object.kind === "chest") this.pickups.push(object);
       }
     }
 
@@ -138,10 +145,31 @@ export class WorldManager {
     this.doors.clear();
     this.interactables.clear();
     this.ovens = [];
+    this.pickups = [];
     this.lowerCache = null;
     this.upperCache = null;
     this.grid = null;
     this.map = null;
+  }
+
+  /** Ponto de coleta do mapa atual no formato do core (ID global `<mapa>/<objeto>`). */
+  harvestSpot(object: HarvestObject): HarvestSpot {
+    return {
+      globalId: `${this.map?.id ?? ""}/${object.id}`,
+      ingredientId: object.ingredientId,
+      count: object.count,
+      renew: object.renew,
+      ...(object.rewardId ? { rewardId: object.rewardId } : {}),
+    };
+  }
+
+  /** Já colhido / já aberto? (sem save completo, como nos testes de mapa: nunca). */
+  isTaken(object: HarvestObject | ChestObject): boolean {
+    const state = this.options.state();
+    if (!("world" in state)) return false;
+    return object.kind === "chest"
+      ? isChestOpen(state, object.rewardId)
+      : isHarvested(state, this.harvestSpot(object));
   }
 
   /** Avalia uma condição de conteúdo com o estado atual (flags). */
@@ -233,6 +261,12 @@ export class WorldManager {
     for (const oven of this.ovens) {
       if (oven.draw)
         drawBrickOven(ctx, oven.x * TILE - camera.x, oven.y * TILE - camera.y, this.time);
+    }
+    for (const p of this.pickups) {
+      const x = p.x * TILE - camera.x;
+      const y = p.y * TILE - camera.y;
+      if (p.kind === "chest") drawChest(ctx, x, y, this.isTaken(p));
+      else drawHarvest(ctx, x, y, p.ingredientId, this.isTaken(p), this.time);
     }
 
     // Ordem de desenho (ARCHITECTURE 10.5): sombras, entidades por Y (desempate: id), camada de cima.

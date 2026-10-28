@@ -117,14 +117,14 @@
   {
     "id": "enemy.rival_ravena",
     "profile": "defumado",
-    "maxHp": 90,
+    "maxHp": 80,
     "traits": [],
     "canFlee": false,
     "xp": 120,
     "drops": [],
     "phases": [
       {
-        "untilHpAtOrBelow": 45,
+        "untilHpAtOrBelow": 40,
         "profile": "defumado",
         "pattern": ["act.fatia_fumaca", "act.golpe_pa", "act.brasa_lenta"]
       },

@@ -177,6 +177,13 @@
           "time": 1500
         }
       ]
+    },
+    {
+      "id": "bau_salao",
+      "x": 12,
+      "y": 10,
+      "kind": "chest",
+      "rewardId": "rew.bau_sotao"
     }
   ]
 }

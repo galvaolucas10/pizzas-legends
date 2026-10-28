@@ -103,9 +103,16 @@ export class LocalSaveRepository implements SaveRepository {
     const data = SaveDataSchema.safeParse(migrated);
     if (!data.success) return corrupted("estrutura inválida");
     const { save, warnings } = this.dropUnknownIds(data.data as SaveData);
+    // O resumo (tela de título) acompanha o personagem migrado.
+    const level = save.characters[0]?.level ?? file.summary.level;
     return {
       status: "ok",
-      file: { ...file, schemaVersion: CURRENT_SCHEMA_VERSION, data: save } as SaveFile,
+      file: {
+        ...file,
+        schemaVersion: CURRENT_SCHEMA_VERSION,
+        summary: { ...file.summary, level },
+        data: save,
+      } as SaveFile,
       warnings,
     };
   }

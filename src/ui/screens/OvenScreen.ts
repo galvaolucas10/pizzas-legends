@@ -15,7 +15,7 @@ export interface OvenScreenOptions {
   save?(): Promise<boolean>;
 }
 
-type Page = "main" | "recipes" | "recipe";
+type Page = "main" | "recipes" | "recipe" | "convert";
 
 /**
  * Forno (F1-08, GDD 11.2): preparar pizzas com pré-visualização do resultado, descansar
@@ -69,12 +69,18 @@ export class OvenScreen {
     );
     const items: MenuItem[] = [
       { label: "Preparar pizza", onSelect: () => this.showRecipes() },
+      { label: "Transformar ingredientes", onSelect: () => this.showConversions() },
       {
         label: "Descansar",
         detail: "inimigos voltam",
         onSelect: () => {
-          this.oven.rest();
-          this.note("Você descansou. Os inimigos e as coletas voltaram.", true);
+          const kit = this.oven.rest();
+          this.note(
+            kit.length
+              ? "Você descansou. O Mestre deixou ingredientes para uma Margherita no forno!"
+              : "Você descansou. Os inimigos e as coletas voltaram.",
+            true,
+          );
         },
       },
     ];
@@ -93,6 +99,45 @@ export class OvenScreen {
     this.menu.onCancel = () => (this.done = true);
     this.menu.onFocus = undefined;
     this.menu.setItems(items);
+  }
+
+  /** Fermentação e Defumação (F2-02): troca ingredientes comuns por incomuns. */
+  private showConversions(focus = 0): void {
+    this.page = "convert";
+    this.titleEl.textContent = "Transformar ingredientes";
+    const doc = this.o.doc;
+    const options = this.oven.conversions();
+    this.menu.onCancel = () => this.showMain();
+    this.menu.onFocus = (_item, index) => {
+      const conv = options[index];
+      if (!conv) return;
+      this.side.replaceChildren(
+        h(doc, "strong", "", conv.name),
+        h(doc, "p", "panel__text", conv.recipe),
+        h(
+          doc,
+          "p",
+          "panel__hint",
+          conv.reason ??
+            `Dá para fazer ${conv.max} ${conv.max === 1 ? "vez" : "vezes"}. Enter: 1 vez.`,
+        ),
+      );
+    };
+    const items: MenuItem[] = options.map((conv, index) => ({
+      label: conv.name,
+      detail: conv.max > 0 ? `×${conv.max}` : undefined,
+      disabled: conv.max === 0,
+      ...(conv.reason ? { reason: conv.reason } : {}),
+      onSelect: () => {
+        const r = this.oven.convert(conv.id, 1);
+        this.note(r.message, r.ok);
+        this.showConversions(index);
+      },
+    }));
+    if (items.length === 0) {
+      this.side.replaceChildren(h(doc, "p", "panel__text", "Nada para transformar."));
+    }
+    this.menu.setItems(items, focus);
   }
 
   private showRecipes(keep = false): void {

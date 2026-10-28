@@ -9,6 +9,7 @@ import {
   type PizzaInstance,
   type ResolvedSliceAction,
   type SaveData,
+  type StatusApplied,
 } from "./types";
 
 /** Motivos legíveis pela interface (GDD 11.3: "Falta Mussarela"). */
@@ -156,7 +157,18 @@ export function previewPizza(
       duration: a.duration ?? content.statuses[a.status]?.defaultDuration ?? 1,
     })),
   };
-  for (const mod of match.toppings.flatMap((t) => t.toppingModifiers)) {
+  const modifiers = match.toppings.flatMap((t) => t.toppingModifiers);
+  // Cobertura que mexe num efeito que a receita não aplica (ex.: Cogumelo numa Margherita):
+  // ela mesma aplica o efeito no inimigo, com a duração que der (mínimo 1 turno).
+  const addedByTopping = new Set<StatusApplied>();
+  for (const mod of modifiers) {
+    if (mod.type !== "statusDuration" && mod.type !== "statusDamage") continue;
+    if (action.applyStatus.some((a) => a.status === mod.status)) continue;
+    const added: StatusApplied = { status: mod.status, target: "opponent", duration: 0 };
+    action.applyStatus.push(added);
+    addedByTopping.add(added);
+  }
+  for (const mod of modifiers) {
     if (mod.type === "healPerSlice") action.heal += scaled(mod.value);
     else if (mod.type === "damagePerSlice") action.damage += scaled(mod.value);
     else if (mod.type === "statusDuration" || mod.type === "statusDamage") {
@@ -167,6 +179,7 @@ export function previewPizza(
       }
     }
   }
+  for (const app of addedByTopping) app.duration = Math.max(1, app.duration);
 
   return {
     recipeId,

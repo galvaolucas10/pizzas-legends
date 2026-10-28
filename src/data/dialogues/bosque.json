@@ -336,5 +336,45 @@
       "type": "incrementFlag",
       "flag": "flag.vespas_derrotadas"
     }
+  ],
+  "fungo1_rotina": [
+    {
+      "type": "stand",
+      "who": "fungo1",
+      "direction": "left",
+      "time": 1400
+    },
+    {
+      "type": "stand",
+      "who": "fungo1",
+      "direction": "down",
+      "time": 1100
+    },
+    {
+      "type": "stand",
+      "who": "fungo1",
+      "direction": "right",
+      "time": 1400
+    }
+  ],
+  "fungo2_rotina": [
+    {
+      "type": "stand",
+      "who": "fungo2",
+      "direction": "left",
+      "time": 1400
+    },
+    {
+      "type": "stand",
+      "who": "fungo2",
+      "direction": "down",
+      "time": 1100
+    },
+    {
+      "type": "stand",
+      "who": "fungo2",
+      "direction": "right",
+      "time": 1400
+    }
   ]
 }

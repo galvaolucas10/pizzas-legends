@@ -114,6 +114,27 @@ describe("save local (F1-16, DATA_MODELS 7.2 e 8.2)", () => {
     if (loaded.status === "ok") {
       expect(loaded.file.schemaVersion).toBe(CURRENT_SCHEMA_VERSION);
       expect(loaded.file.data.characters[0]!.name).toBe("Nico");
+      // v1 → v2 → v3: o nível desceu para começar em 0 e voltou a começar em 1.
+      expect(loaded.file.data.characters[0]!.level).toBe(1);
+      expect(loaded.file.summary.level).toBe(1);
     }
+  });
+
+  it("save v2 (nível começando em 0) volta a começar em 1 na v3", async () => {
+    const { store, repo: r } = repo();
+    const data = newGame(C, { name: "Nico", seed: 2 });
+    const v2 = { ...data, characters: [{ ...data.characters[0]!, level: 0 }] };
+    const file = await r.save("auto", data, summary);
+    store.setItem(
+      "pizzalegends:save:auto",
+      JSON.stringify({
+        ...file,
+        schemaVersion: 2,
+        data: v2,
+        checksum: fnv1a(stableStringify(v2)),
+      }),
+    );
+    const loaded = await r.load("auto");
+    expect(loaded.status === "ok" && loaded.file.data.characters[0]!.level).toBe(1);
   });
 });

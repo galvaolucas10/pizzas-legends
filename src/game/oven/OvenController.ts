@@ -5,6 +5,7 @@ import {
   suggestIngredients,
   type PreparationError,
 } from "../../core/cooking";
+import { maxConversions } from "../../core/gathering";
 import type { SaveData } from "../../core/types";
 import { PROFILE_NAMES } from "../battle/BattleController";
 import type { GameSession } from "../GameSession";
@@ -34,6 +35,17 @@ export interface PreviewView {
   slices?: number;
   effects?: string;
   ingredients: string[];
+}
+
+export interface ConversionOption {
+  id: string;
+  name: string;
+  /** Ex.: "2 Farinha → 1 Massa Fermentada". */
+  recipe: string;
+  /** Quantas vezes dá para fazer agora. */
+  max: number;
+  /** Motivo de não poder (falta a habilidade ou ingrediente). */
+  reason?: string;
 }
 
 /** Lógica da tela do forno (F1-08): receitas, coberturas, pré-visualização e preparo. */
@@ -157,8 +169,39 @@ export class OvenController {
     };
   }
 
-  rest(): void {
+  /** Conversões do jogo (F2-02): as liberadas por habilidade e as que ainda faltam aprender. */
+  conversions(): ConversionOption[] {
+    const name = (id: string) => this.content.locale[`${id}.name`] ?? id;
+    const skills = this.save.characters[0]!.skills;
+    return Object.values(this.content.conversions).map((conv) => {
+      const max = maxConversions(this.save, conv.id, this.content);
+      const recipe = `${conv.inputs.map((i) => `${i.count} ${name(i.ingredientId)}`).join(" + ")} → ${conv.output.count} ${name(conv.output.ingredientId)}`;
+      const reason = !skills.includes(conv.requiresSkill)
+        ? `Aprenda a habilidade ${name(conv.requiresSkill)} (menu → Habilidades).`
+        : max === 0
+          ? `Faltam ingredientes: ${recipe}.`
+          : undefined;
+      return { id: conv.id, name: name(conv.id), recipe, max, ...(reason ? { reason } : {}) };
+    });
+  }
+
+  /** Converte `times` vezes; devolve a mensagem para a tela. */
+  convert(conversionId: string, times: number): { ok: boolean; message: string } {
+    const conv = this.content.conversions[conversionId];
+    const r = this.session.dispatch({ type: "convertIngredients", conversionId, times });
+    if (!r.ok || !conv) return { ok: false, message: "Não deu para transformar." };
+    const out = this.content.locale[`${conv.output.ingredientId}.name`] ?? conv.output.ingredientId;
+    return { ok: true, message: `+${conv.output.count * times} ${out}!` };
+  }
+
+  /** Descansa; devolve os ingredientes recebidos do kit de segurança (vazio na maioria das vezes). */
+  rest(): { ingredientId: string; count: number }[] {
+    const before = this.session.state.inventory.ingredients;
     this.session.dispatch({ type: "rest", ovenId: this.ovenId });
+    const after = this.session.state.inventory.ingredients;
+    return Object.entries(after)
+      .map(([ingredientId, n]) => ({ ingredientId, count: n - (before[ingredientId] ?? 0) }))
+      .filter((i) => i.count > 0);
   }
 
   private errorText(e: PreparationError): string {

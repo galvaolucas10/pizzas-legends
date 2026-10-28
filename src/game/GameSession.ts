@@ -2,10 +2,32 @@ import type { ContentRegistry } from "../content/registry";
 import type { Direction } from "../content/schemas/common";
 import { applyBattleResult, restAtOven, type BattleState } from "../core/battle";
 import { cookPizza, type PreparationError } from "../core/cooking";
+import {
+  convertIngredients,
+  harvest,
+  isChestOpen,
+  type ConversionError,
+  type HarvestSpot,
+} from "../core/gathering";
 import { addIngredients, hasIngredients } from "../core/inventory";
-import { maxHpFor, xpToNextLevel } from "../core/progression";
+import {
+  learnSkill,
+  maxHpFor,
+  skillBlocker,
+  xpToNextLevel,
+  type SkillError,
+} from "../core/progression";
+
+export type { SkillError };
 import { questStatus } from "../core/conditions";
-import { advanceQuest, currentObjective, updateQuests, type QuestEvent } from "../core/quests";
+import {
+  advanceQuest,
+  currentObjective,
+  objectiveProgress,
+  stepProgress,
+  updateQuests,
+  type QuestEvent,
+} from "../core/quests";
 import { claimReward } from "../core/rewards";
 import type { PizzaInstance, SaveData } from "../core/types";
 import { Signals } from "./signals";
@@ -22,11 +44,20 @@ export type Command =
   | { type: "applyBattleResult"; battle: BattleState; enemyGlobalId?: string }
   | { type: "rest"; ovenId: string }
   | { type: "setPosition"; mapId: string; x: number; y: number; direction: Direction }
+  | { type: "learnSkill"; skillId: string }
+  | { type: "convertIngredients"; conversionId: string; times: number }
+  | { type: "harvest"; spot: HarvestSpot }
+  | { type: "openChest"; rewardId: string }
   | { type: "setBasket"; pizzaIds: string[] }
   | { type: "addPlayTime"; ms: number };
 
 export type CommandError =
-  PreparationError | { kind: "notEnoughIngredients" } | { kind: "pizzaNotFound"; pizzaId: string };
+  | PreparationError
+  | SkillError
+  | ConversionError
+  | { kind: "alreadyTaken" }
+  | { kind: "notEnoughIngredients" }
+  | { kind: "pizzaNotFound"; pizzaId: string };
 
 export type CommandResult =
   | {
@@ -42,6 +73,7 @@ export interface SessionSignals extends Record<string, unknown> {
   levelUp: { level: number; levels: number };
   itemsGained: { ingredientId: string; count: number }[];
   recipeLearned: string;
+  skillLearned: string;
   questEvent: QuestEvent;
   objectiveChanged: string | null;
   /** Marca o save como "sujo": o SaveSystem decide quando gravar. */
@@ -71,6 +103,16 @@ export class GameSession {
     return currentObjective(this.current, this.content);
   }
 
+  /** Contagem do objetivo atual (ex.: 1 de 2 ratos), se a etapa tiver contagem. */
+  get objectiveProgress(): { done: number; total: number } | null {
+    return objectiveProgress(this.current, this.content);
+  }
+
+  /** Contagem da etapa atual de uma missão, se houver. */
+  stepProgress(questId: string): { done: number; total: number } | null {
+    return stepProgress(this.current, questId, this.content);
+  }
+
   /** PV máximo do personagem ativo (fora da batalha o PV está sempre cheio, GDD 7.6). */
   get maxHp(): number {
     return maxHpFor(this.current.characters[0]?.level ?? 1, this.content);
@@ -84,6 +126,11 @@ export class GameSession {
   /** Status de uma missão, incluindo "disponível"/"indisponível" antes de começar. */
   questStatus(questId: string): string {
     return questStatus(this.current, questId, this.content);
+  }
+
+  /** Por que a habilidade ainda não pode ser aprendida (null = pode). */
+  skillBlocker(skillId: string): SkillError | null {
+    return skillBlocker(this.current, skillId, this.content);
   }
 
   /** Executa um comando. Se falhar, nada muda e o erro volta tipado. */
@@ -159,7 +206,7 @@ export class GameSession {
         return { ok: true, save: next, drops: outcome.drops, xp: outcome.xp };
       }
       case "rest":
-        return { ok: true, save: restAtOven(save, command.ovenId) };
+        return { ok: true, save: restAtOven(save, command.ovenId, c) };
       case "setPosition":
         return {
           ok: true,
@@ -172,6 +219,25 @@ export class GameSession {
             },
           },
         };
+      case "convertIngredients": {
+        const r = convertIngredients(save, command.conversionId, command.times, c);
+        if ("kind" in r) return { ok: false, error: r };
+        return { ok: true, save: r };
+      }
+      case "harvest": {
+        const r = harvest(save, command.spot, c);
+        if (!r) return { ok: false, error: { kind: "alreadyTaken" } };
+        return { ok: true, save: r };
+      }
+      case "openChest":
+        if (isChestOpen(save, command.rewardId))
+          return { ok: false, error: { kind: "alreadyTaken" } };
+        return { ok: true, save: claimReward(save, command.rewardId, c).save };
+      case "learnSkill": {
+        const r = learnSkill(save, command.skillId, c);
+        if ("kind" in r) return { ok: false, error: r };
+        return { ok: true, save: r };
+      }
       case "setBasket":
         return {
           ok: true,
@@ -210,6 +276,9 @@ export class GameSession {
     if (gained.length && command.type !== "takeIngredients") s.emit("itemsGained", gained);
     for (const recipe of charAfter?.knownRecipes ?? []) {
       if (!charBefore?.knownRecipes.includes(recipe)) s.emit("recipeLearned", recipe);
+    }
+    for (const skill of charAfter?.skills ?? []) {
+      if (!charBefore?.skills.includes(skill)) s.emit("skillLearned", skill);
     }
     for (const event of questEvents) s.emit("questEvent", event);
     const objBefore = currentObjective(before, this.content);

@@ -89,7 +89,13 @@ export function validateContent(content: ContentRegistry): string[] {
   // ---------- Balanceamento ----------
   const b = content.balance;
   if (b.xpTable.length !== b.maxLevel) {
-    fail("balance.json", `xpTable tem ${b.xpTable.length} níveis; maxLevel é ${b.maxLevel}`);
+    fail(
+      "balance.json",
+      `xpTable tem ${b.xpTable.length} níveis; com maxLevel ${b.maxLevel} deveria ter ${b.maxLevel} (do 1 ao ${b.maxLevel})`,
+    );
+  }
+  for (const item of b.restKit ?? []) {
+    ref(content.ingredients, item.ingredientId, "ingrediente", "balance.json#restKit");
   }
   if (b.xpTable[0] !== 0) fail("balance.json", "xpTable deve começar em 0 (nível 1)");
   if (b.xpTable.some((xp, i) => i > 0 && xp <= b.xpTable[i - 1]!)) {
@@ -170,6 +176,7 @@ export function validateContent(content: ContentRegistry): string[] {
   for (const branch of Object.values(content.branches)) image(branch.icon, branch.id);
   for (const skill of Object.values(content.skills)) {
     ref(content.branches, skill.branchId, "ramo", skill.id);
+    if (!hasText(`${skill.id}.desc`)) fail(skill.id, `falta o texto "${skill.id}.desc"`);
     for (const reqId of skill.requires) {
       const req = content.skills[reqId];
       if (!req) fail(skill.id, `pré-requisito inexistente "${reqId}"`);
@@ -323,6 +330,8 @@ export function validateContent(content: ContentRegistry): string[] {
             ref(content.rewards, object.rewardId, "recompensa", `${map.id} ${at}`);
           if (object.renew === "never" && !object.rewardId)
             where(`${at}: coleta "never" exige rewardId`);
+          if (!object.rewardId && !hasText(`obj.coleta.${object.ingredientId}`))
+            where(`${at}: falta o texto "obj.coleta.${object.ingredientId}"`);
           break;
         case "sign":
           if (!hasText(object.textKey)) where(`${at} cita o texto inexistente "${object.textKey}"`);

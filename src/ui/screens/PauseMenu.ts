@@ -1,7 +1,8 @@
 import type { ContentRegistry } from "../../content/registry";
+import type { Skill } from "../../content/schemas/gameplay";
 import { PROFILE_NAMES } from "../../game/battle/BattleController";
-import type { GameSession } from "../../game/GameSession";
-import { Menu, type UiInput } from "../components/Menu";
+import type { GameSession, SkillError } from "../../game/GameSession";
+import { Menu, type MenuItem, type UiInput } from "../components/Menu";
 import { h } from "../dom";
 
 export interface PauseMenuOptions {
@@ -22,13 +23,22 @@ const QUEST_STATUS: Record<string, string> = {
   unavailable: "Bloqueada",
 };
 
-/** Menu de pausa (F1-09, GDD 11.2): mochila (pizzas e ingredientes), missões e status. */
+const TIER_NAMES = ["", "I", "II", "III"] as const;
+
+/** Posição de "Habilidades" no menu principal (para voltar com o foco nela). */
+const SKILLS_PAGE = 2;
+
+/**
+ * Menu de pausa (F1-09, F2-03, GDD 11.2): mochila (pizzas e ingredientes), árvore de
+ * habilidades, missões e status.
+ */
 export class PauseMenu {
   done = false;
   private readonly root: HTMLElement;
   private readonly menu: Menu;
   private readonly titleEl: HTMLElement;
   private readonly side: HTMLElement;
+  private readonly noteEl: HTMLElement;
 
   constructor(private readonly o: PauseMenuOptions) {
     const doc = o.doc;
@@ -39,13 +49,17 @@ export class PauseMenu {
     this.menu = new Menu(doc, "oven__menu");
     this.side = h(doc, "div", "oven__side");
     columns.append(this.menu.element, this.side);
+    this.noteEl = h(doc, "p", "panel__note");
+    this.noteEl.setAttribute("aria-live", "polite");
     box.append(
       this.titleEl,
       columns,
-      h(doc, "p", "panel__hint", "↑↓ escolher · Enter abrir · Esc/Tab fechar"),
+      this.noteEl,
+      h(doc, "p", "panel__hint", "↑↓ escolher · Enter abrir · Esc voltar · Tab fechar"),
     );
     this.root.append(box);
     o.root.append(this.root);
+    this.menu.onRefuse = (reason) => this.note(reason);
     this.showMain();
   }
 
@@ -53,20 +67,29 @@ export class PauseMenu {
     return this.o.content.locale[key] ?? key;
   }
 
-  private showMain(): void {
+  private note(message: string, good = false): void {
+    this.noteEl.textContent = message;
+    this.noteEl.classList.toggle("panel__good", good);
+  }
+
+  private showMain(focus = 0): void {
     this.titleEl.textContent = "Menu";
-    const pages = [
+    const points = this.o.session.state.characters[0]?.skillPoints ?? 0;
+    const pages: (MenuItem & { paint(): void })[] = [
       { label: "Pizzas", paint: () => this.paintPizzas() },
       { label: "Ingredientes", paint: () => this.paintIngredients() },
+      {
+        label: "Habilidades",
+        detail: points > 0 ? `${points} pt` : undefined,
+        paint: () => this.paintSkillTree(),
+        onSelect: () => this.showSkills(),
+      },
       { label: "Missões (guia)", paint: () => this.paintQuests() },
       { label: "Status", paint: () => this.paintStatus() },
     ];
     this.menu.onFocus = (_item, index) => pages[index]?.paint();
     this.menu.onCancel = () => (this.done = true);
-    this.menu.setItems([
-      ...pages.map((p) => ({ label: p.label })),
-      { label: "Fechar", onSelect: () => (this.done = true) },
-    ]);
+    this.menu.setItems([...pages, { label: "Fechar", onSelect: () => (this.done = true) }], focus);
   }
 
   private paintPizzas(): void {
@@ -126,6 +149,165 @@ export class PauseMenu {
     this.side.replaceChildren(list);
   }
 
+  // ---------- Habilidades (F2-03) ----------
+
+  /** Habilidades na ordem da árvore: ramo a ramo, do nível 1 ao 3. */
+  private skillList(): Skill[] {
+    const { branches, skills } = this.o.content;
+    const order = (branchId: string) => branches[branchId]?.order ?? 0;
+    return Object.values(skills).sort(
+      (a, b) => order(a.branchId) - order(b.branchId) || a.tier - b.tier,
+    );
+  }
+
+  private skillName(skillId: string): string {
+    return this.text(`${skillId}.name`);
+  }
+
+  private blockerText(error: SkillError): string {
+    switch (error.kind) {
+      case "alreadyLearned":
+        return "Você já aprendeu esta habilidade.";
+      case "missingRequirement":
+        return `Primeiro aprenda ${this.skillName(error.skillId)}.`;
+      case "levelTooLow":
+        return `Precisa estar no nível ${error.minLevel}.`;
+      case "notEnoughPoints":
+        return `Pontos insuficientes: custa ${error.need}, você tem ${error.have}.`;
+      case "unknownSkill":
+        return "Habilidade desconhecida.";
+    }
+  }
+
+  private pointsLabel(n: number): string {
+    return `${n} ${n === 1 ? "ponto" : "pontos"}`;
+  }
+
+  /** Visão geral: os três ramos com o estado de cada habilidade (símbolo + texto, GDD 11.3). */
+  private paintSkillTree(): void {
+    const doc = this.o.doc;
+    const { session, content } = this.o;
+    const char = session.state.characters[0]!;
+    const list = h(doc, "ul", "panel__list");
+    const branches = Object.values(content.branches).sort((a, b) => a.order - b.order);
+    for (const branch of branches) {
+      const li = h(doc, "li", "quest");
+      li.append(h(doc, "strong", "", this.text(`${branch.id}.name`)));
+      const line = this.skillList()
+        .filter((s) => s.branchId === branch.id)
+        .map((s) => {
+          const learned = char.skills.includes(s.id);
+          const open = !learned && !session.skillBlocker(s.id);
+          return `${learned ? "✔" : open ? "●" : "○"} ${this.skillName(s.id)}`;
+        })
+        .join(" → ");
+      li.append(h(doc, "p", "panel__text", line));
+      list.append(li);
+    }
+    this.side.replaceChildren(
+      h(doc, "p", "panel__text", `Pontos de habilidade: ${char.skillPoints}`),
+      list,
+      h(doc, "p", "panel__hint", "✔ aprendida · ● pode aprender · ○ bloqueada"),
+    );
+  }
+
+  private showSkills(focus = 0): void {
+    const { session } = this.o;
+    const char = session.state.characters[0]!;
+    const skills = this.skillList();
+    this.titleEl.textContent = `Habilidades · ${this.pointsLabel(char.skillPoints)}`;
+    this.menu.onCancel = () => this.showMain(SKILLS_PAGE);
+    this.menu.onFocus = (_item, index) => {
+      const skill = skills[index];
+      if (skill) this.paintSkill(skill);
+    };
+    this.menu.setItems(
+      skills.map((skill, index) => {
+        const learned = char.skills.includes(skill.id);
+        const blocker = session.skillBlocker(skill.id);
+        const branch = this.text(`${skill.branchId}.name`);
+        return {
+          label: `${branch} ${TIER_NAMES[skill.tier]} · ${this.skillName(skill.id)}`,
+          mark: learned ? "✔" : undefined,
+          detail: learned ? "aprendida" : `${skill.cost} pt`,
+          disabled: blocker !== null,
+          reason: blocker ? this.blockerText(blocker) : undefined,
+          onSelect: () => this.showConfirm(skill, index),
+        };
+      }),
+      focus,
+    );
+  }
+
+  /** Detalhe de uma habilidade: o efeito aparece antes de confirmar (GDD 11.3). */
+  private paintSkill(skill: Skill): void {
+    const doc = this.o.doc;
+    const { session } = this.o;
+    const char = session.state.characters[0]!;
+    const learned = char.skills.includes(skill.id);
+    const blocker = session.skillBlocker(skill.id);
+    const stats = h(doc, "dl", "stats");
+    const add = (label: string, value: string) =>
+      stats.append(h(doc, "dt", "", label), h(doc, "dd", "", value));
+    add("Custo", this.pointsLabel(skill.cost));
+    for (const reqId of skill.requires) {
+      add("Requer", `${char.skills.includes(reqId) ? "✔" : "✗"} ${this.skillName(reqId)}`);
+    }
+    if (skill.minLevel) {
+      add("Nível mínimo", `${char.level >= skill.minLevel ? "✔" : "✗"} ${skill.minLevel}`);
+    }
+    const status = learned
+      ? "✔ Você já tem esta habilidade."
+      : blocker
+        ? this.blockerText(blocker)
+        : "Enter para aprender.";
+    this.side.replaceChildren(
+      h(doc, "strong", "", this.skillName(skill.id)),
+      h(
+        doc,
+        "p",
+        "row__detail",
+        `${this.text(`${skill.branchId}.name`)} · nível ${TIER_NAMES[skill.tier]} da árvore`,
+      ),
+      h(doc, "p", "panel__text", this.text(`${skill.id}.desc`)),
+      stats,
+      h(doc, "p", "panel__hint", status),
+    );
+  }
+
+  private showConfirm(skill: Skill, index: number): void {
+    const { session } = this.o;
+    const points = session.state.characters[0]!.skillPoints;
+    const name = this.skillName(skill.id);
+    this.titleEl.textContent = `Aprender ${name}?`;
+    this.paintSkill(skill);
+    this.side.append(
+      h(
+        this.o.doc,
+        "p",
+        "panel__text",
+        `Pontos: ${points} → ${points - skill.cost}. Não dá para desfazer.`,
+      ),
+    );
+    this.menu.onCancel = () => this.showSkills(index);
+    this.menu.onFocus = undefined;
+    this.menu.setItems([
+      {
+        label: "Aprender",
+        detail: this.pointsLabel(skill.cost),
+        onSelect: () => {
+          const result = session.dispatch({ type: "learnSkill", skillId: skill.id });
+          if (result.ok) this.note(`Você aprendeu ${name}!`, true);
+          else this.note(this.blockerText(result.error as SkillError));
+          this.showSkills(index);
+        },
+      },
+      { label: "Cancelar", onSelect: () => this.showSkills(index) },
+    ]);
+  }
+
+  // ---------- Missões e status ----------
+
   private paintQuests(): void {
     const doc = this.o.doc;
     const { session, content } = this.o;
@@ -141,7 +323,9 @@ export class PauseMenu {
       const step = session.state.quests[quest.id]?.step ?? 0;
       const objective = status === "active" ? quest.steps[step]?.objectiveKey : undefined;
       if (objective) {
-        li.append(h(doc, "p", "panel__text", this.text(objective)));
+        const progress = session.stepProgress(quest.id);
+        const count = progress ? ` (${progress.done}/${progress.total})` : "";
+        li.append(h(doc, "p", "panel__text", `${this.text(objective)}${count}`));
         const guide = this.o.content.locale[`${objective}.guia`];
         if (guide) li.append(h(doc, "p", "panel__hint", guide));
       }
@@ -164,6 +348,7 @@ export class PauseMenu {
       ["PV", `${session.maxHp}`],
       ["XP", `${char.xp}${next !== null ? ` (faltam ${next})` : ""}`],
       ["Receitas", `${char.knownRecipes.length}`],
+      ["Habilidades", `${char.skills.length}/${Object.keys(this.o.content.skills).length}`],
       ["Pontos de habilidade", `${char.skillPoints}`],
     ] as const) {
       stats.append(h(doc, "dt", "", label), h(doc, "dd", "", value));

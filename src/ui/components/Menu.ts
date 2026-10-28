@@ -51,10 +51,14 @@ export class Menu {
     return this.index;
   }
 
-  /** Troca os itens; `keep` mantém o foco na mesma posição (se ainda existir). */
-  setItems(items: MenuItem[], keep = false): void {
+  /**
+   * Troca os itens. `keep: true` mantém o foco na mesma posição; um número põe o foco
+   * nesse item (limitado ao tamanho da lista).
+   */
+  setItems(items: MenuItem[], keep: boolean | number = false): void {
     this.items = items;
-    this.index = keep ? Math.min(this.index, Math.max(0, items.length - 1)) : 0;
+    const target = typeof keep === "number" ? keep : keep ? this.index : 0;
+    this.index = Math.max(0, Math.min(target, items.length - 1));
     this.paint();
     this.notifyFocus();
   }

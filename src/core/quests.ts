@@ -92,3 +92,36 @@ export function currentObjective(save: SaveData, content: ContentRegistry): stri
   }
   return null;
 }
+
+/**
+ * Progresso contável da etapa atual de uma missão (ex.: ratos 1/2), quando a condição é
+ * "flag com atLeast". Null se a etapa não tem contagem.
+ */
+export function stepProgress(
+  save: SaveData,
+  questId: string,
+  content: ContentRegistry,
+): { done: number; total: number } | null {
+  const quest = content.quests[questId];
+  const state = save.quests[questId];
+  if (!quest || state?.status !== "active") return null;
+  const cond = quest.steps[state.step]?.completeWhen;
+  if (!cond || !("flag" in cond) || !("atLeast" in cond) || typeof cond.atLeast !== "number") {
+    return null;
+  }
+  const done = Math.min(Number(save.flags[cond.flag] ?? 0), cond.atLeast);
+  return { done, total: cond.atLeast };
+}
+
+/** Progresso do objetivo mostrado no HUD (mesma missão de `currentObjective`). */
+export function objectiveProgress(
+  save: SaveData,
+  content: ContentRegistry,
+): { done: number; total: number } | null {
+  const key = currentObjective(save, content);
+  if (!key) return null;
+  const quest = Object.values(content.quests).find(
+    (q) => q.steps[save.quests[q.id]?.step ?? -1]?.objectiveKey === key,
+  );
+  return quest ? stepProgress(save, quest.id, content) : null;
+}

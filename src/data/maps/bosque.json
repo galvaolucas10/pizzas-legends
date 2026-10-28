@@ -520,6 +520,123 @@
       },
       "kind": "sign",
       "textKey": "placa.ponte_quebrada"
+    },
+    {
+      "id": "manjericao1",
+      "x": 4,
+      "y": 12,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.manjericao",
+      "count": 2,
+      "renew": "rest"
+    },
+    {
+      "id": "manjericao2",
+      "x": 10,
+      "y": 25,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.manjericao",
+      "count": 2,
+      "renew": "rest"
+    },
+    {
+      "id": "cogumelo1",
+      "x": 15,
+      "y": 3,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.cogumelo",
+      "count": 2,
+      "renew": "rest"
+    },
+    {
+      "id": "cogumelo2",
+      "x": 20,
+      "y": 26,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.cogumelo",
+      "count": 1,
+      "renew": "rest"
+    },
+    {
+      "id": "pimenta_secreta",
+      "x": 38,
+      "y": 27,
+      "solid": true,
+      "kind": "harvest",
+      "ingredientId": "ing.pimenta_dragao",
+      "count": 1,
+      "renew": "never",
+      "rewardId": "rew.segredo_pimenta"
+    },
+    {
+      "id": "fungo1",
+      "x": 8,
+      "y": 19,
+      "direction": "down",
+      "visibleIf": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
+      "kind": "enemy",
+      "enemyId": "enemy.fungo_rabugento",
+      "respawn": "rest",
+      "behaviorLoop": [
+        {
+          "type": "stand",
+          "who": "fungo1",
+          "direction": "left",
+          "time": 1400
+        },
+        {
+          "type": "stand",
+          "who": "fungo1",
+          "direction": "down",
+          "time": 1100
+        },
+        {
+          "type": "stand",
+          "who": "fungo1",
+          "direction": "right",
+          "time": 1400
+        }
+      ]
+    },
+    {
+      "id": "fungo2",
+      "x": 5,
+      "y": 25,
+      "direction": "right",
+      "visibleIf": {
+        "quest": "quest.primeiro_desafio",
+        "stepAtLeast": 2
+      },
+      "kind": "enemy",
+      "enemyId": "enemy.fungo_rabugento",
+      "respawn": "rest",
+      "behaviorLoop": [
+        {
+          "type": "stand",
+          "who": "fungo2",
+          "direction": "left",
+          "time": 1400
+        },
+        {
+          "type": "stand",
+          "who": "fungo2",
+          "direction": "down",
+          "time": 1100
+        },
+        {
+          "type": "stand",
+          "who": "fungo2",
+          "direction": "right",
+          "time": 1400
+        }
+      ]
     }
   ]
 }

@@ -164,11 +164,56 @@ describe("menu de pausa (F1-09)", () => {
     tick(menu, input, "down");
     expect(visibleText(root)).toMatch(/×\d/);
     tick(menu, input, "down");
+    expect(visibleText(root)).toContain("Pontos de habilidade: 0");
+    tick(menu, input, "down");
     expect(visibleText(root)).toContain("O Primeiro Desafio");
     tick(menu, input, "down");
     expect(visibleText(root)).toContain("Nico");
     tick(menu, input, "menu");
     expect(menu.done).toBe(true);
+  });
+});
+
+describe("árvore de habilidades (F2-03)", () => {
+  function openSkills(points: number) {
+    const s = setup();
+    const char = s.session.state.characters[0]!;
+    s.session.load({
+      ...s.session.state,
+      characters: [{ ...char, skillPoints: points }],
+    });
+    const menu = new PauseMenu({ ...s, content: C, input: s.ui, iconUrl: () => null });
+    tick(menu, s.input, "down");
+    tick(menu, s.input, "down");
+    tick(menu, s.input, "confirm"); // abre Habilidades
+    return { ...s, menu };
+  }
+
+  it("mostra o efeito antes de confirmar e aprende gastando pontos", () => {
+    const { session, root, input, menu } = openSkills(1);
+    expect(visibleText(root)).toContain("Sova Firme");
+    expect(visibleText(root)).toContain("+1 fatia em todas as pizzas.");
+    tick(menu, input, "confirm"); // Sova Firme
+    expect(visibleText(root)).toContain("Aprender Sova Firme?");
+    expect(visibleText(root)).toContain("Pontos: 1 → 0");
+    tick(menu, input, "confirm"); // Aprender
+    expect(session.state.characters[0]!.skills).toEqual(["skill.sova_firme"]);
+    expect(session.state.characters[0]!.skillPoints).toBe(0);
+    expect(visibleText(root)).toContain("Você aprendeu Sova Firme!");
+    // De volta à lista, com a habilidade marcada.
+    expect(visibleText(root)).toContain("aprendida");
+    tick(menu, input, "cancel");
+    tick(menu, input, "cancel");
+    expect(menu.done).toBe(true);
+  });
+
+  it("habilidade bloqueada explica o motivo e não muda nada", () => {
+    const { session, root, input, menu } = openSkills(1);
+    tick(menu, input, "down"); // Fermentação Natural (requer Sova Firme)
+    expect(visibleText(root)).toContain("✗ Sova Firme");
+    tick(menu, input, "confirm");
+    expect(visibleText(root)).toContain("Primeiro aprenda Sova Firme.");
+    expect(session.state.characters[0]!.skills).toEqual([]);
   });
 });
 
@@ -205,5 +250,47 @@ describe("SaveSystem (F1-17)", () => {
     await new Promise((r) => setTimeout(r, 0));
     const latest = await saves.latest();
     expect(latest?.data.quests["quest.primeiro_desafio"]!.step).toBe(1);
+  });
+});
+
+describe("forno: transformar ingredientes (F2-02)", () => {
+  it("sem a habilidade explica o motivo; com ela, transforma", () => {
+    const { session, doc, root, input, ui } = setup();
+    const oven = new OvenScreen({
+      doc,
+      root,
+      session,
+      content: C,
+      ovenId: "oven.mestre",
+      input: ui,
+    });
+    tick(oven, input, "down");
+    tick(oven, input, "confirm"); // Transformar ingredientes
+    expect(oven.currentPage).toBe("convert");
+    expect(visibleText(root)).toContain("Aprenda a habilidade Fermentação Natural");
+    tick(oven, input, "confirm");
+    expect(visibleText(root)).toContain("Aprenda a habilidade");
+    oven.destroy();
+
+    const char = session.state.characters[0]!;
+    session.load({
+      ...session.state,
+      characters: [{ ...char, skills: ["skill.fogo_controlado", "skill.defumacao"] }],
+    });
+    const again = new OvenScreen({
+      doc,
+      root,
+      session,
+      content: C,
+      ovenId: "oven.mestre",
+      input: ui,
+    });
+    tick(again, input, "down");
+    tick(again, input, "confirm");
+    tick(again, input, "down"); // Defumar queijo
+    expect(visibleText(root)).toContain("1 Mussarela → 1 Queijo Defumado");
+    tick(again, input, "confirm");
+    expect(session.state.inventory.ingredients["ing.queijo_defumado"]).toBe(1);
+    expect(visibleText(root)).toContain("+1 Queijo Defumado!");
   });
 });

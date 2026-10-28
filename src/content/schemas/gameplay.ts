@@ -59,6 +59,11 @@ export const BalanceSchema = z.strictObject({
   fleeStunMs: z.number().int().min(0),
   firstCookXp: z.number().int().min(0),
   maxLevel: count,
+  /**
+   * Rede de segurança: ao descansar sem pizzas e sem ingredientes para preparar a receita
+   * básica, o jogador recebe o que falta deste kit (nunca fica sem como continuar).
+   */
+  restKit: z.array(ItemCountSchema).optional(),
 });
 export type Balance = z.infer<typeof BalanceSchema>;
 

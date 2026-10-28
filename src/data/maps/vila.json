@@ -238,6 +238,13 @@
           "time": 1400
         }
       ]
+    },
+    {
+      "id": "bau_vila",
+      "x": 4,
+      "y": 10,
+      "kind": "chest",
+      "rewardId": "rew.bau_vila"
     }
   ]
 }

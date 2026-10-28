@@ -11,7 +11,7 @@
   "potency": { "base": 4, "perQuality": 2 },
   "slices": { "min": 1, "max": 8 },
   "xpTable": [0, 60, 150, 280, 450],
-  "maxHp": { "base": 40, "perLevel": 8 },
+  "maxHp": { "base": 50, "perLevel": 10 },
   "basketSize": 4,
   "maxPizzas": 12,
   "maxIngredientStack": 99,
@@ -19,5 +19,10 @@
   "improviseDamage": 3,
   "fleeStunMs": 3000,
   "firstCookXp": 10,
-  "maxLevel": 5
+  "maxLevel": 5,
+  "restKit": [
+    { "ingredientId": "ing.farinha", "count": 1 },
+    { "ingredientId": "ing.molho_tomate", "count": 1 },
+    { "ingredientId": "ing.mussarela", "count": 1 }
+  ]
 }

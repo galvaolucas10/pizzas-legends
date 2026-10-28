@@ -140,6 +140,30 @@ export class WorldScene implements Scene {
       this.events.runBlocking([{ type: "message", textKey: object.textKey }]);
       return true;
     }
+    if (object?.kind === "harvest") {
+      const r = this.options.session?.dispatch({
+        type: "harvest",
+        spot: this.world.harvestSpot(object),
+      });
+      this.events.runBlocking([
+        {
+          type: "message",
+          textKey: r?.ok
+            ? object.rewardId
+              ? "obj.coleta.segredo"
+              : `obj.coleta.${object.ingredientId}`
+            : "obj.coleta.vazia",
+        },
+      ]);
+      return true;
+    }
+    if (object?.kind === "chest") {
+      const r = this.options.session?.dispatch({ type: "openChest", rewardId: object.rewardId });
+      this.events.runBlocking([
+        { type: "message", textKey: r?.ok ? "obj.bau.aberto" : "obj.bau.vazio" },
+      ]);
+      return true;
+    }
     if (object?.kind === "oven") {
       this.events.runBlocking(
         this.options.openOven
