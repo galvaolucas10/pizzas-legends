@@ -426,7 +426,7 @@ export class OvenController {
 }
 
 /** Dica de onde conseguir o que falta. */
-const BUY_HINT = ". Compre na Loja (Tab → Loja) ou vença inimigos.";
+const BUY_HINT = ". Compre no Mercadinho da Lia, na vila.";
 
 export const CATEGORY_NAMES: Record<string, string> = {
   massa: "Massa",

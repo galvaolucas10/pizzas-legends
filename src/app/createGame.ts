@@ -220,23 +220,6 @@ export function createGame(options: GameOptions): GameHandle {
                 content,
                 ovenId,
                 input: input.reader("menu"),
-                openShop: (onShopClose) =>
-                  pushOverlay(
-                    scenes,
-                    input,
-                    "menu",
-                    () =>
-                      new PauseMenu({
-                        doc,
-                        root: ui.element,
-                        session,
-                        content,
-                        input: input.reader("menu"),
-                        iconUrl,
-                        shopOnly: { title: "Loja de ingredientes" },
-                      }),
-                    onShopClose,
-                  ),
                 orders: () => {
                   // Pedidos do salão (null = a Nina cuida) + pedidos online do motoboy.
                   const salon = worldScene.restaurant ? worldScene.restaurant.pendingOrders() : [];

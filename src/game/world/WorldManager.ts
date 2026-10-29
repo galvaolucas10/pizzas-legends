@@ -305,18 +305,14 @@ export class WorldManager {
   }
 
   /**
-   * Aproximação do mundo para salas menores que o retângulo do jogo: o meio-termo entre
-   * "a sala inteira cabe" e "a sala cobre o retângulo todo" (fica bem maior, cortando só um
-   * pouco de cima ou de baixo; a câmera segue o jogador). Mapas grandes ficam em 1×.
+   * Aproximação do mundo: uma sala menor que o retângulo do jogo é ampliada até caber
+   * inteira nele, preenchendo o máximo possível sem cortar nada. Mapas grandes ficam em 1×
+   * (já preenchem o retângulo; a câmera segue o jogador).
    */
   get zoom(): number {
     const map = this.map;
     if (!map) return 1;
-    const fitX = VIEW_W / (map.width * TILE);
-    const fitY = VIEW_H / (map.height * TILE);
-    const whole = Math.max(1, Math.min(fitX, fitY)); // a sala inteira aparece
-    const cover = Math.max(1, Math.max(fitX, fitY)); // a sala cobre o retângulo todo
-    return (whole + cover) / 2;
+    return Math.max(1, Math.min(VIEW_W / (map.width * TILE), VIEW_H / (map.height * TILE)));
   }
 
   /** Visão atual da câmera, centrada no jogador e limitada às bordas do mapa. */

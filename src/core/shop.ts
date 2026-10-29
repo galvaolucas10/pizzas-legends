@@ -3,7 +3,7 @@ import { addIngredients, ingredientCount } from "./inventory";
 import type { SaveData } from "./types";
 
 /**
- * Loja (Tab → Loja): moedas e compra de ingredientes.
+ * Loja (Mercadinho da Lia: fale com ela): moedas e compra de ingredientes.
  * As moedas ficam numa flag do save, então saves antigos funcionam sem migração:
  * sem a flag, o jogador tem as moedas iniciais de `balance.shop`.
  */

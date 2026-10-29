@@ -67,7 +67,7 @@ describe("tela do forno (F1-08)", () => {
     expect(oven.done).toBe(true);
   });
 
-  it("faltando ingrediente, compra sozinho e prepara", () => {
+  it("faltando ingrediente, não compra: manda ao Mercadinho da Lia", () => {
     const { session, doc, root, input, ui } = setup();
     session.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });
     session.dispatch({
@@ -82,16 +82,17 @@ describe("tela do forno (F1-08)", () => {
       ovenId: "oven.balcao",
       input: ui,
     });
-    expect(visibleText(root)).toMatch(/compra \d+ moedas/);
+    expect(visibleText(root)).toContain("faltam ingredientes");
     const pizzas = session.state.inventory.pizzas.length;
     const coins = session.coins;
     tick(oven, input, "confirm");
-    waitCooking(oven);
-    expect(session.state.inventory.pizzas).toHaveLength(pizzas + 1);
-    expect(session.coins).toBeLessThan(coins);
+    expect(oven.currentPage).toBe("quick"); // não começa a fazer
+    expect(visibleText(root)).toContain("Mercadinho da Lia");
+    expect(session.state.inventory.pizzas).toHaveLength(pizzas);
+    expect(session.coins).toBe(coins);
   });
 
-  it("'Mais opções' guarda a tela completa: prévia, como fazer e comprar o que falta", () => {
+  it("'Mais opções' guarda a tela completa: prévia e como fazer", () => {
     const { session, doc, root, input, ui } = setup();
     session.dispatch({ type: "cookPizza", recipeId: "rec.margherita", ingredientIds: MARGHERITA });
     session.dispatch({
@@ -113,12 +114,8 @@ describe("tela do forno (F1-08)", () => {
     expect(oven.currentPage).toBe("recipe");
     expect(visibleText(root)).toMatch(/✗ Massa/);
     expect(visibleText(root)).toMatch(/Falta/);
-    const pizzas = session.state.inventory.pizzas.length;
-    tick(oven, input, "confirm"); // o cursor começa em "Comprar o que falta e preparar"
-    expect(session.state.inventory.pizzas).toHaveLength(pizzas + 1);
-    tick(oven, input, "down");
-    tick(oven, input, "up");
-    expect(visibleText(root)).toContain("Qualidade"); // prévia antes de confirmar
+    expect(visibleText(root)).not.toContain("Comprar o que falta");
+    expect(visibleText(root)).toContain("Compre no Mercadinho da Lia");
   });
 });
 

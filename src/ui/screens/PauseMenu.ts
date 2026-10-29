@@ -92,12 +92,6 @@ export class PauseMenu {
       },
       { label: "Missões (guia)", paint: () => this.paintQuests() },
       { label: "Status", paint: () => this.paintStatus() },
-      {
-        label: "Loja",
-        detail: `${this.o.session.coins} moedas`,
-        paint: () => this.paintShopIntro(),
-        onSelect: () => this.showShop(),
-      },
     ];
     const openControls = this.o.openControls;
     if (openControls) {
@@ -186,15 +180,6 @@ export class PauseMenu {
     }
     name.append(doc.createTextNode(this.text(`${id}.name`)));
     return name;
-  }
-
-  private paintShopIntro(): void {
-    const doc = this.o.doc;
-    this.side.replaceChildren(
-      h(doc, "p", "panel__text", `Você tem ${this.o.session.coins} moedas.`),
-      h(doc, "p", "panel__text", "Compre ingredientes para preparar pizzas no forno."),
-      h(doc, "p", "panel__hint", "Ganhe moedas atendendo clientes e com as entregas."),
-    );
   }
 
   private shopErrorText(error: ShopError): string {

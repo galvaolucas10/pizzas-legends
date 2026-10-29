@@ -24,8 +24,6 @@ export interface OvenScreenOptions {
   input: UiInput;
   /** Salvamento manual (GDD 5.5). Devolve true se gravou. */
   save?(): Promise<boolean>;
-  /** Abre a loja por cima do forno (para comprar ingredientes); `onClose` ao sair. */
-  openShop?(onClose: () => void): void;
   /** Pedidos dos clientes do salão esperando pizza; null quando a funcionária cuida deles. */
   orders?(): PendingOrder[] | null;
 }
@@ -38,7 +36,7 @@ const COOK_MS = 1200;
 /**
  * Forno (F1-08, GDD 11.2): preparar pizzas com pré-visualização do resultado, descansar
  * (inimigos e coletas voltam) e salvar. Ajuda a produzir: "como fazer" de cada receita,
- * preparar várias de uma vez, comprar o que falta e dicas (pedidos e próximo desafio).
+ * preparar várias de uma vez e dicas (pedidos e próximo desafio).
  */
 export class OvenScreen {
   done = false;
@@ -75,7 +73,7 @@ export class OvenScreen {
 
   /**
    * Tela simples (a que abre primeiro): só as pizzas que dá para fazer. Escolheu, "fazendo...",
-   * pronta. Se faltar ingrediente, compra sozinho na loja. O resto fica em "Mais opções".
+   * pronta. Os ingredientes vêm do Mercadinho da Lia. O resto fica em "Mais opções".
    */
   private showQuick(focus = 0): void {
     this.page = "quick";
@@ -84,28 +82,18 @@ export class OvenScreen {
     const orders = this.ordersByRecipe();
     const cards = this.oven.recipeCards().filter((c) => c.known);
     const items: MenuItem[] = cards.map((card, index) => {
-      const plan = card.canMake > 0 ? null : this.oven.purchasePlan(card.id);
-      const cost = plan?.cost ?? 0;
-      const blocked = plan?.unavailable || this.o.session.coins < cost;
+      // Sem ingrediente, não faz: as compras são só no Mercadinho da Lia (na vila).
+      const missing = card.canMake > 0 ? [] : (this.oven.purchasePlan(card.id)?.items ?? []);
+      const names = missing.map((m) => this.text(`${m.ingredientId}.name`)).join(", ");
       return {
         label: card.name,
         mark: orders.has(card.id) ? "★" : undefined,
-        detail: card.canMake > 0 ? `tem para ${card.canMake}` : `compra ${cost} moedas`,
-        disabled: Boolean(blocked),
-        reason: plan?.unavailable
-          ? "Algum ingrediente não está à venda."
-          : `Faltam ingredientes e moedas (precisa de ${cost}, você tem ${this.o.session.coins}). Atenda clientes ou use 🛒 Comprar ingredientes.`,
+        detail: card.canMake > 0 ? `tem para ${card.canMake}` : "faltam ingredientes",
+        disabled: card.canMake === 0,
+        reason: `Falta${missing.length > 1 ? "m" : ""} ${names || "ingrediente"}. Compre no Mercadinho da Lia, na vila.`,
         onSelect: () => this.startCooking(card.id, index),
       };
     });
-    if (this.o.openShop) {
-      const openShop = this.o.openShop;
-      items.push({
-        label: "🛒 Comprar ingredientes",
-        detail: "loja",
-        onSelect: () => openShop(() => this.showQuick(this.menu.focusIndex)),
-      });
-    }
     items.push(
       { label: "Mais opções", detail: "descansar, salvar...", onSelect: () => this.showMain() },
       { label: "Sair", onSelect: () => (this.done = true) },
@@ -149,7 +137,7 @@ export class OvenScreen {
   private finishCooking(): void {
     const c = this.cooking;
     if (!c) return;
-    const result = this.oven.buyMissingAndCook(c.recipeId);
+    const result = this.oven.cook(c.recipeId);
     this.note(result.ok ? `${result.message} Está na sua mochila.` : result.message, result.ok);
     this.showQuick(c.index);
   }
@@ -325,7 +313,7 @@ export class OvenScreen {
           card.canMake > 0 ? "panel__good" : "panel__bad",
           card.canMake > 0
             ? `Dá para fazer ${card.canMake} agora. Enter para abrir.`
-            : "Falta ingrediente: abra a receita para comprar o que falta.",
+            : "Falta ingrediente: compre no Mercadinho da Lia, na vila.",
         ),
       );
     }
@@ -356,7 +344,6 @@ export class OvenScreen {
       const toppings = this.oven.toppingOptions();
       const preview = this.oven.preview(recipeId);
       const max = this.oven.maxCookable(recipeId);
-      const plan = preview.ok ? null : this.oven.purchasePlan(recipeId);
       this.paintPreview(recipeId, preview);
       const items: MenuItem[] = [
         {
@@ -380,19 +367,6 @@ export class OvenScreen {
           },
         });
       }
-      if (plan && !plan.unavailable) {
-        items.push({
-          label: "Comprar o que falta e preparar",
-          detail: `${plan.cost} moedas`,
-          disabled: this.o.session.coins < plan.cost,
-          reason: `Moedas insuficientes: custa ${plan.cost}, você tem ${this.o.session.coins}.`,
-          onSelect: () => {
-            const result = this.oven.buyMissingAndCook(recipeId);
-            this.note(result.message, result.ok);
-            refresh();
-          },
-        });
-      }
       items.push(
         ...toppings.map((t) => ({
           label: t.name,
@@ -405,7 +379,7 @@ export class OvenScreen {
         })),
         { label: "Voltar", onSelect: () => this.backToRecipes(listIndex) },
       );
-      // Ao abrir, o cursor começa na primeira opção que dá para usar (ex.: "Comprar o que falta").
+      // Ao abrir, o cursor começa na primeira opção que dá para usar.
       const start = first
         ? Math.max(
             0,
