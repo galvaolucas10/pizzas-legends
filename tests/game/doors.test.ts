@@ -81,7 +81,7 @@ describe("portas (F0-12) e mundo da demo", () => {
     expect(g.input.activeContext).toBe("world");
   });
 
-  it("passagem do fundo leva à despensa, e a seta no chão sai na avenida", async () => {
+  it("passagem do fundo leva à despensa, e a seta no chão volta à cozinha do Mestre", async () => {
     const g = await game();
     await walk(g, "up", 1); // (5,5)
     await walk(g, "right", 2); // (7,5)
@@ -90,7 +90,8 @@ describe("portas (F0-12) e mundo da demo", () => {
 
     await walk(g, "right", 1); // (5,5)
     await walk(g, "down", 5); // (5,10): seta
-    expect(g.where()).toEqual({ map: "map.vila", x: 5, y: 10, direction: "down" });
+    // Volta à cozinha do Mestre, logo abaixo da passagem (não sai na rua pela porta do salão).
+    expect(g.where()).toEqual({ map: "map.cozinha_mestre", x: 7, y: 5, direction: "down" });
   });
 
   it("avenida ↔ loja e praça ↔ Neon Greens", async () => {

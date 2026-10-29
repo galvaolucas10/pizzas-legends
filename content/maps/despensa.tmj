@@ -651,12 +651,12 @@
             {
               "name": "toMap",
               "type": "string",
-              "value": "map.vila"
+              "value": "map.cozinha_mestre"
             },
             {
               "name": "toEntrance",
               "type": "string",
-              "value": "salao"
+              "value": "fundos"
             }
           ]
         },

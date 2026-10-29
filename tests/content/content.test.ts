@@ -205,7 +205,7 @@ describe("mapas da demo (F0-08)", () => {
       [
         "map.cozinha_mestre → map.salao#cozinha",
         "map.cozinha_mestre → map.despensa#fundos",
-        "map.despensa → map.vila#salao",
+        "map.despensa → map.cozinha_mestre#fundos",
         "map.salao → map.cozinha_mestre#porta",
         "map.salao → map.vila#salao",
         "map.vila → map.salao#rua",

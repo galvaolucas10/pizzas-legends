@@ -403,7 +403,7 @@ Três regiões (Vila, Bosque, Clareira) + dois interiores, conforme a meta de 3 
 | `map.vila` | Vila do Forno (Anchovy Avenue) | `Street` | Pizzaria do Mestre, mercadinho da Lia (SHOP), passagem para a praça, saída leste para o bosque; Erio e Dona Rita passeando |
 | `map.salao` | Salão da Pizzaria do Mestre | `DiningRoom` | Mesas, bar, garçom Beto; porta do fundo para a cozinha |
 | `map.cozinha_mestre` | Cozinha do Mestre | `DemoRoom` | Mestre Basílio; passagem do fundo para a despensa |
-| `map.despensa` | Despensa da Lia | `Kitchen` | Saída pela seta no chão, para a avenida |
+| `map.despensa` | Despensa da Lia | `Kitchen` | Saída pela seta no chão, de volta à cozinha do Mestre |
 | `map.loja` | Mercadinho da Lia | `PizzaShop` | Feirante Lia no balcão |
 | `map.praca` | Praça Neon | `StreetNorth` | Canteiros, Seu Tito passeando, entrada da Neon Greens |
 | `map.estufa` | Neon Greens | `GreenKitchen` | Restaurante verde (sem NPC ainda) |

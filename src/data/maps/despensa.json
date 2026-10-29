@@ -52,8 +52,8 @@
       "x": 5,
       "y": 10,
       "kind": "door",
-      "toMap": "map.vila",
-      "toEntrance": "salao"
+      "toMap": "map.cozinha_mestre",
+      "toEntrance": "fundos"
     },
     {
       "id": "balcao1",
