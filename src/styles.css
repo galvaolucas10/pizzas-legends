@@ -593,3 +593,74 @@ body {
 .install-hint[hidden] {
   display: none;
 }
+
+/* Botão "🎮 Controles" à esquerda de Pedidos. */
+.touch-controls {
+  right: calc(var(--px) * 118);
+}
+
+/* Modo celular: setas (esquerda) e botões A/B (direita). */
+.touch-pad {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.touch-pad[hidden] {
+  display: none;
+}
+.touch-pad__dpad {
+  position: absolute;
+  left: calc(var(--px) * 6);
+  bottom: calc(var(--px) * 6);
+  width: calc(var(--px) * 60);
+  height: calc(var(--px) * 60);
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+.touch-pad__btn {
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  font:
+    bold calc(var(--px) * 9) "Courier New",
+    monospace;
+  color: #3a2418;
+  background: #f2d6a6cc;
+  border: calc(var(--px) * 1) solid #3a2418;
+  border-radius: calc(var(--px) * 3);
+  cursor: pointer;
+}
+.touch-pad__btn:active {
+  background: #ffe2a8;
+}
+.touch-pad__up {
+  grid-area: 1 / 2;
+}
+.touch-pad__left {
+  grid-area: 2 / 1;
+}
+.touch-pad__right {
+  grid-area: 2 / 3;
+}
+.touch-pad__down {
+  grid-area: 3 / 2;
+}
+.touch-pad__actions {
+  position: absolute;
+  right: calc(var(--px) * 8);
+  bottom: calc(var(--px) * 26);
+  display: flex;
+  gap: calc(var(--px) * 6);
+  align-items: flex-end;
+}
+.touch-pad__a,
+.touch-pad__b {
+  width: calc(var(--px) * 24);
+  height: calc(var(--px) * 24);
+  border-radius: 50%;
+}
+.touch-pad__a {
+  margin-bottom: calc(var(--px) * 8);
+  background: #f6c142dd;
+}

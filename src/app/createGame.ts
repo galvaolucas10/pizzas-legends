@@ -19,11 +19,13 @@ import { browserStore, LocalSaveRepository, memoryStore } from "../persistence/S
 import { Hud } from "../ui/components/Hud";
 import { BattleScreen } from "../ui/screens/BattleScreen";
 import { OvenScreen } from "../ui/screens/OvenScreen";
+import { ControlsScreen, type ControlMode } from "../ui/screens/ControlsScreen";
 import { OrdersScreen } from "../ui/screens/OrdersScreen";
 import { PauseMenu } from "../ui/screens/PauseMenu";
 import { TitleScreen } from "../ui/screens/TitleScreen";
 import { UiRoot } from "../ui/UiRoot";
 import { pushOverlay } from "./overlay";
+import { createTouchPad } from "./touchPad";
 
 export interface GameOptions {
   canvas: HTMLCanvasElement;
@@ -322,6 +324,52 @@ export function createGame(options: GameOptions): GameHandle {
       });
       container.append(ordersButton);
       cleanups.push(() => ordersButton.remove());
+      // Controles: computador (teclado e mouse) ou celular (setas e botões A/B na tela).
+      const MODE_KEY = "pizza-legends.controles";
+      const loadMode = (): ControlMode => {
+        try {
+          const saved = localStorage.getItem(MODE_KEY);
+          if (saved === "computador" || saved === "celular") return saved;
+        } catch {
+          // sem armazenamento: usa o padrão abaixo
+        }
+        return window.matchMedia?.("(pointer: coarse)").matches ? "celular" : "computador";
+      };
+      let controlMode = loadMode();
+      const touchPad = createTouchPad(document, input);
+      container.append(touchPad);
+      cleanups.push(() => touchPad.remove());
+      const controlsButton = document.createElement("button");
+      controlsButton.type = "button";
+      controlsButton.className = "touch-menu touch-controls";
+      controlsButton.textContent = "🎮 Controles";
+      controlsButton.addEventListener("pointerdown", (e) => e.stopPropagation());
+      controlsButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (input.activeContext !== "world") return;
+        pushOverlay(
+          scenes,
+          input,
+          "menu",
+          () =>
+            new ControlsScreen({
+              doc,
+              root: ui.element,
+              input: input.reader("menu"),
+              current: controlMode,
+              choose: (mode) => {
+                controlMode = mode;
+                try {
+                  localStorage.setItem(MODE_KEY, mode);
+                } catch {
+                  // sem armazenamento: vale só nesta sessão
+                }
+              },
+            }),
+        );
+      });
+      container.append(controlsButton);
+      cleanups.push(() => controlsButton.remove());
       // Instalar como app: na tela inicial, um aviso (iPhone: passo a passo do Safari;
       // Android/computador: botão que abre a instalação do navegador).
       const installBox = createInstallHint(document);
@@ -332,6 +380,9 @@ export function createGame(options: GameOptions): GameHandle {
         const hide = !playing || input.activeContext !== "world";
         menuButton.hidden = hide;
         ordersButton.hidden = hide;
+        controlsButton.hidden = hide;
+        // As setas e A/B do celular servem também nos menus e falas: só somem fora do jogo.
+        touchPad.hidden = !playing || controlMode !== "celular";
         installBox.element.hidden = playing || !installBox.useful;
       };
       cleanups.push(() => (syncTouchButtons = null));
