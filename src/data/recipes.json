@@ -130,5 +130,152 @@
       "kind": "skill",
       "skillId": "skill.defumacao"
     }
+  },
+  {
+    "id": "rec.calabresa",
+    "profile": "defumado",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.linguica",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.9,
+      "heal": 0.3
+    },
+    "unlock": {
+      "kind": "reward",
+      "rewardId": "rew.carreira_9"
+    }
+  },
+  {
+    "id": "rec.funghi",
+    "profile": "cremoso",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.cogumelo",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.7,
+      "heal": 0.5
+    },
+    "unlock": {
+      "kind": "reward",
+      "rewardId": "rew.carreira_10"
+    }
+  },
+  {
+    "id": "rec.napolitana",
+    "profile": "fresco",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.queijo_cabra",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.manjericao",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.6,
+      "heal": 0.8
+    },
+    "unlock": {
+      "kind": "reward",
+      "rewardId": "rew.carreira_11"
+    }
+  },
+  {
+    "id": "rec.calabresa_picante",
+    "profile": "picante",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_apimentado",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.linguica",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 1.1
+    },
+    "unlock": {
+      "kind": "reward",
+      "rewardId": "rew.carreira_12"
+    }
   }
 ]

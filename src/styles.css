@@ -565,3 +565,31 @@ body {
 .touch-menu[hidden] {
   display: none;
 }
+
+/* Tela inicial: como instalar o jogo como app. */
+.install-hint {
+  position: absolute;
+  left: calc(var(--px) * 8);
+  right: calc(var(--px) * 8);
+  bottom: calc(var(--px) * 6);
+  z-index: 5;
+  text-align: center;
+  font:
+    calc(var(--px) * 7) "Courier New",
+    monospace;
+  color: #fff3d6;
+  text-shadow: 0 calc(var(--px) * 1) 0 #3a2418;
+}
+.install-hint button {
+  font:
+    bold calc(var(--px) * 8) "Courier New",
+    monospace;
+  padding: calc(var(--px) * 2) calc(var(--px) * 6);
+  border: calc(var(--px) * 1) solid #3a2418;
+  background: #f2d6a6;
+  color: #3a2418;
+  cursor: pointer;
+}
+.install-hint[hidden] {
+  display: none;
+}

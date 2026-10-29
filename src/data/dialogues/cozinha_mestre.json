@@ -64,34 +64,32 @@
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 8
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 8 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
           "textKey": "dlg.mestre_basilio.fim.1"
+        },
+        {
+          "type": "if",
+          "condition": { "quest": "quest.carreira", "status": "available" },
+          "then": [
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.carreira.1"
+            },
+            { "type": "advanceQuest", "questId": "quest.carreira", "toStep": 0 }
+          ]
         }
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 7
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 7 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
@@ -102,23 +100,13 @@
           "speaker": "npc.mestre_basilio",
           "textKey": "dlg.mestre_basilio.etapa6.2"
         },
-        {
-          "type": "setFlag",
-          "flag": "flag.voltou_vila"
-        }
+        { "type": "setFlag", "flag": "flag.voltou_vila" }
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 6
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 6 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
@@ -127,16 +115,9 @@
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 4
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 4 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
@@ -152,23 +133,13 @@
           "speaker": "npc.mestre_basilio",
           "textKey": "dlg.mestre_basilio.etapa4.3"
         },
-        {
-          "type": "setFlag",
-          "flag": "flag.mestre_explicou_arvore"
-        }
+        { "type": "setFlag", "flag": "flag.mestre_explicou_arvore" }
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 3
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 3 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
@@ -182,16 +153,9 @@
       ]
     },
     {
-      "condition": {
-        "quest": "quest.primeiro_desafio",
-        "stepAtLeast": 1
-      },
+      "condition": { "quest": "quest.primeiro_desafio", "stepAtLeast": 1 },
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",
@@ -211,11 +175,7 @@
     },
     {
       "events": [
-        {
-          "type": "face",
-          "who": "mestre",
-          "towards": "player"
-        },
+        { "type": "face", "who": "mestre", "towards": "player" },
         {
           "type": "message",
           "speaker": "npc.mestre_basilio",

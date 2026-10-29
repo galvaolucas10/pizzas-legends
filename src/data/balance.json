@@ -118,7 +118,13 @@
     "payCoins": 12,
     "payXp": 10,
     "sprites": ["img.npc1", "img.npc2", "img.npc3", "img.npc4", "img.erio"],
-    "countFlags": ["flag.clientes_a", "flag.clientes_b", "flag.clientes_c"],
+    "countFlags": [
+      "flag.clientes_a",
+      "flag.clientes_b",
+      "flag.clientes_c",
+      "flag.clientes_d",
+      "flag.clientes_e"
+    ],
     "employee": {
       "id": "nina",
       "offFlag": "flag.nina_folga",

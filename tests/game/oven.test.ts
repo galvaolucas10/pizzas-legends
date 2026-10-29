@@ -59,3 +59,28 @@ describe("balcão: ajuda para produzir", () => {
     expect(oven.tip()).toBeNull();
   });
 });
+
+describe("sabores novos e Carreira", () => {
+  it("Calabresa exige linguiça (cobertura obrigatória) e é liberada no Nível 9", () => {
+    const { session, oven } = setup();
+    expect(oven.recipeCards().find((c) => c.id === "rec.calabresa")?.known).toBe(false);
+    session.dispatch({ type: "claimReward", rewardId: "rew.carreira_9" });
+    expect(oven.recipeCards().find((c) => c.id === "rec.calabresa")?.known).toBe(true);
+    // Compra o que falta (inclusive a linguiça) e prepara.
+    expect(oven.buyMissingAndCook("rec.calabresa").ok).toBe(true);
+    expect(session.state.inventory.pizzas.at(-1)?.recipeId).toBe("rec.calabresa");
+  });
+
+  it("a Carreira abre quando a primeira missão termina", () => {
+    const { session } = setup();
+    expect(session.questStatus("quest.carreira")).toBe("unavailable");
+    session.load({
+      ...session.state,
+      quests: {
+        ...session.state.quests,
+        "quest.primeiro_desafio": { status: "rewarded", step: 8 },
+      },
+    });
+    expect(session.questStatus("quest.carreira")).toBe("available");
+  });
+});

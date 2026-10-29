@@ -176,5 +176,100 @@
         "rewardId": "rew.horta_pizza"
       }
     ]
+  },
+  {
+    "id": "quest.carreira",
+    "kind": "main",
+    "availableWhen": {
+      "any": [
+        {
+          "quest": "quest.primeiro_desafio",
+          "status": "completed"
+        },
+        {
+          "quest": "quest.primeiro_desafio",
+          "status": "rewarded"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "objectiveKey": "quest.carreira.nivel9",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
+        "completeWhen": {
+          "flag": "flag.clientes_d",
+          "atLeast": 3
+        },
+        "rewardId": "rew.carreira_9"
+      },
+      {
+        "objectiveKey": "quest.carreira.nivel10",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "hasPizza": {
+            "recipeId": "rec.calabresa"
+          }
+        },
+        "rewardId": "rew.carreira_10"
+      },
+      {
+        "objectiveKey": "quest.carreira.nivel11",
+        "completeWhen": {
+          "flag": "flag.moedas",
+          "atLeast": 150
+        },
+        "rewardId": "rew.carreira_11"
+      },
+      {
+        "objectiveKey": "quest.carreira.nivel12",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.funghi"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.napolitana"
+              }
+            }
+          ]
+        },
+        "rewardId": "rew.carreira_12"
+      },
+      {
+        "objectiveKey": "quest.carreira.nivel13",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
+        "completeWhen": {
+          "flag": "flag.clientes_e",
+          "atLeast": 3
+        },
+        "rewardId": "rew.carreira_13"
+      },
+      {
+        "objectiveKey": "quest.carreira.nivel14",
+        "completeWhen": {
+          "flag": "flag.moedas",
+          "atLeast": 300
+        },
+        "rewardId": "rew.carreira_14"
+      }
+    ]
   }
 ]

@@ -50,6 +50,10 @@ const RECIPE_TAGS: Record<string, string> = {
   "rec.quatro_queijos": "4 Queijos",
   "rec.brasa": "Brasa",
   "rec.defumada": "Defum.",
+  "rec.calabresa": "Calab.",
+  "rec.funghi": "Funghi",
+  "rec.napolitana": "Napol.",
+  "rec.calabresa_picante": "C.Picante",
 };
 
 const BUBBLES: Record<CustomerState, { text: string; color: string } | null> = {

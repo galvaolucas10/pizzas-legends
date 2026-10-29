@@ -154,9 +154,6 @@ export function validateContent(content: ContentRegistry): string[] {
       if (req.kind !== "ingredient") continue;
       const ing = content.ingredients[req.ingredientId];
       if (!ing) fail(recipe.id, `ingrediente inexistente "${req.ingredientId}"`);
-      else if (ing.category === "cobertura") {
-        fail(recipe.id, `"${req.ingredientId}" é cobertura e não pode ser obrigatório`);
-      }
     }
     if (
       !recipe.requirements.some(

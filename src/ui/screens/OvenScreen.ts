@@ -24,6 +24,8 @@ export interface OvenScreenOptions {
   input: UiInput;
   /** Salvamento manual (GDD 5.5). Devolve true se gravou. */
   save?(): Promise<boolean>;
+  /** Abre a loja por cima do forno (para comprar ingredientes); `onClose` ao sair. */
+  openShop?(onClose: () => void): void;
   /** Pedidos dos clientes do salão esperando pizza; null quando a funcionária cuida deles. */
   orders?(): PendingOrder[] | null;
 }
@@ -92,10 +94,18 @@ export class OvenScreen {
         disabled: Boolean(blocked),
         reason: plan?.unavailable
           ? "Algum ingrediente não está à venda."
-          : `Moedas insuficientes: precisa de ${cost}, você tem ${this.o.session.coins}.`,
+          : `Faltam ingredientes e moedas (precisa de ${cost}, você tem ${this.o.session.coins}). Atenda clientes ou use 🛒 Comprar ingredientes.`,
         onSelect: () => this.startCooking(card.id, index),
       };
     });
+    if (this.o.openShop) {
+      const openShop = this.o.openShop;
+      items.push({
+        label: "🛒 Comprar ingredientes",
+        detail: "loja",
+        onSelect: () => openShop(() => this.showQuick(this.menu.focusIndex)),
+      });
+    }
     items.push(
       { label: "Mais opções", detail: "descansar, salvar...", onSelect: () => this.showMain() },
       { label: "Sair", onSelect: () => (this.done = true) },

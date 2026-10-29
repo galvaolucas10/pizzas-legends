@@ -216,6 +216,23 @@ export function createGame(options: GameOptions): GameHandle {
                 content,
                 ovenId,
                 input: input.reader("menu"),
+                openShop: (onShopClose) =>
+                  pushOverlay(
+                    scenes,
+                    input,
+                    "menu",
+                    () =>
+                      new PauseMenu({
+                        doc,
+                        root: ui.element,
+                        session,
+                        content,
+                        input: input.reader("menu"),
+                        iconUrl,
+                        shopOnly: { title: "Loja de ingredientes" },
+                      }),
+                    onShopClose,
+                  ),
                 orders: () => {
                   // Pedidos do salão (null = a Nina cuida) + pedidos online do motoboy.
                   const salon = worldScene.restaurant ? worldScene.restaurant.pendingOrders() : [];
@@ -305,11 +322,17 @@ export function createGame(options: GameOptions): GameHandle {
       });
       container.append(ordersButton);
       cleanups.push(() => ordersButton.remove());
+      // Instalar como app: na tela inicial, um aviso (iPhone: passo a passo do Safari;
+      // Android/computador: botão que abre a instalação do navegador).
+      const installBox = createInstallHint(document);
+      container.append(installBox.element);
+      cleanups.push(() => installBox.destroy());
       // Os botões só aparecem andando pelo mapa: com fala, menu ou forno abertos, não cobrem nada.
       syncTouchButtons = () => {
         const hide = !playing || input.activeContext !== "world";
         menuButton.hidden = hide;
         ordersButton.hidden = hide;
+        installBox.element.hidden = playing || !installBox.useful;
       };
       cleanups.push(() => (syncTouchButtons = null));
 
@@ -424,5 +447,64 @@ function attachMouse(
   return () => {
     container.removeEventListener("pointerdown", onPointerDown);
     container.removeEventListener("contextmenu", onContextMenu);
+  };
+}
+
+/** O navegador guarda o pedido de instalação para o botão usar depois (Android/computador). */
+interface InstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+}
+
+/** Aviso "instalar como app" da tela inicial; some se o jogo já estiver instalado. */
+function createInstallHint(doc: Document): {
+  element: HTMLElement;
+  readonly useful: boolean;
+  destroy(): void;
+} {
+  const element = doc.createElement("div");
+  element.className = "install-hint";
+  const standalone =
+    window.matchMedia?.("(display-mode: standalone)").matches ||
+    window.matchMedia?.("(display-mode: fullscreen)").matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  let prompt: InstallPromptEvent | null = null;
+  const paint = () => {
+    if (ios) {
+      element.textContent =
+        "📲 Instalar no iPhone: abra no Safari, toque em Compartilhar (quadrado com seta ↑) e depois em “Adicionar à Tela de Início”.";
+      return;
+    }
+    if (prompt) {
+      const button = doc.createElement("button");
+      button.type = "button";
+      button.textContent = "⬇ Instalar jogo";
+      button.addEventListener("pointerdown", (e) => e.stopPropagation());
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        void prompt?.prompt();
+      });
+      element.replaceChildren(button);
+      return;
+    }
+    element.textContent =
+      "📲 Para instalar: menu do navegador → “Instalar app” ou “Adicionar à tela inicial”.";
+  };
+  const onPrompt = (e: Event) => {
+    e.preventDefault();
+    prompt = e as InstallPromptEvent;
+    paint();
+  };
+  window.addEventListener("beforeinstallprompt", onPrompt);
+  paint();
+  return {
+    element,
+    get useful() {
+      return !standalone;
+    },
+    destroy() {
+      window.removeEventListener("beforeinstallprompt", onPrompt);
+      element.remove();
+    },
   };
 }

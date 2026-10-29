@@ -227,12 +227,12 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
       );
     });
 
-    it("cobertura não pode ser ingrediente obrigatório; toda receita exige massa", () => {
+    it("toda receita exige massa (coberturas podem ser obrigatórias, ex.: Calabresa)", () => {
       const text = problemsAfter((raw) => {
         const recipe = byId(raw.recipes, "rec.brasa");
         recipe.requirements = [{ kind: "ingredient", ingredientId: "ing.manjericao", count: 1 }];
       });
-      expect(text).toContain('"ing.manjericao" é cobertura e não pode ser obrigatório');
+      expect(text).not.toContain("é cobertura");
       expect(text).toContain("rec.brasa: toda receita exige massa");
     });
 

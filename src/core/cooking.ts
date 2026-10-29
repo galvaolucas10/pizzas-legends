@@ -76,11 +76,19 @@ function matchRequirements(
     const index = pool.findIndex(pred);
     return index >= 0 ? pool.splice(index, 1)[0] : undefined;
   };
+  // Receita que pede uma cobertura pelo nome (ex.: Calabresa pede Linguiça): ela sai das
+  // coberturas escolhidas e não conta como cobertura extra.
+  const takeTopping = (id: string): boolean => {
+    const index = toppings.findIndex((i) => i.id === id);
+    if (index < 0) return false;
+    toppings.splice(index, 1);
+    return true;
+  };
 
   for (const req of recipe.requirements) {
     if (req.kind !== "ingredient") continue;
     for (let n = 0; n < req.count; n++) {
-      if (!take((i) => i.id === req.ingredientId))
+      if (!take((i) => i.id === req.ingredientId) && !takeTopping(req.ingredientId))
         return { kind: "missingIngredient", ingredientId: req.ingredientId };
     }
   }
