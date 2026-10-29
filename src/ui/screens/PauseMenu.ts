@@ -15,6 +15,8 @@ export interface PauseMenuOptions {
   iconUrl(assetId: string): string | null;
   /** Abre direto na loja (mercadinho da Lia); Esc fecha. */
   shopOnly?: { title: string };
+  /** Abre a escolha de controles (computador ou celular) por cima do menu. */
+  openControls?(): void;
 }
 
 const QUEST_STATUS: Record<string, string> = {
@@ -97,6 +99,17 @@ export class PauseMenu {
         onSelect: () => this.showShop(),
       },
     ];
+    const openControls = this.o.openControls;
+    if (openControls) {
+      pages.push({
+        label: "🎮 Controles",
+        paint: () =>
+          this.side.replaceChildren(
+            h(this.o.doc, "p", "panel__text", "Escolha jogar no computador ou no celular."),
+          ),
+        onSelect: () => openControls(),
+      });
+    }
     this.menu.onFocus = (_item, index) => pages[index]?.paint();
     this.menu.onCancel = () => (this.done = true);
     this.menu.setItems([...pages, { label: "Fechar", onSelect: () => (this.done = true) }], focus);
@@ -180,7 +193,7 @@ export class PauseMenu {
     this.side.replaceChildren(
       h(doc, "p", "panel__text", `Você tem ${this.o.session.coins} moedas.`),
       h(doc, "p", "panel__text", "Compre ingredientes para preparar pizzas no forno."),
-      h(doc, "p", "panel__hint", "Ganhe moedas vencendo batalhas e abrindo baús."),
+      h(doc, "p", "panel__hint", "Ganhe moedas atendendo clientes e com as entregas."),
     );
   }
 

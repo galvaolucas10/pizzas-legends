@@ -332,11 +332,13 @@ body {
   font-size: calc(var(--u) * 6.5);
 }
 
+/* Avisos (pedidos, entregas, moedas) no canto de cima, à esquerda, abaixo do quadro do jogador. */
 .hud__toast {
   position: absolute;
-  top: calc(var(--u) * 34);
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(var(--u) * 4);
+  top: calc(var(--u) * 40);
+  max-width: calc(var(--u) * 170);
+  font-size: calc(var(--u) * 6.5);
   padding: calc(var(--u) * 2) calc(var(--u) * 6);
   font-weight: bold;
   color: var(--good);
@@ -663,4 +665,41 @@ body {
 .touch-pad__a {
   margin-bottom: calc(var(--px) * 8);
   background: #f6c142dd;
+}
+
+/* Coluna de botões (Menu, Pedidos, Controles) no canto direito, dentro do retângulo do jogo. */
+.side-bar {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.side-btn {
+  width: 58px;
+  padding: 6px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 2px solid #3a2418;
+  border-radius: 8px;
+  background: #f2d6a6;
+  color: #3a2418;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+}
+.side-btn[hidden] {
+  display: none;
+}
+.side-btn__icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.side-btn__text {
+  font-size: 10px;
+  font-weight: bold;
 }

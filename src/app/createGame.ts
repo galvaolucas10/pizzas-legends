@@ -280,6 +280,7 @@ export function createGame(options: GameOptions): GameHandle {
               content,
               input: input.reader("menu"),
               iconUrl,
+              openControls: () => openControls(),
             });
             return menu;
           }),
@@ -289,8 +290,13 @@ export function createGame(options: GameOptions): GameHandle {
       // Celular: sem teclado, um botão na tela abre o menu (o mesmo do Tab).
       const menuButton = document.createElement("button");
       menuButton.type = "button";
-      menuButton.className = "touch-menu";
-      menuButton.textContent = "☰ Menu";
+      // Coluna de botões no canto direito do retângulo do jogo (na faixa escura ao lado da sala).
+      const sideBar = document.createElement("div");
+      sideBar.className = "side-bar";
+      container.append(sideBar);
+      cleanups.push(() => sideBar.remove());
+      menuButton.className = "side-btn";
+      sideLabel(menuButton, "☰", "Menu");
       menuButton.addEventListener("click", (e) => {
         e.stopPropagation();
         if (input.activeContext !== "world") return;
@@ -298,13 +304,13 @@ export function createGame(options: GameOptions): GameHandle {
         input.release("menu");
       });
       menuButton.addEventListener("pointerdown", (e) => e.stopPropagation());
-      container.append(menuButton);
+      sideBar.append(menuButton);
       cleanups.push(() => menuButton.remove());
       // Pedidos online (entregas): botão no canto que abre a lista.
       const ordersButton = document.createElement("button");
       ordersButton.type = "button";
-      ordersButton.className = "touch-menu touch-orders";
-      ordersButton.textContent = "📱 Pedidos";
+      ordersButton.className = "side-btn";
+      sideLabel(ordersButton, "📱", "Pedidos");
       ordersButton.addEventListener("pointerdown", (e) => e.stopPropagation());
       ordersButton.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -322,7 +328,7 @@ export function createGame(options: GameOptions): GameHandle {
             }),
         );
       });
-      container.append(ordersButton);
+      sideBar.append(ordersButton);
       cleanups.push(() => ordersButton.remove());
       // Controles: computador (teclado e mouse) ou celular (setas e botões A/B na tela).
       const MODE_KEY = "pizza-legends.controles";
@@ -339,14 +345,7 @@ export function createGame(options: GameOptions): GameHandle {
       const touchPad = createTouchPad(document, input);
       container.append(touchPad);
       cleanups.push(() => touchPad.remove());
-      const controlsButton = document.createElement("button");
-      controlsButton.type = "button";
-      controlsButton.className = "touch-menu touch-controls";
-      controlsButton.textContent = "🎮 Controles";
-      controlsButton.addEventListener("pointerdown", (e) => e.stopPropagation());
-      controlsButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (input.activeContext !== "world") return;
+      const openControls = (): void =>
         pushOverlay(
           scenes,
           input,
@@ -367,9 +366,6 @@ export function createGame(options: GameOptions): GameHandle {
               },
             }),
         );
-      });
-      container.append(controlsButton);
-      cleanups.push(() => controlsButton.remove());
       // Instalar como app: na tela inicial, um aviso (iPhone: passo a passo do Safari;
       // Android/computador: botão que abre a instalação do navegador).
       const installBox = createInstallHint(document);
@@ -380,7 +376,6 @@ export function createGame(options: GameOptions): GameHandle {
         const hide = !playing || input.activeContext !== "world";
         menuButton.hidden = hide;
         ordersButton.hidden = hide;
-        controlsButton.hidden = hide;
         // As setas e A/B do celular servem também nos menus e falas: só somem fora do jogo.
         touchPad.hidden = !playing || controlMode !== "celular";
         installBox.element.hidden = playing || !installBox.useful;
@@ -562,4 +557,16 @@ function createInstallHint(doc: Document): {
       element.remove();
     },
   };
+}
+
+/** Botão da coluna lateral: ícone grande e o nome embaixo. */
+function sideLabel(button: HTMLButtonElement, icon: string, text: string): void {
+  const i = document.createElement("span");
+  i.className = "side-btn__icon";
+  i.textContent = icon;
+  const t = document.createElement("span");
+  t.className = "side-btn__text";
+  t.textContent = text;
+  button.replaceChildren(i, t);
+  button.setAttribute("aria-label", text);
 }
