@@ -301,7 +301,13 @@ describe("funcionária do salão (Nina)", () => {
     for (let t = 0; t < 6000 && Number(session.state.flags["flag.clientes_total"] ?? 0) < 1; t++)
       g.tick();
     expect(session.state.flags["flag.clientes_total"]).toBe(1);
-    expect(session.coins).toBe(coins + cfg.payCoins - employee.cut + (cfg.drinkCoins ?? 0));
+    // Os pedidos online (motoboy) também pagam neste meio-tempo: fora da conta do salão.
+    const avenue = session.content.balance.avenue!;
+    const online =
+      Number(session.state.flags["flag.pedidos_online"] ?? 0) * (avenue.pay - avenue.helper!.cut);
+    expect(session.coins - online).toBe(
+      coins + cfg.payCoins - employee.cut + (cfg.drinkCoins ?? 0),
+    );
     expect(session.state.characters[0]!.xp).toBe(xp); // XP só para quem atende
 
     // Longe do salão o restaurante continua: o dinheiro entra enquanto o jogador faz desafios.

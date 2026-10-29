@@ -52,6 +52,8 @@ export class Avenue {
   private cars: Car[] = [];
   private ride: Ride | null = null;
   private helperTask: HelperTask | null = null;
+  /** Últimos pedidos entregues (para a tela de pedidos), mais recente primeiro. */
+  private delivered: { order: OnlineOrder; coins: number }[] = [];
   private nextOrderMs: number;
   private seq = 0;
   private readonly random: () => number;
@@ -124,9 +126,8 @@ export class Avenue {
       if (lane.direction > 0 && car.x > width + CAR_W) car.x = -CAR_W * 2;
       if (lane.direction < 0 && car.x < -CAR_W * 2) car.x = width + CAR_W;
     }
-    // Pedidos online começam depois da primeira pizza (etapa 1 da missão).
-    const started = (this.o.session.state.quests["quest.primeiro_desafio"]?.step ?? 0) >= 1;
-    if (started) {
+    // Pedidos online chegam desde o começo do jogo.
+    {
       this.nextOrderMs -= dt;
       if (this.nextOrderMs <= 0) {
         this.nextOrderMs = cfg.orderEveryMs;
@@ -171,9 +172,13 @@ export class Avenue {
   orderList(): {
     pizza: string;
     address: string;
-    status: "esperando" | "preparando" | "a caminho";
+    status: "esperando" | "preparando" | "a caminho" | "entregue";
+    coins?: number;
   }[] {
-    const line = (o: OnlineOrder, status: "esperando" | "preparando" | "a caminho") => ({
+    const line = (
+      o: OnlineOrder,
+      status: "esperando" | "preparando" | "a caminho" | "entregue",
+    ) => ({
       pizza: this.name(o.recipeId),
       address: o.address,
       status,
@@ -182,6 +187,7 @@ export class Avenue {
       ...(this.ride ? [line(this.ride.order, "a caminho")] : []),
       ...(this.helperTask ? [line(this.helperTask.order, "preparando")] : []),
       ...this.orders.map((o) => line(o, "esperando")),
+      ...this.delivered.map((d) => ({ ...line(d.order, "entregue"), coins: d.coins })),
     ];
   }
 
@@ -231,6 +237,10 @@ export class Avenue {
     this.ride = null;
     this.o.session.dispatch({ type: "onlinePaid", byHelper: ride.byHelper });
     const cut = ride.byHelper ? (this.config.helper?.cut ?? 0) : 0;
+    this.delivered = [
+      { order: ride.order, coins: Math.max(0, this.config.pay - cut) },
+      ...this.delivered,
+    ].slice(0, 5);
     this.notice("motoboy.entregou", {
       pizza: this.name(ride.order.recipeId),
       moedas: String(Math.max(0, this.config.pay - cut)),

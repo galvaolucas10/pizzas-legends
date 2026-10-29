@@ -163,8 +163,8 @@
       "x": 9,
       "y": 10
     },
-    "firstOrderMs": 12000,
-    "orderEveryMs": 35000,
+    "firstOrderMs": 5000,
+    "orderEveryMs": 25000,
     "maxOrders": 3,
     "rideMs": 8000,
     "pay": 15,

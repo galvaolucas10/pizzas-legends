@@ -6,7 +6,9 @@ export interface OrderLine {
   pizza: string;
   address: string;
   /** "esperando" (na fila), "preparando" (o garçom está fazendo) ou "a caminho" (com o motoboy). */
-  status: "esperando" | "preparando" | "a caminho";
+  status: "esperando" | "preparando" | "a caminho" | "entregue";
+  /** Moedas recebidas (pedido entregue). */
+  coins?: number;
 }
 
 export interface OrdersScreenOptions {
@@ -21,6 +23,7 @@ const STATUS_TEXT: Record<OrderLine["status"], string> = {
   esperando: "na fila",
   preparando: "👨‍🍳 o Beto está fazendo",
   "a caminho": "🛵 a caminho com o motoboy",
+  entregue: "✔ entregue",
 };
 
 /** Pedidos online (entregas): o que está na fila, sendo feito e a caminho. Botão "📱 Pedidos". */
@@ -63,7 +66,7 @@ export class OrdersScreen {
     const doc = this.o.doc;
     if (orders.length === 0) {
       this.list.replaceChildren(
-        h(doc, "p", "panel__text", "Nenhum pedido online agora. Quando chegar um, aparece aqui."),
+        h(doc, "p", "panel__text", "Nenhum pedido online ainda. O primeiro chega em instantes!"),
       );
       return;
     }
@@ -72,7 +75,12 @@ export class OrdersScreen {
       const li = h(doc, "li", "row");
       li.append(
         h(doc, "span", "", `🍕 ${order.pizza} · ${order.address}`),
-        h(doc, "span", "row__detail", STATUS_TEXT[order.status]),
+        h(
+          doc,
+          "span",
+          "row__detail",
+          STATUS_TEXT[order.status] + (order.coins ? ` · +${order.coins} moedas` : ""),
+        ),
       );
       ul.append(li);
     }
