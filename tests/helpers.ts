@@ -38,6 +38,23 @@ export function stubDom() {
     drawImage: (image: unknown, ...args: number[]) => calls.push({ image, args }),
     fillRect: () => {},
     fillStyle: "",
+    // Transformações (zoom do mundo) e desenhos extras: não fazem nada no teste.
+    save: () => {},
+    restore: () => {},
+    scale: () => {},
+    translate: () => {},
+    rotate: () => {},
+    beginPath: () => {},
+    rect: () => {},
+    clip: () => {},
+    moveTo: () => {},
+    lineTo: () => {},
+    closePath: () => {},
+    fill: () => {},
+    stroke: () => {},
+    strokeRect: () => {},
+    fillText: () => {},
+    measureText: () => ({ width: 0 }),
   };
   const document = {
     createElement: () => ({ width: 0, height: 0, getContext: () => ctx }),
