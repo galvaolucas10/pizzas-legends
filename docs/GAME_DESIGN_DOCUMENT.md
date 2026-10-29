@@ -390,7 +390,7 @@ Leitura esperada pelo jogador:
 |---|---|---|---|
 | `map.cozinha_mestre` | Cozinha do Mestre | Interior | Início, forno do Mestre, tutorial (reaproveita a estrutura do `DemoRoom` atual) |
 | `map.vila` | Vila do Forno | Região (hub) | Mestre Basílio, Feirante Lia, despensa, baús, saída para o bosque |
-| `map.despensa` | Despensa da Lia | Interior | Primeira batalha (Ratos); reaproveita a estrutura do `Kitchen` atual |
+| `map.despensa` | Cozinha dos Fundos | Interior | Primeira batalha (Ratos); reaproveita a estrutura do `Kitchen` atual |
 | `map.bosque` | Bosque das Ervas | Região | Pontos de coleta, Vespas, Fungos, acampamento com forno, Guardiã Sálvia, Lenhador Bento, segredo |
 | `map.clareira` | Clareira do Desafio | Região (arena) | Duelo contra Ravena Fumê |
 
@@ -403,7 +403,7 @@ Três regiões (Vila, Bosque, Clareira) + dois interiores, conforme a meta de 3 
 | `map.vila` | Vila do Forno (Anchovy Avenue) | `Street` | Pizzaria do Mestre, mercadinho da Lia (SHOP), passagem para a praça, saída leste para o bosque; Erio e Dona Rita passeando |
 | `map.salao` | Salão da Pizzaria do Mestre | `DiningRoom` | Mesas, bar, garçom Beto; porta do fundo para a cozinha |
 | `map.cozinha_mestre` | Cozinha do Mestre | `DemoRoom` | Mestre Basílio; passagem do fundo para a despensa |
-| `map.despensa` | Despensa da Lia | `Kitchen` | Saída pela seta no chão, de volta à cozinha do Mestre |
+| `map.despensa` | Cozinha dos Fundos | `Kitchen` | Saída pela seta no chão, de volta à cozinha do Mestre |
 | `map.loja` | Mercadinho da Lia | `PizzaShop` | Feirante Lia no balcão |
 | `map.praca` | Praça Neon | `StreetNorth` | Canteiros, Seu Tito passeando, entrada da Neon Greens |
 | `map.estufa` | Neon Greens | `GreenKitchen` | Restaurante verde (sem NPC ainda) |

@@ -64,6 +64,63 @@
           "condition": {
             "all": [
               {
+                "flag": "flag.mestre_pizzaiolo"
+              },
+              {
+                "not": {
+                  "flag": "flag.final_visto"
+                }
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.final.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.final.2"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.final.3"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.final_visto"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "flag": "flag.mestre_pizzaiolo"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.final_depois.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "all": [
+              {
                 "quest": "quest.primeiro_desafio",
                 "stepAtLeast": 1
               },

@@ -50,6 +50,12 @@ export class Hud {
       s.on("recipeLearned", (id) => this.toast(`Nova receita: ${this.text(`${id}.name`)}!`)),
       s.on("questEvent", (e) => {
         if (e.type === "questStepCompleted") this.toast("Etapa concluída!");
+        // Missão com texto de conclusão (ex.: fim da Carreira) ganha um aviso mais longo.
+        const done =
+          e.type === "questCompleted"
+            ? this.session.content.locale[`${e.questId}.concluida`]
+            : undefined;
+        if (done) this.toast(done, 6000);
       }),
     );
     this.refresh();
@@ -92,11 +98,11 @@ Tab: menu → Missões para o passo a passo`
   }
 
   /** Aviso curto no canto (nível, receita, etapa). */
-  toast(message: string): void {
+  toast(message: string, ms = 2500): void {
     this.toastEl.textContent = message;
     this.toastEl.hidden = false;
     if (this.toastTimer) clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => (this.toastEl.hidden = true), 2500);
+    this.toastTimer = setTimeout(() => (this.toastEl.hidden = true), ms);
   }
 
   /** Mostra "Salvando..." enquanto a promessa não termina (mínimo de 600 ms, para ser visível). */
