@@ -13,6 +13,19 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
   });
 }
 
+// Voltou ao jogo depois de um tempo fora (aba fechada e reaberta, app minimizado, celular
+// bloqueado): recarrega para abrir na tela inicial, onde dá para Continuar ou começar de novo.
+const AWAY_MS = 60_000;
+let hiddenAt: number | null = null;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else if (hiddenAt !== null && Date.now() - hiddenAt >= AWAY_MS) location.reload();
+});
+// O navegador pode devolver a página guardada na memória (voltar/reabrir aba): recomeça na tela inicial.
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) location.reload();
+});
+
 createGame({ canvas, container })
   .start()
   .catch((error: unknown) => {

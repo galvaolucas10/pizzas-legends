@@ -139,6 +139,8 @@ export function createGame(options: GameOptions): GameHandle {
     if (document.hidden) {
       input.releaseAll();
       loop.stop();
+      // Saiu da tela (aba fechada, app minimizado): guarda o progresso para o "Continuar".
+      if (playing) void saves.autosave();
     } else if (!paused) {
       loop.start();
     }
