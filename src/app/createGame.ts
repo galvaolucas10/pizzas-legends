@@ -487,7 +487,11 @@ function attachMouse(
     const gy = ((e.clientY - rect.top) / rect.height) * VIEW_H;
     if (gx < 0 || gy < 0 || gx >= VIEW_W || gy >= VIEW_H) return;
     const camera = world.camera(1);
-    scene.clickTile(Math.floor((gx + camera.x) / TILE), Math.floor((gy + camera.y) / TILE));
+    const zoom = world.zoom;
+    scene.clickTile(
+      Math.floor((gx / zoom + camera.x) / TILE),
+      Math.floor((gy / zoom + camera.y) / TILE),
+    );
   };
   const onContextMenu = (e: MouseEvent) => {
     e.preventDefault();
