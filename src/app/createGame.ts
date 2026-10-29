@@ -144,14 +144,7 @@ export function createGame(options: GameOptions): GameHandle {
 
   return {
     async start() {
-      cleanups.push(
-        attachKeyboard(input),
-        attachScreenScaler(container, (viewW) => {
-          canvas.width = viewW;
-          canvas.height = VIEW_H;
-          ctx.imageSmoothingEnabled = false;
-        }),
-      );
+      cleanups.push(attachKeyboard(input), attachScreenScaler(container));
       document.addEventListener("visibilitychange", onVisibility);
       cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
@@ -443,11 +436,7 @@ function attachMouse(
     const gy = ((e.clientY - rect.top) / rect.height) * VIEW_H;
     if (gx < 0 || gy < 0 || gx >= VIEW_W || gy >= VIEW_H) return;
     const camera = world.camera(1);
-    const zoom = world.zoom;
-    scene.clickTile(
-      Math.floor((gx / zoom + camera.x) / TILE),
-      Math.floor((gy / zoom + camera.y) / TILE),
-    );
+    scene.clickTile(Math.floor((gx + camera.x) / TILE), Math.floor((gy + camera.y) / TILE));
   };
   const onContextMenu = (e: MouseEvent) => {
     e.preventDefault();

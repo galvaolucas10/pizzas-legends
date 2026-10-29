@@ -11,16 +11,10 @@ export interface Point {
  * - Limitada às bordas do mapa: nada de área preta além do cenário.
  * - Mapa menor que a tela naquele eixo: o mapa fica centralizado.
  */
-export function cameraView(
-  focus: Point,
-  mapWidthPx: number,
-  mapHeightPx: number,
-  viewW: number = VIEW_W,
-  viewH: number = VIEW_H,
-): Point {
+export function cameraView(focus: Point, mapWidthPx: number, mapHeightPx: number): Point {
   return {
-    x: axis(focus.x, mapWidthPx, viewW),
-    y: axis(focus.y, mapHeightPx, viewH),
+    x: axis(focus.x, mapWidthPx, VIEW_W),
+    y: axis(focus.y, mapHeightPx, VIEW_H),
   };
 }
 

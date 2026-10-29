@@ -1,44 +1,38 @@
 import { describe, expect, it } from "vitest";
-import {
-  MAX_VIEW_W,
-  MIN_VIEW_W,
-  VIEW_H,
-  VIEW_W,
-  fitToScreen,
-} from "../../src/engine/render/viewport";
+import { VIEW_H, VIEW_W, fitToScreen } from "../../src/engine/render/viewport";
 
-describe("viewport (tela cheia)", () => {
-  it("começa em 384×216 de pixels de jogo", () => {
+describe("viewport", () => {
+  it("usa a resolução interna 384×216", () => {
     expect([VIEW_W, VIEW_H]).toEqual([384, 216]);
   });
 
   it.each([
-    // [janela CSS, dpr]
-    [1920, 1080, 1], // 16:9
-    [1366, 768, 1],
-    [2532 / 3, 1170 / 3, 3], // iPhone deitado (19,5:9)
-    [1706.67, 960, 1.5],
-  ])("janela %ix%i (dpr %f): ocupa a tela toda, sem faixas pretas", (w, h, dpr) => {
-    const fit = fitToScreen(w, h, dpr);
-    const deviceW = Math.floor(w * dpr);
-    const deviceH = Math.floor(h * dpr);
-    expect(Math.abs(fit.cssWidth * dpr - deviceW)).toBeLessThanOrEqual(fit.scale);
-    expect(Math.abs(fit.cssHeight * dpr - deviceH)).toBeLessThanOrEqual(1);
-    expect(fit.viewW).toBeGreaterThanOrEqual(MIN_VIEW_W);
-    expect(fit.viewW).toBeLessThanOrEqual(MAX_VIEW_W);
+    // [janela CSS, dpr, escala esperada]
+    [1366, 768, 1, 3], // 1152×648
+    [1920, 1080, 1, 5], // preenche a tela inteira
+    [1920, 960, 1, 4], // 1080p com barra do navegador
+    [2560, 1440, 1, 6], // 2304×1296
+    [1536, 864, 1.25, 5], // 1080p com o Windows em 125%
+    [1706.67, 960, 1.5, 6], // 1440p com o Windows em 150%
+  ])("janela %ix%i (dpr %f) → escala ×%i", (w, h, dpr, scale) => {
+    expect(fitToScreen(w, h, dpr).scale).toBe(scale);
   });
 
-  it("celular deitado ganha largura: a visão fica mais larga que 384", () => {
-    expect(fitToScreen(844, 390, 3).viewW).toBeGreaterThan(384);
-  });
-
-  it("celular em pé: a largura mínima cabe na tela (faixas em cima e embaixo)", () => {
-    const fit = fitToScreen(390, 844, 3);
-    expect(fit.viewW).toBe(MIN_VIEW_W);
-    expect(fit.cssWidth).toBeLessThanOrEqual(390 + 1);
+  it("ocupa um número inteiro de pixels físicos e fica centralizado", () => {
+    const dpr = 1.25;
+    const fit = fitToScreen(1536, 760, dpr); // 1920×950 físicos → ×4
+    expect(fit.scale).toBe(4);
+    expect(fit.cssWidth * dpr).toBe(VIEW_W * 4);
+    expect(fit.cssHeight * dpr).toBe(VIEW_H * 4);
+    expect(Number.isInteger(fit.cssLeft * dpr)).toBe(true);
+    expect(Number.isInteger(fit.cssTop * dpr)).toBe(true);
+    expect(fit.cssLeft * dpr).toBe((1920 - VIEW_W * 4) / 2);
   });
 
   it("nunca usa escala menor que 1, mesmo em janelas minúsculas", () => {
-    expect(fitToScreen(200, 100, 1).scale).toBe(1);
+    const fit = fitToScreen(200, 100, 1);
+    expect(fit.scale).toBe(1);
+    expect(fit.cssLeft).toBe(0);
+    expect(fit.cssTop).toBe(0);
   });
 });

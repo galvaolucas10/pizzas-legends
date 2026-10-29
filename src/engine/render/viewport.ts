@@ -1,16 +1,10 @@
 /** Resolução interna do jogo, em pixels de jogo (ARCHITECTURE 13, GDD 13.1). */
-/** Largura da visão em pixels de jogo: muda com o formato da tela (sempre 216 de altura). */
-export let VIEW_W = 384;
-/** Limites da largura: de quase quadrado (celular em pé) a bem largo (monitor ultrawide). */
-export const MIN_VIEW_W = 256;
-export const MAX_VIEW_W = 640;
+export const VIEW_W = 384;
 export const VIEW_H = 216;
 
 export interface ScreenFit {
-  /** Pixels físicos por pixel de jogo (mínimo 1; pode ser fracionário para ocupar a tela). */
+  /** Pixels físicos por pixel de jogo (sempre inteiro, mínimo 1). */
   scale: number;
-  /** Largura da visão em pixels de jogo para este formato de tela. */
-  viewW: number;
   /** Tamanho e posição do canvas em pixels CSS. */
   cssWidth: number;
   cssHeight: number;
@@ -26,16 +20,14 @@ export interface ScreenFit {
 export function fitToScreen(viewportCssW: number, viewportCssH: number, dpr: number): ScreenFit {
   const deviceW = Math.floor(viewportCssW * dpr);
   const deviceH = Math.floor(viewportCssH * dpr);
-  // Ocupa a altura toda; a largura da visão estica para preencher a tela (sem faixas pretas).
-  const scale = Math.max(1, Math.min(deviceH / VIEW_H, deviceW / MIN_VIEW_W));
-  const viewW = Math.max(MIN_VIEW_W, Math.min(MAX_VIEW_W, Math.round(deviceW / scale)));
-  const width = Math.round(viewW * scale);
-  const height = Math.round(VIEW_H * scale);
+  const scale = Math.max(1, Math.floor(Math.min(deviceW / VIEW_W, deviceH / VIEW_H)));
+  const width = VIEW_W * scale;
+  const height = VIEW_H * scale;
+  // Bordas em pixels físicos inteiros, para o canvas não cair "entre" dois pixels.
   const left = Math.max(0, Math.floor((deviceW - width) / 2));
   const top = Math.max(0, Math.floor((deviceH - height) / 2));
   return {
     scale,
-    viewW,
     cssWidth: width / dpr,
     cssHeight: height / dpr,
     cssLeft: left / dpr,
@@ -44,20 +36,12 @@ export function fitToScreen(viewportCssW: number, viewportCssH: number, dpr: num
 }
 
 /** Aplica a escala ao container e a recalcula quando a janela, o zoom ou a tela mudam. */
-export function attachScreenScaler(
-  container: HTMLElement,
-  /** Chamado quando a largura da visão muda (o canvas precisa acompanhar). */
-  onViewSize?: (viewW: number) => void,
-): () => void {
+export function attachScreenScaler(container: HTMLElement): () => void {
   let dprQuery: MediaQueryList | null = null;
 
   const apply = () => {
     const dpr = window.devicePixelRatio || 1;
     const fit = fitToScreen(window.innerWidth, window.innerHeight, dpr);
-    if (fit.viewW !== VIEW_W) {
-      VIEW_W = fit.viewW;
-      onViewSize?.(VIEW_W);
-    }
     const style = container.style;
     style.width = `${fit.cssWidth}px`;
     style.height = `${fit.cssHeight}px`;

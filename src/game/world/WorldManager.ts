@@ -9,7 +9,6 @@ import type { AssetLoader } from "../../engine/assets/AssetLoader";
 import { cameraView, type Point } from "../../engine/Camera";
 import type { ActionReader } from "../../engine/input/InputManager";
 import { buildTileLayerCache, TILE } from "../../engine/render/TileLayerCache";
-import { VIEW_H, VIEW_W } from "../../engine/render/viewport";
 import { EnemyActor } from "../entities/EnemyActor";
 import type { Entity, SpriteDef } from "../entities/Entity";
 import { neighbor } from "../entities/GridMover";
@@ -304,40 +303,19 @@ export class WorldManager {
     for (const entity of this.entities) entity.update(dt, grid);
   }
 
-  /**
-   * Aproximação do mundo: uma sala menor que a tela é ampliada até cobri-la (sem faixas
-   * pretas; a câmera segue o jogador). Mapas grandes ficam em 1×.
-   */
-  get zoom(): number {
-    const map = this.map;
-    if (!map) return 1;
-    return Math.max(1, VIEW_W / (map.width * TILE), VIEW_H / (map.height * TILE));
-  }
-
   /** Visão atual da câmera, centrada no jogador e limitada às bordas do mapa. */
   camera(alpha: number): Point {
     const map = this.map;
     if (!map) return { x: 0, y: 0 };
     const at = this.player.renderPosition(alpha);
-    const zoom = this.zoom;
     return cameraView(
       { x: at.x + TILE / 2, y: at.y + TILE / 2 },
       map.width * TILE,
       map.height * TILE,
-      VIEW_W / zoom,
-      VIEW_H / zoom,
     );
   }
 
   render(ctx: CanvasRenderingContext2D, alpha: number): void {
-    if (!this.map) return;
-    ctx.save();
-    ctx.scale(this.zoom, this.zoom);
-    this.renderWorld(ctx, alpha);
-    ctx.restore();
-  }
-
-  private renderWorld(ctx: CanvasRenderingContext2D, alpha: number): void {
     if (!this.map) return;
     const camera = this.camera(alpha);
     const assets = this.options.assets;
