@@ -46,6 +46,7 @@ export const SaveDataSchema = z.object({
         skills: z.array(z.string()),
         knownRecipes: z.array(z.string()),
         cookedRecipes: z.array(z.string()),
+        look: z.number().int().min(0).optional(),
       }),
     )
     .min(1),

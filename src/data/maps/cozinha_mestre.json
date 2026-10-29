@@ -64,6 +64,63 @@
           "condition": {
             "all": [
               {
+                "flag": "flag.lenda_restaurante"
+              },
+              {
+                "not": {
+                  "flag": "flag.lenda_vista"
+                }
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.lenda.final.1"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.lenda.final.2"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.lenda.final.3"
+            },
+            {
+              "type": "setFlag",
+              "flag": "flag.lenda_vista"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "flag": "flag.lenda_restaurante"
+          },
+          "events": [
+            {
+              "type": "face",
+              "who": "mestre",
+              "towards": "player"
+            },
+            {
+              "type": "message",
+              "speaker": "npc.mestre_basilio",
+              "textKey": "dlg.mestre_basilio.lenda.depois.1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "all": [
+              {
                 "flag": "flag.mestre_pizzaiolo"
               },
               {
@@ -97,6 +154,25 @@
             {
               "type": "setFlag",
               "flag": "flag.final_visto"
+            },
+            {
+              "type": "if",
+              "condition": {
+                "quest": "quest.lenda",
+                "status": "available"
+              },
+              "then": [
+                {
+                  "type": "message",
+                  "speaker": "npc.mestre_basilio",
+                  "textKey": "dlg.mestre_basilio.lenda.inicio"
+                },
+                {
+                  "type": "advanceQuest",
+                  "questId": "quest.lenda",
+                  "toStep": 0
+                }
+              ]
             }
           ]
         },
@@ -111,9 +187,44 @@
               "towards": "player"
             },
             {
-              "type": "message",
-              "speaker": "npc.mestre_basilio",
-              "textKey": "dlg.mestre_basilio.final_depois.1"
+              "type": "if",
+              "condition": {
+                "quest": "quest.lenda",
+                "status": "active"
+              },
+              "then": [
+                {
+                  "type": "message",
+                  "speaker": "npc.mestre_basilio",
+                  "textKey": "dlg.mestre_basilio.lenda.andamento"
+                }
+              ],
+              "else": [
+                {
+                  "type": "message",
+                  "speaker": "npc.mestre_basilio",
+                  "textKey": "dlg.mestre_basilio.final_depois.1"
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "quest": "quest.lenda",
+                    "status": "available"
+                  },
+                  "then": [
+                    {
+                      "type": "message",
+                      "speaker": "npc.mestre_basilio",
+                      "textKey": "dlg.mestre_basilio.lenda.inicio"
+                    },
+                    {
+                      "type": "advanceQuest",
+                      "questId": "quest.lenda",
+                      "toStep": 0
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },

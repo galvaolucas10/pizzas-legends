@@ -36,9 +36,8 @@ describe("final da Carreira (nível 14)", () => {
     ]);
     expect(first).toContainEqual({ type: "setFlag", flag: "flag.final_visto" });
 
+    // Depois do final, a fala do Mestre convida para a Lenda do Restaurante (testado em fullGame).
     const later = mestreSays({ "flag.mestre_pizzaiolo": true, "flag.final_visto": true });
-    expect(later.map((e) => e.textKey).filter(Boolean)).toEqual([
-      "dlg.mestre_basilio.final_depois.1",
-    ]);
+    expect(JSON.stringify(later)).toContain("dlg.mestre_basilio.final_depois.1");
   });
 });

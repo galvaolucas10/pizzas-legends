@@ -213,22 +213,51 @@
           "targets": ["balcao1", "balcao2", "balcao3"]
         },
         "completeWhen": {
-          "hasPizza": {
-            "recipeId": "rec.calabresa"
-          }
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.calabresa"
+              }
+            },
+            {
+              "flag": "flag.moedas",
+              "atLeast": 150
+            }
+          ]
         },
         "rewardId": "rew.carreira_10"
-      },
-      {
-        "objectiveKey": "quest.carreira.nivel11",
-        "completeWhen": {
-          "flag": "flag.moedas",
-          "atLeast": 150
+      }
+    ]
+  },
+  {
+    "id": "quest.lenda",
+    "kind": "main",
+    "availableWhen": {
+      "all": [
+        {
+          "flag": "flag.mestre_pizzaiolo"
         },
-        "rewardId": "rew.carreira_11"
+        {
+          "flag": "flag.final_visto"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "objectiveKey": "quest.lenda.d11",
+        "guide": {
+          "mapId": "map.salao",
+          "targets": ["@clientes"],
+          "needsPizza": true
+        },
+        "completeWhen": {
+          "flag": "flag.clientes_f",
+          "atLeast": 5
+        },
+        "rewardId": "rew.lenda_11"
       },
       {
-        "objectiveKey": "quest.carreira.nivel12",
+        "objectiveKey": "quest.lenda.d12",
         "guide": {
           "mapId": "map.despensa",
           "targets": ["balcao1", "balcao2", "balcao3"]
@@ -247,28 +276,96 @@
             }
           ]
         },
-        "rewardId": "rew.carreira_12"
+        "rewardId": "rew.lenda_12"
       },
       {
-        "objectiveKey": "quest.carreira.nivel13",
+        "objectiveKey": "quest.lenda.d13",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "hasPizza": {
+            "recipeId": "rec.calabresa_picante"
+          }
+        },
+        "rewardId": "rew.lenda_13"
+      },
+      {
+        "objectiveKey": "quest.lenda.d14",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "hasPizza": {
+            "minQuality": 4
+          }
+        },
+        "rewardId": "rew.lenda_14"
+      },
+      {
+        "objectiveKey": "quest.lenda.d15",
+        "guide": {
+          "mapId": "map.despensa",
+          "targets": ["balcao1", "balcao2", "balcao3"]
+        },
+        "completeWhen": {
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.margherita"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.quatro_queijos"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.brasa"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.calabresa"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.funghi"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.napolitana"
+              }
+            }
+          ]
+        },
+        "rewardId": "rew.lenda_15"
+      },
+      {
+        "objectiveKey": "quest.lenda.d16",
         "guide": {
           "mapId": "map.salao",
           "targets": ["@clientes"],
           "needsPizza": true
         },
         "completeWhen": {
-          "flag": "flag.clientes_e",
-          "atLeast": 3
+          "flag": "flag.clientes_g",
+          "atLeast": 8
         },
-        "rewardId": "rew.carreira_13"
+        "rewardId": "rew.lenda_16"
       },
       {
-        "objectiveKey": "quest.carreira.nivel14",
+        "objectiveKey": "quest.lenda.d17",
         "completeWhen": {
           "flag": "flag.moedas",
-          "atLeast": 300
+          "atLeast": 600
         },
-        "rewardId": "rew.carreira_14"
+        "rewardId": "rew.lenda_17"
       }
     ]
   }

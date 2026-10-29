@@ -57,6 +57,11 @@ export class AssetLoader {
     return this.placeholder();
   }
 
+  /** Troca uma imagem já carregada (ex.: o herói recolorido). */
+  replace(id: string, image: DrawableImage): void {
+    this.loaded.set(id, image);
+  }
+
   private loadOne(id: string): Promise<void> {
     if (this.loaded.has(id)) return Promise.resolve();
     const inFlight = this.pending.get(id);

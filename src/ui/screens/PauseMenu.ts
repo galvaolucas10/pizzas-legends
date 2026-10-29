@@ -17,6 +17,8 @@ export interface PauseMenuOptions {
   shopOnly?: { title: string };
   /** Abre a escolha de controles (computador ou celular) por cima do menu. */
   openControls?(): void;
+  /** Liga/desliga a música de fundo. */
+  music?: { readonly enabled: boolean; toggle(): void };
 }
 
 const QUEST_STATUS: Record<string, string> = {
@@ -102,6 +104,21 @@ export class PauseMenu {
             h(this.o.doc, "p", "panel__text", "Escolha jogar no computador ou no celular."),
           ),
         onSelect: () => openControls(),
+      });
+    }
+    const music = this.o.music;
+    if (music) {
+      const index = pages.length;
+      pages.push({
+        label: music.enabled ? "🎵 Música: ligada" : "🔇 Música: desligada",
+        paint: () =>
+          this.side.replaceChildren(
+            h(this.o.doc, "p", "panel__text", "Enter liga ou desliga a música de fundo."),
+          ),
+        onSelect: () => {
+          music.toggle();
+          this.showMain(index);
+        },
       });
     }
     this.menu.onFocus = (_item, index) => pages[index]?.paint();

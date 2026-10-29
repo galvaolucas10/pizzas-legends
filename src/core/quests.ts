@@ -26,6 +26,18 @@ export function updateQuests(
       const state = next.quests[quest.id];
       if (!state || state.status !== "active") break;
       const step = quest.steps[state.step];
+      if (!step && state.step >= quest.steps.length && quest.steps.length > 0) {
+        // Save de antes de a missão encolher (ex.: Carreira de 6 para 2 desafios):
+        // conclui e garante o prêmio final.
+        const last = quest.steps[quest.steps.length - 1]!;
+        if (last.rewardId) next = claimReward(next, last.rewardId, content).save;
+        next = {
+          ...next,
+          quests: { ...next.quests, [quest.id]: { status: "completed", step: quest.steps.length } },
+        };
+        events.push({ type: "questCompleted", questId: quest.id });
+        break;
+      }
       if (!step || !evaluateCondition(step.completeWhen, next, content)) break;
 
       if (step.rewardId) {

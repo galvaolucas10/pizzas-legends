@@ -540,6 +540,35 @@ body {
   font-weight: normal;
 }
 
+/* Escolha de personagem no novo jogo. */
+.title__looks {
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--u) * 4);
+  margin-top: calc(var(--u) * 4);
+}
+.title__look {
+  padding: calc(var(--u) * 1);
+  border: calc(var(--u) * 2) solid transparent;
+  background: #efe3cf;
+  cursor: pointer;
+  line-height: 0;
+}
+.title__look canvas {
+  width: calc(var(--u) * 32);
+  height: calc(var(--u) * 32);
+  image-rendering: pixelated;
+}
+.title__look.is-focused {
+  border-color: var(--ink);
+  background: #ffe2a8;
+}
+.title__look-name {
+  text-align: center;
+  font-weight: bold;
+  margin: calc(var(--u) * 3) 0 0;
+}
+
 /* Celular: botão do menu (o Tab do teclado) no canto de baixo. */
 .touch-menu {
   position: absolute;

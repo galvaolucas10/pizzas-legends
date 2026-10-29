@@ -14,6 +14,8 @@ export interface CharacterState {
   skills: string[];
   knownRecipes: string[];
   cookedRecipes: string[];
+  /** Visual escolhido no novo jogo (índice em LOOKS; ausente = 0). */
+  look?: number;
 }
 
 export interface StatusApplied {

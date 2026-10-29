@@ -239,7 +239,7 @@
     },
     "unlock": {
       "kind": "reward",
-      "rewardId": "rew.carreira_11"
+      "rewardId": "rew.lenda_11"
     }
   },
   {
@@ -275,7 +275,7 @@
     },
     "unlock": {
       "kind": "reward",
-      "rewardId": "rew.carreira_12"
+      "rewardId": "rew.lenda_12"
     }
   }
 ]

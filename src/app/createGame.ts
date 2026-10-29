@@ -3,6 +3,7 @@ import { bundledContent } from "../content/sources";
 import { MAX_NAME_LENGTH, newGame } from "../core/newGame";
 import type { SaveData } from "../core/types";
 import { AssetLoader } from "../engine/assets/AssetLoader";
+import { Music } from "../engine/audio/Music";
 import { GameLoop } from "../engine/GameLoop";
 import { InputManager } from "../engine/input/InputManager";
 import { attachKeyboard } from "../engine/input/KeyboardSource";
@@ -11,6 +12,7 @@ import { attachScreenScaler, VIEW_H, VIEW_W } from "../engine/render/viewport";
 import { SceneStack } from "../engine/SceneStack";
 import type { BattleOutcome, BattleRequest } from "../game/events/EventRunner";
 import { GameSession } from "../game/GameSession";
+import { LOOKS, lookIndex, portrait, recolor } from "../game/looks";
 import { SaveSystem } from "../game/SaveSystem";
 import { BattleScene } from "../game/scenes/BattleScene";
 import { WorldScene } from "../game/scenes/WorldScene";
@@ -153,6 +155,22 @@ export function createGame(options: GameOptions): GameHandle {
       cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
       await assets.loadBundle(content.assets.bundles.boot ?? []);
+
+      // Personagens: a folha original do herói, recolorida para cada visual.
+      const heroBase = assets.image(PLAYER_SPRITE_ID);
+      const heroSheets = LOOKS.map((look) => recolor(container.ownerDocument, heroBase, look));
+      const applyLook = (save: SaveData) => {
+        const look = lookIndex(save.characters[0]?.look);
+        assets.replace(PLAYER_SPRITE_ID, heroSheets[look]!);
+      };
+
+      // Música: o navegador só libera o som depois do primeiro toque ou tecla.
+      const music = new Music();
+      const unlockMusic = () => music.unlock();
+      for (const type of ["pointerdown", "keydown", "touchstart"] as const) {
+        window.addEventListener(type, unlockMusic, { capture: true });
+        cleanups.push(() => window.removeEventListener(type, unlockMusic, { capture: true }));
+      }
       const ui = new UiRoot(container);
       cleanups.push(() => ui.destroy());
       const doc = container.ownerDocument;
@@ -165,6 +183,7 @@ export function createGame(options: GameOptions): GameHandle {
         const enemy = content.enemies[request.enemyId];
         scenes.transition(async () => {
           await assets.loadBundle(enemy ? [enemy.sprite] : []);
+          music.play("battle");
           const screen = new BattleScreen({
             doc,
             root: ui.element,
@@ -188,6 +207,7 @@ export function createGame(options: GameOptions): GameHandle {
                   async () => {
                     scenes.pop();
                     hud!.visible = true;
+                    music.play("town");
                   },
                   () => {
                     onEnd(outcome);
@@ -266,6 +286,12 @@ export function createGame(options: GameOptions): GameHandle {
               input: input.reader("menu"),
               iconUrl,
               openControls: () => openControls(),
+              music: {
+                get enabled() {
+                  return music.enabled;
+                },
+                toggle: () => music.setEnabled(!music.enabled),
+              },
             });
             return menu;
           }),
@@ -372,6 +398,7 @@ export function createGame(options: GameOptions): GameHandle {
       const begin = (save: SaveData, fresh: boolean) => {
         scenes.transition(async () => {
           session.load(save);
+          applyLook(save);
           const { mapId, position } = session.state.world;
           await worldScene.loadMap(mapId, position);
           if (!worldOnStack) {
@@ -397,6 +424,10 @@ export function createGame(options: GameOptions): GameHandle {
           root: ui.element,
           input: input.reader("menu"),
           maxNameLength: MAX_NAME_LENGTH,
+          looks: LOOKS.map((look, i) => ({
+            name: look.name,
+            portrait: portrait(doc, heroSheets[i]!),
+          })),
           save:
             latest && char
               ? {
@@ -408,7 +439,8 @@ export function createGame(options: GameOptions): GameHandle {
                     : null,
                 }
               : null,
-          onNewGame: (name) => begin(newGame(content, { name, seed: Date.now() >>> 0 }), true),
+          onNewGame: (name, look) =>
+            begin(newGame(content, { name, seed: Date.now() >>> 0, look }), true),
           onContinue: () => latest && begin(latest.data, false),
         });
       });

@@ -11,7 +11,12 @@ export const MAX_NAME_LENGTH = 12;
 /** Save inicial de um novo jogo (DATA_MODELS 4.3). A semente vem de fora: o core não sorteia. */
 export function newGame(
   content: ContentRegistry,
-  options: { name: string; seed: number; characterId?: string },
+  options: {
+    name: string;
+    seed: number;
+    characterId?: string;
+    look?: number;
+  },
 ): SaveData {
   const charId = options.characterId ?? "char.aprendiz";
   const def = content.characters[charId];
@@ -38,6 +43,7 @@ export function newGame(
         skills: [],
         knownRecipes: [...def.startingRecipes],
         cookedRecipes: [],
+        ...(options.look ? { look: options.look } : {}),
       },
     ],
     inventory: { ingredients, pizzas: [], lastBasket: [] },

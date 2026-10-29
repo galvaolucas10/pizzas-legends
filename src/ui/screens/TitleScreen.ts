@@ -16,7 +16,9 @@ export interface TitleScreenOptions {
   /** Save mais recente, se existir. */
   save: SaveInfo | null;
   maxNameLength: number;
-  onNewGame(name: string): void;
+  /** Personagens para escolher no novo jogo: nome e retrato. */
+  looks: { name: string; portrait: HTMLCanvasElement }[];
+  onNewGame(name: string, look: number): void;
   onContinue(): void;
 }
 
@@ -27,6 +29,8 @@ export class TitleScreen {
   private readonly menu: Menu;
   private readonly body: HTMLElement;
   private naming: HTMLInputElement | null = null;
+  /** Escolha de personagem aberta: nome digitado e o visual em foco. */
+  private picking: { name: string; index: number; cards: HTMLElement[] } | null = null;
 
   constructor(private readonly o: TitleScreenOptions) {
     const doc = o.doc;
@@ -51,6 +55,7 @@ export class TitleScreen {
     const doc = this.o.doc;
     const save = this.o.save;
     this.naming = null;
+    this.picking = null;
     const children: HTMLElement[] = [this.menu.element];
     if (save) {
       const minutes = Math.floor(save.playTimeMs / 60000);
@@ -76,19 +81,19 @@ export class TitleScreen {
     this.o.onContinue();
   }
 
-  private askName(): void {
+  private askName(name = "Nico"): void {
+    this.picking = null;
     const doc = this.o.doc;
     const field = h(doc, "input", "title__input");
     field.type = "text";
     field.maxLength = this.o.maxNameLength;
-    field.value = "Nico";
+    field.value = name;
     field.setAttribute("aria-label", "Nome do aprendiz");
     const start = () => {
       if (this.done) return;
-      this.done = true;
-      this.o.onNewGame(field.value.trim() || "Nico");
+      this.pickLook(field.value.trim() || "Nico");
     };
-    const startButton = h(doc, "button", "title__button", "Começar");
+    const startButton = h(doc, "button", "title__button", "Próximo");
     startButton.type = "button";
     startButton.addEventListener("click", start);
     const backButton = h(doc, "button", "title__button title__button--back", "Voltar");
@@ -115,8 +120,82 @@ export class TitleScreen {
     field.select();
   }
 
+  /** Segunda etapa do novo jogo: escolher um dos personagens. */
+  private pickLook(name: string, index = 0): void {
+    const doc = this.o.doc;
+    this.naming = null;
+    const row = h(doc, "div", "title__looks");
+    const label = h(doc, "p", "panel__text title__look-name");
+    const cards = this.o.looks.map((look, i) => {
+      const card = h(doc, "button", "title__look");
+      card.type = "button";
+      card.setAttribute("aria-label", look.name);
+      card.append(look.portrait);
+      card.addEventListener("click", () => {
+        if (this.picking?.index === i) this.confirmLook();
+        else this.focusLook(i);
+      });
+      return card;
+    });
+    row.append(...cards);
+    const startButton = h(doc, "button", "title__button", "Começar");
+    startButton.type = "button";
+    startButton.addEventListener("click", () => this.confirmLook());
+    const backButton = h(doc, "button", "title__button title__button--back", "Voltar");
+    backButton.type = "button";
+    backButton.addEventListener("click", () => this.askName(name));
+    const buttons = h(doc, "div", "title__buttons");
+    buttons.append(startButton, backButton);
+    this.body.replaceChildren(
+      h(doc, "p", "panel__text", `Escolha o personagem de ${name}:`),
+      row,
+      label,
+      buttons,
+      h(doc, "p", "panel__hint", "← → escolher · Enter começar · Esc volta"),
+    );
+    this.picking = { name, index, cards };
+    this.focusLook(index);
+  }
+
+  private focusLook(index: number): void {
+    const p = this.picking;
+    if (!p) return;
+    p.index = index;
+    p.cards.forEach((card, i) => card.classList.toggle("is-focused", i === index));
+    const label = this.body.querySelector(".title__look-name");
+    if (label) label.textContent = this.o.looks[index]?.name ?? "";
+  }
+
+  private confirmLook(): void {
+    const p = this.picking;
+    if (this.done || !p) return;
+    this.done = true;
+    this.o.onNewGame(p.name, p.index);
+  }
+
   update(): void {
     if (this.done || this.naming) return; // digitando: o campo cuida do teclado
+    const p = this.picking;
+    if (p) {
+      const input = this.o.input;
+      const n = this.o.looks.length;
+      if (input.wasPressed("left") || input.wasPressed("up")) {
+        input.consume("left");
+        input.consume("up");
+        this.focusLook((p.index + n - 1) % n);
+      } else if (input.wasPressed("right") || input.wasPressed("down")) {
+        input.consume("right");
+        input.consume("down");
+        this.focusLook((p.index + 1) % n);
+      } else if (input.wasPressed("confirm")) {
+        input.consume("confirm");
+        this.confirmLook();
+      } else if (input.wasPressed("cancel")) {
+        input.consume("cancel");
+        this.askName(p.name);
+      }
+      return;
+    }
     this.menu.handle(this.o.input);
   }
 
