@@ -8,6 +8,7 @@ import {
 } from "../../game/oven/OvenController";
 import { Menu, type MenuItem, type UiInput } from "../components/Menu";
 import { h } from "../dom";
+import { pizzaPhoto } from "../pizzaArt";
 
 /** Pedido de cliente esperando pizza (receita e quantos). */
 export interface PendingOrder {
@@ -98,18 +99,25 @@ export class OvenScreen {
       { label: "Mais opções", detail: "descansar, salvar...", onSelect: () => this.showMain() },
       { label: "Sair", onSelect: () => (this.done = true) },
     );
-    this.side.replaceChildren(
-      h(this.o.doc, "p", "panel__text", "Escolha uma pizza que eu preparo para você!"),
-      ...this.helpRows().slice(0, -1),
-      h(
-        this.o.doc,
-        "p",
-        "panel__hint",
-        `Pizzas na mochila: ${this.o.session.state.inventory.pizzas.length}/${this.o.content.balance.maxPizzas} · Moedas: ${this.o.session.coins}`,
-      ),
-    );
+    // Cada pizza em foco mostra a foto de como ela tem que ficar.
+    const paintSide = (index: number) => {
+      const card = cards[index];
+      this.side.replaceChildren(
+        ...(card
+          ? [pizzaPhoto(this.o.doc, this.o.content, card.id)]
+          : [h(this.o.doc, "p", "panel__text", "Escolha uma pizza que eu preparo para você!")]),
+        ...this.helpRows().slice(0, -1),
+        h(
+          this.o.doc,
+          "p",
+          "panel__hint",
+          `Pizzas na mochila: ${this.o.session.state.inventory.pizzas.length}/${this.o.content.balance.maxPizzas} · Moedas: ${this.o.session.coins}`,
+        ),
+      );
+    };
+    paintSide(focus);
     this.menu.onCancel = () => (this.done = true);
-    this.menu.onFocus = undefined;
+    this.menu.onFocus = (_item, index) => paintSide(index);
     this.menu.setItems(items, focus);
   }
 
@@ -129,6 +137,7 @@ export class OvenScreen {
     const done = Math.round(((COOK_MS - c.leftMs) / COOK_MS) * steps);
     const bar = "▓".repeat(done) + "░".repeat(steps - done);
     this.side.replaceChildren(
+      pizzaPhoto(doc, this.o.content, c.recipeId),
       h(doc, "p", "panel__text", `🔥 Fazendo a ${this.text(`${c.recipeId}.name`)}...`),
       h(doc, "p", "panel__text", bar),
     );
@@ -287,7 +296,10 @@ export class OvenScreen {
   /** Cartão da receita na lista: como fazer, quantas dá e pedidos. */
   private paintCard(card: RecipeCard, ordered: number): void {
     const doc = this.o.doc;
-    const rows: HTMLElement[] = [h(doc, "p", "panel__hint", `${card.profile}`)];
+    const rows: HTMLElement[] = [
+      ...(card.known ? [pizzaPhoto(doc, this.o.content, card.id)] : []),
+      h(doc, "p", "panel__hint", `${card.profile}`),
+    ];
     if (ordered) rows.push(h(doc, "p", "panel__good", `★ ${ordered} cliente(s) pediram esta!`));
     rows.push(...this.howToRows(card.howTo));
     const preview = card.known ? this.oven.preview(card.id) : null;
@@ -404,7 +416,10 @@ export class OvenScreen {
   private paintPreview(recipeId: string, preview?: PreviewView): void {
     const doc = this.o.doc;
     const p = preview ?? this.oven.preview(recipeId);
-    const rows: HTMLElement[] = [...this.howToRows(this.oven.howTo(recipeId))];
+    const rows: HTMLElement[] = [
+      pizzaPhoto(doc, this.o.content, recipeId, [...this.oven.toppings]),
+      ...this.howToRows(this.oven.howTo(recipeId)),
+    ];
     if (!p.ok) {
       rows.push(h(doc, "p", "panel__bad", p.error ?? "Não dá para preparar."));
     } else {

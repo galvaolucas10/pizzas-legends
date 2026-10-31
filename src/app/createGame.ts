@@ -12,7 +12,7 @@ import { attachScreenScaler, VIEW_H, VIEW_W } from "../engine/render/viewport";
 import { SceneStack } from "../engine/SceneStack";
 import type { BattleOutcome, BattleRequest } from "../game/events/EventRunner";
 import { GameSession } from "../game/GameSession";
-import { LOOKS, lookIndex, portrait, recolor } from "../game/looks";
+import { FACES, HAIRS, SKINS, avatarOf, buildSheet, closeUp } from "../game/looks";
 import { SaveSystem } from "../game/SaveSystem";
 import { BattleScene } from "../game/scenes/BattleScene";
 import { WorldScene } from "../game/scenes/WorldScene";
@@ -22,6 +22,7 @@ import { Hud } from "../ui/components/Hud";
 import { BattleScreen } from "../ui/screens/BattleScreen";
 import { OvenScreen } from "../ui/screens/OvenScreen";
 import { ControlsScreen, type ControlMode } from "../ui/screens/ControlsScreen";
+import { ManualScreen } from "../ui/screens/ManualScreen";
 import { OrdersScreen } from "../ui/screens/OrdersScreen";
 import { PauseMenu } from "../ui/screens/PauseMenu";
 import { TitleScreen } from "../ui/screens/TitleScreen";
@@ -156,13 +157,17 @@ export function createGame(options: GameOptions): GameHandle {
 
       await assets.loadBundle(content.assets.bundles.boot ?? []);
 
-      // Personagens: a folha original do herói, recolorida para cada visual.
+      // Aprendiz: a folha original do herói recolorida com o avatar e o avental do nível.
       const heroBase = assets.image(PLAYER_SPRITE_ID);
-      const heroSheets = LOOKS.map((look) => recolor(container.ownerDocument, heroBase, look));
       const applyLook = (save: SaveData) => {
-        const look = lookIndex(save.characters[0]?.look);
-        assets.replace(PLAYER_SPRITE_ID, heroSheets[look]!);
+        const char = save.characters[0];
+        assets.replace(
+          PLAYER_SPRITE_ID,
+          buildSheet(container.ownerDocument, heroBase, avatarOf(char), char?.level ?? 1),
+        );
       };
+      // Subiu de nível: avental novo na hora.
+      cleanups.push(session.signals.on("levelUp", () => applyLook(session.state)));
 
       // Música: o navegador só libera o som depois do primeiro toque ou tecla.
       const music = new Music();
@@ -286,6 +291,7 @@ export function createGame(options: GameOptions): GameHandle {
               input: input.reader("menu"),
               iconUrl,
               openControls: () => openControls(),
+              openManual: () => openManual(),
               music: {
                 get enabled() {
                   return music.enabled;
@@ -295,7 +301,11 @@ export function createGame(options: GameOptions): GameHandle {
             });
             return menu;
           }),
-        onMapLoaded: () => void saves.autosave(),
+        onMapLoaded: (mapId) => {
+          const name = content.locale[`${mapId}.name`];
+          if (name) hud?.showPlace(name);
+          void saves.autosave();
+        },
       });
       cleanups.push(attachMouse(container, canvas, input, world, worldScene));
       // Celular: sem teclado, um botão na tela abre o menu (o mesmo do Tab).
@@ -377,6 +387,21 @@ export function createGame(options: GameOptions): GameHandle {
               },
             }),
         );
+      const openManual = (onClose?: () => void): void =>
+        pushOverlay(
+          scenes,
+          input,
+          "menu",
+          () =>
+            new ManualScreen({
+              doc,
+              root: ui.element,
+              input: input.reader("menu"),
+              mode: controlMode,
+              name: session.state.characters[0]?.name ?? "Nico",
+            }),
+          onClose,
+        );
       // Instalar como app: na tela inicial, um aviso (iPhone: passo a passo do Safari;
       // Android/computador: botão que abre a instalação do navegador).
       const installBox = createInstallHint(document);
@@ -410,8 +435,11 @@ export function createGame(options: GameOptions): GameHandle {
           saves.start();
           if (fresh) {
             void saves.autosave();
-            worldScene.events.runBlocking(
-              ["intro.1", "intro.2", "intro.3"].map((textKey) => ({ type: "message", textKey })),
+            // Novo jogo: primeiro o manual (como jogar), depois a fala de abertura.
+            openManual(() =>
+              worldScene.events.runBlocking(
+                ["intro.1", "intro.2", "intro.3"].map((textKey) => ({ type: "message", textKey })),
+              ),
             );
           }
         });
@@ -424,10 +452,14 @@ export function createGame(options: GameOptions): GameHandle {
           root: ui.element,
           input: input.reader("menu"),
           maxNameLength: MAX_NAME_LENGTH,
-          looks: LOOKS.map((look, i) => ({
-            name: look.name,
-            portrait: portrait(doc, heroSheets[i]!),
-          })),
+          avatar: {
+            parts: [
+              { key: "skin", label: "Pele", options: SKINS.map((o) => o.name) },
+              { key: "hair", label: "Cabelo", options: HAIRS.map((o) => o.name) },
+              { key: "face", label: "Rosto", options: FACES.map((o) => o.name) },
+            ],
+            portrait: (avatar) => closeUp(doc, buildSheet(doc, heroBase, avatar, 1)),
+          },
           save:
             latest && char
               ? {
@@ -439,8 +471,8 @@ export function createGame(options: GameOptions): GameHandle {
                     : null,
                 }
               : null,
-          onNewGame: (name, look) =>
-            begin(newGame(content, { name, seed: Date.now() >>> 0, look }), true),
+          onNewGame: (name, avatar) =>
+            begin(newGame(content, { name, seed: Date.now() >>> 0, avatar }), true),
           onContinue: () => latest && begin(latest.data, false),
         });
       });

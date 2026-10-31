@@ -4,6 +4,7 @@ import { PROFILE_NAMES } from "../../game/battle/BattleController";
 import type { GameSession, ShopError, SkillError } from "../../game/GameSession";
 import { Menu, type MenuItem, type UiInput } from "../components/Menu";
 import { h } from "../dom";
+import { APRONS, apronFor } from "../../game/looks";
 
 export interface PauseMenuOptions {
   doc: Document;
@@ -17,6 +18,8 @@ export interface PauseMenuOptions {
   shopOnly?: { title: string };
   /** Abre a escolha de controles (computador ou celular) por cima do menu. */
   openControls?(): void;
+  /** Abre o manual "Como jogar" por cima do menu. */
+  openManual?(): void;
   /** Liga/desliga a música de fundo. */
   music?: { readonly enabled: boolean; toggle(): void };
 }
@@ -95,6 +98,22 @@ export class PauseMenu {
       { label: "Missões (guia)", paint: () => this.paintQuests() },
       { label: "Status", paint: () => this.paintStatus() },
     ];
+    const openManual = this.o.openManual;
+    if (openManual) {
+      pages.push({
+        label: "📖 Como jogar",
+        paint: () =>
+          this.side.replaceChildren(
+            h(
+              this.o.doc,
+              "p",
+              "panel__text",
+              "Manual: como andar, onde apertar e como fazer pizza.",
+            ),
+          ),
+        onSelect: () => openManual(),
+      });
+    }
     const openControls = this.o.openControls;
     if (openControls) {
       pages.push({
@@ -457,6 +476,11 @@ export class PauseMenu {
     for (const [label, value] of [
       ["Nome", char.name],
       ["Nível", `${char.level}`],
+      [
+        "Avental",
+        apronFor(char.level).name +
+          (char.level < APRONS.length ? ` (próximo no Nv ${char.level + 1})` : " (o último!)"),
+      ],
       ["PV", `${session.maxHp}`],
       ["XP", `${char.xp}${next !== null ? ` (faltam ${next})` : ""}`],
       ["Receitas", `${char.knownRecipes.length}`],

@@ -732,3 +732,128 @@ body {
   font-size: 10px;
   font-weight: bold;
 }
+
+/* Montar o avatar no novo jogo: retrato à esquerda, pele/cabelo/rosto à direita. */
+.avatar__layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 6);
+  margin-top: calc(var(--u) * 3);
+}
+.avatar__layout .title__look canvas {
+  width: calc(var(--u) * 40);
+  height: calc(var(--u) * 52.5);
+}
+.avatar {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+.avatar__row {
+  display: grid;
+  grid-template-columns: calc(var(--u) * 30) auto calc(var(--u) * 62) auto;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  padding: calc(var(--u) * 1) calc(var(--u) * 2);
+  border: calc(var(--u) * 1) solid transparent;
+}
+.avatar__row.is-focused {
+  border-color: var(--ink);
+  background: #ffe2a8;
+}
+.avatar__label {
+  font-weight: bold;
+}
+.avatar__value {
+  text-align: center;
+}
+.avatar__arrow {
+  font: inherit;
+  padding: 0 calc(var(--u) * 2);
+  border: calc(var(--u) * 1) solid var(--ink);
+  background: #efe3cf;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* Manual "Como jogar". */
+.manual {
+  max-width: calc(var(--u) * 260);
+  text-align: center;
+}
+.manual__page {
+  min-height: calc(var(--u) * 80);
+}
+.manual__icon {
+  font-size: calc(var(--u) * 18);
+  line-height: 1.2;
+}
+.manual__title {
+  display: block;
+  margin-bottom: calc(var(--u) * 2);
+}
+.manual .panel__list {
+  text-align: left;
+}
+.manual__dots {
+  margin: calc(var(--u) * 2) 0;
+  letter-spacing: calc(var(--u) * 1);
+}
+.manual .title__button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Plaquinha com o nome do lugar ao entrar num mapa. */
+.hud__place {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * 16);
+  transform: translateX(-50%);
+  padding: calc(var(--u) * 2) calc(var(--u) * 8);
+  background: #c98a4a;
+  border: calc(var(--u) * 2) solid #3a2010;
+  box-shadow: 0 calc(var(--u) * 2) 0 rgba(0, 0, 0, 0.35);
+  color: #fff6e0;
+  font-weight: bold;
+  font-size: calc(var(--u) * 8);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hud__place.is-showing {
+  animation: place-in 2.6s ease both;
+}
+@keyframes place-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(var(--u) * -6));
+  }
+  12%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Foto da pizza pronta, no forno. */
+.pizza-photo {
+  margin: 0 auto calc(var(--u) * 2);
+  text-align: center;
+}
+.pizza-photo canvas {
+  width: calc(var(--u) * 56);
+  height: calc(var(--u) * 56);
+}
+.pizza-photo figcaption {
+  font-size: calc(var(--u) * 5.5);
+  opacity: 0.8;
+}
+.pizza-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

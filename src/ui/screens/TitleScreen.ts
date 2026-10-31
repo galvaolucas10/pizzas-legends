@@ -9,6 +9,8 @@ export interface SaveInfo {
   objective: string | null;
 }
 
+export type AvatarPart = "skin" | "hair" | "face";
+
 export interface TitleScreenOptions {
   doc: Document;
   root: HTMLElement;
@@ -16,9 +18,12 @@ export interface TitleScreenOptions {
   /** Save mais recente, se existir. */
   save: SaveInfo | null;
   maxNameLength: number;
-  /** Personagens para escolher no novo jogo: nome e retrato. */
-  looks: { name: string; portrait: HTMLCanvasElement }[];
-  onNewGame(name: string, look: number): void;
+  /** Montar o avatar no novo jogo: nomes de cada opção e o retrato do resultado. */
+  avatar: {
+    parts: { key: AvatarPart; label: string; options: string[] }[];
+    portrait(avatar: Record<AvatarPart, number>): HTMLCanvasElement;
+  };
+  onNewGame(name: string, avatar: Record<AvatarPart, number>): void;
   onContinue(): void;
 }
 
@@ -29,8 +34,15 @@ export class TitleScreen {
   private readonly menu: Menu;
   private readonly body: HTMLElement;
   private naming: HTMLInputElement | null = null;
-  /** Escolha de personagem aberta: nome digitado e o visual em foco. */
-  private picking: { name: string; index: number; cards: HTMLElement[] } | null = null;
+  /** Montagem do avatar aberta: nome digitado, escolhas e a linha em foco. */
+  private picking: {
+    name: string;
+    row: number;
+    avatar: Record<AvatarPart, number>;
+    rows: HTMLElement[];
+    values: HTMLElement[];
+    preview: HTMLElement;
+  } | null = null;
 
   constructor(private readonly o: TitleScreenOptions) {
     const doc = o.doc;
@@ -120,24 +132,35 @@ export class TitleScreen {
     field.select();
   }
 
-  /** Segunda etapa do novo jogo: escolher um dos personagens. */
-  private pickLook(name: string, index = 0): void {
+  /** Segunda etapa do novo jogo: montar o avatar (pele, cabelo e rostinho). */
+  private pickLook(
+    name: string,
+    avatar: Record<AvatarPart, number> = { skin: 0, hair: 0, face: 0 },
+  ): void {
     const doc = this.o.doc;
     this.naming = null;
-    const row = h(doc, "div", "title__looks");
-    const label = h(doc, "p", "panel__text title__look-name");
-    const cards = this.o.looks.map((look, i) => {
-      const card = h(doc, "button", "title__look");
-      card.type = "button";
-      card.setAttribute("aria-label", look.name);
-      card.append(look.portrait);
-      card.addEventListener("click", () => {
-        if (this.picking?.index === i) this.confirmLook();
-        else this.focusLook(i);
-      });
-      return card;
+    const preview = h(doc, "div", "title__look is-focused");
+    const editor = h(doc, "div", "avatar");
+    const rows: HTMLElement[] = [];
+    const values: HTMLElement[] = [];
+    this.o.avatar.parts.forEach((part, i) => {
+      const row = h(doc, "div", "avatar__row");
+      const prev = h(doc, "button", "avatar__arrow", "◀");
+      const next = h(doc, "button", "avatar__arrow", "▶");
+      prev.type = next.type = "button";
+      prev.setAttribute("aria-label", `${part.label}: anterior`);
+      next.setAttribute("aria-label", `${part.label}: próximo`);
+      prev.addEventListener("click", () => this.change(i, -1));
+      next.addEventListener("click", () => this.change(i, 1));
+      const value = h(doc, "span", "avatar__value");
+      row.append(h(doc, "span", "avatar__label", part.label), prev, value, next);
+      row.addEventListener("pointerenter", () => this.focusRow(i));
+      rows.push(row);
+      values.push(value);
     });
-    row.append(...cards);
+    editor.append(...rows);
+    const layout = h(doc, "div", "avatar__layout");
+    layout.append(preview, editor);
     const startButton = h(doc, "button", "title__button", "Começar");
     startButton.type = "button";
     startButton.addEventListener("click", () => this.confirmLook());
@@ -147,30 +170,48 @@ export class TitleScreen {
     const buttons = h(doc, "div", "title__buttons");
     buttons.append(startButton, backButton);
     this.body.replaceChildren(
-      h(doc, "p", "panel__text", `Escolha o personagem de ${name}:`),
-      row,
-      label,
+      h(doc, "p", "panel__text", `Monte o visual de ${name}:`),
+      layout,
       buttons,
-      h(doc, "p", "panel__hint", "← → escolher · Enter começar · Esc volta"),
+      h(doc, "p", "panel__hint", "↑↓ escolher · ← → trocar · Enter começar · Esc volta"),
     );
-    this.picking = { name, index, cards };
-    this.focusLook(index);
+    this.picking = { name, row: 0, avatar: { ...avatar }, rows, values, preview };
+    this.paintAvatar();
   }
 
-  private focusLook(index: number): void {
+  private focusRow(row: number): void {
+    if (!this.picking) return;
+    this.picking.row = row;
+    this.paintAvatar();
+  }
+
+  /** Troca a opção de uma parte (pele, cabelo ou rosto) para a anterior/próxima. */
+  private change(row: number, step: number): void {
+    const p = this.picking;
+    const part = this.o.avatar.parts[row];
+    if (!p || !part) return;
+    const n = part.options.length;
+    p.row = row;
+    p.avatar[part.key] = (p.avatar[part.key] + step + n) % n;
+    this.paintAvatar();
+  }
+
+  private paintAvatar(): void {
     const p = this.picking;
     if (!p) return;
-    p.index = index;
-    p.cards.forEach((card, i) => card.classList.toggle("is-focused", i === index));
-    const label = this.body.querySelector(".title__look-name");
-    if (label) label.textContent = this.o.looks[index]?.name ?? "";
+    this.o.avatar.parts.forEach((part, i) => {
+      p.rows[i]?.classList.toggle("is-focused", i === p.row);
+      const value = p.values[i];
+      if (value) value.textContent = part.options[p.avatar[part.key]] ?? "";
+    });
+    p.preview.replaceChildren(this.o.avatar.portrait(p.avatar));
   }
 
   private confirmLook(): void {
     const p = this.picking;
     if (this.done || !p) return;
     this.done = true;
-    this.o.onNewGame(p.name, p.index);
+    this.o.onNewGame(p.name, { ...p.avatar });
   }
 
   update(): void {
@@ -178,15 +219,19 @@ export class TitleScreen {
     const p = this.picking;
     if (p) {
       const input = this.o.input;
-      const n = this.o.looks.length;
-      if (input.wasPressed("left") || input.wasPressed("up")) {
-        input.consume("left");
+      const n = this.o.avatar.parts.length;
+      if (input.wasPressed("up")) {
         input.consume("up");
-        this.focusLook((p.index + n - 1) % n);
-      } else if (input.wasPressed("right") || input.wasPressed("down")) {
-        input.consume("right");
+        this.focusRow((p.row + n - 1) % n);
+      } else if (input.wasPressed("down")) {
         input.consume("down");
-        this.focusLook((p.index + 1) % n);
+        this.focusRow((p.row + 1) % n);
+      } else if (input.wasPressed("left")) {
+        input.consume("left");
+        this.change(p.row, -1);
+      } else if (input.wasPressed("right")) {
+        input.consume("right");
+        this.change(p.row, 1);
       } else if (input.wasPressed("confirm")) {
         input.consume("confirm");
         this.confirmLook();

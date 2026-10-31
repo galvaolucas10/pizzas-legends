@@ -16,6 +16,7 @@ export function newGame(
     seed: number;
     characterId?: string;
     look?: number;
+    avatar?: { skin: number; hair: number; face: number };
   },
 ): SaveData {
   const charId = options.characterId ?? "char.aprendiz";
@@ -44,6 +45,7 @@ export function newGame(
         knownRecipes: [...def.startingRecipes],
         cookedRecipes: [],
         ...(options.look ? { look: options.look } : {}),
+        ...(options.avatar ? { avatar: { ...options.avatar } } : {}),
       },
     ],
     inventory: { ingredients, pizzas: [], lastBasket: [] },

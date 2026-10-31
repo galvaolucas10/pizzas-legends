@@ -1,3 +1,4 @@
+import { apronFor } from "../../game/looks";
 import type { GameSession } from "../../game/GameSession";
 import { h, hpBar } from "../dom";
 
@@ -8,6 +9,8 @@ export class Hud {
   private readonly hp: ReturnType<typeof hpBar>;
   private readonly objectiveEl: HTMLElement;
   private readonly toastEl: HTMLElement;
+  private readonly placeEl: HTMLElement;
+  private placeTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly saveEl: HTMLElement;
   private readonly unsubscribe: (() => void)[] = [];
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -29,7 +32,9 @@ export class Hud {
     this.toastEl.setAttribute("aria-live", "polite");
     this.saveEl = h(doc, "div", "hud__save", "Salvando...");
     this.saveEl.hidden = true;
-    this.element.append(status, this.objectiveEl, this.toastEl, this.saveEl);
+    this.placeEl = h(doc, "div", "hud__place");
+    this.placeEl.hidden = true;
+    this.element.append(status, this.objectiveEl, this.toastEl, this.saveEl, this.placeEl);
 
     const s = session.signals;
     this.unsubscribe.push(
@@ -37,7 +42,8 @@ export class Hud {
       s.on("objectiveChanged", () => this.refresh()),
       s.on("levelUp", (e) =>
         this.toast(
-          `Subiu para o nível ${e.level}! +${e.levels} ${e.levels === 1 ? "ponto" : "pontos"} de habilidade (menu → Habilidades)`,
+          `Subiu para o nível ${e.level}! 🎽 Ganhou o avental ${apronFor(e.level).name}! +${e.levels} ${e.levels === 1 ? "ponto" : "pontos"} de habilidade (menu → Habilidades)`,
+          6000,
         ),
       ),
       s.on("itemsGained", (items) =>
@@ -98,6 +104,17 @@ Tab: menu → Missões para o passo a passo`
   }
 
   /** Aviso curto no canto (nível, receita, etapa). */
+  /** Plaquinha com o nome do lugar, ao entrar num mapa. */
+  showPlace(name: string): void {
+    this.placeEl.textContent = `📍 ${name}`;
+    this.placeEl.hidden = false;
+    this.placeEl.classList.remove("is-showing");
+    void this.placeEl.offsetWidth; // reinicia a animação
+    this.placeEl.classList.add("is-showing");
+    if (this.placeTimer) clearTimeout(this.placeTimer);
+    this.placeTimer = setTimeout(() => (this.placeEl.hidden = true), 2600);
+  }
+
   toast(message: string, ms = 2500): void {
     this.toastEl.textContent = message;
     this.toastEl.hidden = false;
@@ -114,6 +131,7 @@ Tab: menu → Missões para o passo a passo`
 
   destroy(): void {
     this.unsubscribe.forEach((off) => off());
+    if (this.placeTimer) clearTimeout(this.placeTimer);
     if (this.toastTimer) clearTimeout(this.toastTimer);
     this.element.remove();
   }

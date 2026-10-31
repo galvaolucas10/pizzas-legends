@@ -14,8 +14,10 @@ export interface CharacterState {
   skills: string[];
   knownRecipes: string[];
   cookedRecipes: string[];
-  /** Visual escolhido no novo jogo (índice em LOOKS; ausente = 0). */
+  /** Personagem pronto dos saves antigos (0–4; hoje vira um avatar). */
   look?: number;
+  /** Pele, cabelo e rostinho escolhidos no novo jogo. */
+  avatar?: { skin: number; hair: number; face: number };
 }
 
 export interface StatusApplied {
