@@ -215,15 +215,9 @@ describe("integridade do conteúdo (DATA_MODELS 7.1)", () => {
           kind: "reward",
           rewardId: "rew.primeiro_desafio_etapa2",
         };
-        byId(raw.skills.skills, "skill.defumacao").effects = [
-          { type: "unlockConversion", conversionId: "conv.defumacao" },
-        ];
       });
       expect(text).toContain(
         'rec.quatro_queijos: a recompensa "rew.primeiro_desafio_etapa2" não entrega esta receita',
-      );
-      expect(text).toContain(
-        'rec.defumada: a habilidade "skill.defumacao" não desbloqueia esta receita',
       );
     });
 

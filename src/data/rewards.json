@@ -127,26 +127,22 @@
   {
     "id": "rew.carreira_9",
     "coins": 30,
-    "xp": 40,
-    "recipes": ["rec.calabresa"]
+    "xp": 40
   },
   {
     "id": "rew.carreira_10",
     "xp": 100,
-    "recipes": ["rec.funghi"],
     "setFlags": ["flag.mestre_pizzaiolo"]
   },
   {
     "id": "rew.lenda_11",
     "coins": 50,
-    "xp": 60,
-    "recipes": ["rec.napolitana"]
+    "xp": 60
   },
   {
     "id": "rew.lenda_12",
     "coins": 40,
-    "xp": 60,
-    "recipes": ["rec.calabresa_picante"]
+    "xp": 60
   },
   {
     "id": "rew.lenda_13",

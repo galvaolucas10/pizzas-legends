@@ -32,14 +32,19 @@ export interface PizzaPreview {
   ingredientsUsed: string[];
 }
 
-/** Receitas que o personagem sabe: as obtidas por recompensa + as liberadas por habilidade. */
+/** Receitas que o personagem sabe: as de começo (valem até em saves antigos), as de recompensa e as de habilidade. */
 export function getAvailableRecipes(char: CharacterState, content: ContentRegistry): string[] {
   const fromSkills = char.skills.flatMap((id) =>
     (content.skills[id]?.effects ?? []).flatMap((e) =>
       e.type === "unlockRecipe" ? [e.recipeId] : [],
     ),
   );
-  return [...new Set([...char.knownRecipes, ...fromSkills])].filter((id) => id in content.recipes);
+  const fromStart = Object.values(content.recipes)
+    .filter((r) => r.unlock.kind === "start")
+    .map((r) => r.id);
+  return [...new Set([...char.knownRecipes, ...fromSkills, ...fromStart])].filter(
+    (id) => id in content.recipes,
+  );
 }
 
 /** Soma dos efeitos de habilidade de um tipo. */

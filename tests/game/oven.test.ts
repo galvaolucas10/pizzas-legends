@@ -13,15 +13,26 @@ function setup() {
 }
 
 describe("balcão: ajuda para produzir", () => {
-  it("começa com Margherita, Quatro Queijos e Brasa; a Defumada diz como liberar", () => {
+  it("todas as pizzas já vêm liberadas, e todo ingrediente do Mercadinho entra em alguma", () => {
     const { oven } = setup();
     const cards = oven.recipeCards();
-    expect(cards.filter((c) => c.known).map((c) => c.id)).toEqual([
-      "rec.margherita",
-      "rec.quatro_queijos",
-      "rec.brasa",
-    ]);
-    expect(cards.find((c) => c.id === "rec.defumada")?.unlockHint).toMatch(/Habilidades/);
+    expect(cards.every((c) => c.known)).toBe(true);
+    expect(cards.length).toBeGreaterThanOrEqual(12);
+    const used = new Set(
+      Object.values(C.recipes).flatMap((r) =>
+        r.requirements.flatMap((q) =>
+          q.kind === "ingredient"
+            ? [q.ingredientId]
+            : Object.values(C.ingredients)
+                .filter((i) => i.category === q.category)
+                .map((i) => i.id),
+        ),
+      ),
+    );
+    const sold = Object.keys(C.balance.shop?.prices ?? {}).filter(
+      (id) => C.ingredients[id]?.category !== "bebida",
+    );
+    expect(sold.filter((id) => !used.has(id))).toEqual([]);
   });
 
   it("'como fazer' marca o que tem e o que falta", () => {
@@ -61,10 +72,8 @@ describe("balcão: ajuda para produzir", () => {
 });
 
 describe("sabores novos e Carreira", () => {
-  it("Calabresa exige linguiça (cobertura obrigatória) e é liberada no Nível 9", () => {
+  it("Calabresa exige linguiça (cobertura obrigatória) e já vem liberada", () => {
     const { session, oven } = setup();
-    expect(oven.recipeCards().find((c) => c.id === "rec.calabresa")?.known).toBe(false);
-    session.dispatch({ type: "claimReward", rewardId: "rew.carreira_9" });
     expect(oven.recipeCards().find((c) => c.id === "rec.calabresa")?.known).toBe(true);
     // Compra o que falta (inclusive a linguiça) e prepara.
     expect(oven.buyMissingAndCook("rec.calabresa").ok).toBe(true);

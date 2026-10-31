@@ -127,8 +127,7 @@
       ]
     },
     "unlock": {
-      "kind": "skill",
-      "skillId": "skill.defumacao"
+      "kind": "start"
     }
   },
   {
@@ -164,8 +163,7 @@
       "heal": 0.3
     },
     "unlock": {
-      "kind": "reward",
-      "rewardId": "rew.carreira_9"
+      "kind": "start"
     }
   },
   {
@@ -201,8 +199,7 @@
       "heal": 0.5
     },
     "unlock": {
-      "kind": "reward",
-      "rewardId": "rew.carreira_10"
+      "kind": "start"
     }
   },
   {
@@ -238,8 +235,7 @@
       "heal": 0.8
     },
     "unlock": {
-      "kind": "reward",
-      "rewardId": "rew.lenda_11"
+      "kind": "start"
     }
   },
   {
@@ -274,8 +270,158 @@
       "damage": 1.1
     },
     "unlock": {
-      "kind": "reward",
-      "rewardId": "rew.lenda_12"
+      "kind": "start"
+    }
+  },
+  {
+    "id": "rec.margherita_manjericao",
+    "profile": "fresco",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.mussarela",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.manjericao",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.7,
+      "heal": 0.7,
+      "cleanseNegative": 1
+    },
+    "unlock": {
+      "kind": "start"
+    }
+  },
+  {
+    "id": "rec.funghi_defumado",
+    "profile": "defumado",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.queijo_defumado",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.cogumelo",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.8,
+      "heal": 0.4
+    },
+    "unlock": {
+      "kind": "start"
+    }
+  },
+  {
+    "id": "rec.diavola",
+    "profile": "picante",
+    "baseQuality": 1,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "category",
+        "category": "massa",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_apimentado",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.queijo_defumado",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.linguica",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 1.1,
+      "applyStatus": [
+        {
+          "status": "status.queimadura",
+          "target": "opponent"
+        }
+      ]
+    },
+    "unlock": {
+      "kind": "start"
+    }
+  },
+  {
+    "id": "rec.rustica",
+    "profile": "cremoso",
+    "baseQuality": 2,
+    "baseSlices": 4,
+    "toppingSlots": 1,
+    "requirements": [
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.massa_fermentada",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.molho_tomate",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.queijo_cabra",
+        "count": 1
+      },
+      {
+        "kind": "ingredient",
+        "ingredientId": "ing.cogumelo",
+        "count": 1
+      }
+    ],
+    "sliceAction": {
+      "damage": 0.8,
+      "heal": 0.5,
+      "shield": 1
+    },
+    "unlock": {
+      "kind": "start"
     }
   }
 ]

@@ -53,7 +53,7 @@ describe("tela do forno (F1-08)", () => {
     });
     expect(oven.currentPage).toBe("quick");
     expect(visibleText(root)).toContain("Margherita");
-    expect(visibleText(root)).not.toContain("Defumada"); // só as que dá para fazer
+    expect(visibleText(root)).toContain("faltam ingredientes"); // as outras mostram o que falta
     tick(oven, input, "confirm"); // Margherita
     expect(oven.currentPage).toBe("cooking");
     expect(visibleText(root)).toContain("Fazendo a Margherita");

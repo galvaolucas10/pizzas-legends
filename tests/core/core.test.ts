@@ -56,14 +56,14 @@ describe("rng (F1-02)", () => {
 });
 
 describe("novo jogo (F1-02)", () => {
-  it("começa no nível 1 com 3 receitas, ingredientes iniciais e a missão principal ativa", () => {
+  it("começa no nível 1 com todas as receitas, ingredientes iniciais e a missão principal ativa", () => {
     const save = fresh();
     const char = activeCharacter(save);
     expect([char.name, char.level, char.xp, char.knownRecipes]).toEqual([
       "Nico",
       1,
       0,
-      ["rec.margherita", "rec.quatro_queijos", "rec.brasa"],
+      Object.keys(C.recipes),
     ]);
     expect(save.inventory.ingredients).toEqual({
       "ing.farinha": 1,
@@ -284,9 +284,9 @@ describe("preparo (F1-07, GDD 5.4)", () => {
   it("todos os erros de preparo", () => {
     const save = fresh();
     const char = activeCharacter(save);
-    expect(previewPizza("rec.defumada", [], char, C)).toEqual({
+    expect(previewPizza("rec.inexistente", [], char, C)).toEqual({
       kind: "recipeUnknown",
-      recipeId: "rec.defumada",
+      recipeId: "rec.inexistente",
     });
     expect(previewPizza("rec.margherita", ["ing.farinha", "ing.mussarela"], char, C)).toEqual({
       kind: "missingIngredient",

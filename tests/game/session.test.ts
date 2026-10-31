@@ -11,10 +11,14 @@ describe("GameSession (F1-03)", () => {
   it("comando inválido não altera o estado e devolve o erro tipado", () => {
     const s = session();
     const before = s.state;
-    const result = s.dispatch({ type: "cookPizza", recipeId: "rec.defumada", ingredientIds: [] });
+    const result = s.dispatch({
+      type: "cookPizza",
+      recipeId: "rec.inexistente",
+      ingredientIds: [],
+    });
     expect(result).toEqual({
       ok: false,
-      error: { kind: "recipeUnknown", recipeId: "rec.defumada" },
+      error: { kind: "recipeUnknown", recipeId: "rec.inexistente" },
     });
     expect(s.state).toBe(before);
   });

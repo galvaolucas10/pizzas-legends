@@ -61,6 +61,8 @@ function blob(
   ctx.fill();
 }
 
+const MASSAS = new Set(["ing.farinha", "ing.massa_fermentada"]);
+
 const SAUCE: Record<string, [string, string]> = {
   "ing.molho_tomate": ["#d8432c", "#b8321f"],
   "ing.molho_apimentado": ["#a81e16", "#e0602a"],
@@ -167,8 +169,10 @@ export function drawPizza(doc: Document, ingredients: string[], seed: string): H
   disc(ctx, C, C + 1.5, 46, "rgba(0, 0, 0, 0.25)");
   disc(ctx, C, C, 45, "#b9824c");
   disc(ctx, C, C, 42, "#a06a38");
-  disc(ctx, C, C, 39, "#c47a32");
-  disc(ctx, C, C, 37, "#e8a852");
+  // Massa fermentada: borda mais alta e tostada.
+  const rustic = ingredients.includes("ing.massa_fermentada");
+  disc(ctx, C, C, 39, rustic ? "#a65e22" : "#c47a32");
+  disc(ctx, C, C, 37, rustic ? "#cf8a3c" : "#e8a852");
   for (const p of spots(rand, 14, 35, 6)) {
     if (Math.hypot(p.x - C, p.y - C) > 31) disc(ctx, p.x, p.y, 1.2, "#b86a28"); // tostadinho
   }
@@ -191,7 +195,7 @@ export function drawPizza(doc: Document, ingredients: string[], seed: string): H
   }
 
   // Coberturas.
-  const toppings = ingredients.filter((id) => !SAUCE[id] && !CHEESE[id]);
+  const toppings = ingredients.filter((id) => !SAUCE[id] && !CHEESE[id] && !MASSAS.has(id));
   toppings.forEach((id, i) => {
     const count = id === "ing.azeite_dourado" ? 14 : id === "ing.manjericao" ? 6 : 8;
     for (const p of spots(seeded(`${seed}:${i}`), count, 25, 9))

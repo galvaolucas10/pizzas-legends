@@ -2,7 +2,20 @@
   {
     "id": "char.aprendiz",
     "sprite": "img.hero",
-    "startingRecipes": ["rec.margherita", "rec.quatro_queijos", "rec.brasa"],
+    "startingRecipes": [
+      "rec.margherita",
+      "rec.quatro_queijos",
+      "rec.brasa",
+      "rec.defumada",
+      "rec.calabresa",
+      "rec.funghi",
+      "rec.napolitana",
+      "rec.calabresa_picante",
+      "rec.margherita_manjericao",
+      "rec.funghi_defumado",
+      "rec.diavola",
+      "rec.rustica"
+    ],
     "startingIngredients": [
       {
         "ingredientId": "ing.farinha",
