@@ -220,6 +220,11 @@
               }
             },
             {
+              "hasPizza": {
+                "recipeId": "rec.defumada"
+              }
+            },
+            {
               "flag": "flag.moedas",
               "atLeast": 150
             }
@@ -273,6 +278,11 @@
               "hasPizza": {
                 "recipeId": "rec.napolitana"
               }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.margherita_manjericao"
+              }
             }
           ]
         },
@@ -285,9 +295,18 @@
           "targets": ["balcao1", "balcao2", "balcao3"]
         },
         "completeWhen": {
-          "hasPizza": {
-            "recipeId": "rec.calabresa_picante"
-          }
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.calabresa_picante"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.diavola"
+              }
+            }
+          ]
         },
         "rewardId": "rew.lenda_13"
       },
@@ -298,9 +317,23 @@
           "targets": ["balcao1", "balcao2", "balcao3"]
         },
         "completeWhen": {
-          "hasPizza": {
-            "minQuality": 4
-          }
+          "all": [
+            {
+              "hasPizza": {
+                "recipeId": "rec.rustica"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.funghi_defumado"
+              }
+            },
+            {
+              "hasPizza": {
+                "minQuality": 4
+              }
+            }
+          ]
         },
         "rewardId": "rew.lenda_14"
       },
@@ -314,7 +347,7 @@
           "all": [
             {
               "hasPizza": {
-                "recipeId": "rec.margherita"
+                "recipeId": "rec.margherita_manjericao"
               }
             },
             {
@@ -340,6 +373,16 @@
             {
               "hasPizza": {
                 "recipeId": "rec.napolitana"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.diavola"
+              }
+            },
+            {
+              "hasPizza": {
+                "recipeId": "rec.rustica"
               }
             }
           ]

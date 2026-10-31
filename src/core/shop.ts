@@ -1,4 +1,5 @@
 import type { ContentRegistry } from "../content/registry";
+import { getAvailableRecipes, previewPizza, suggestIngredients } from "./cooking";
 import { addIngredients, ingredientCount } from "./inventory";
 import type { SaveData } from "./types";
 
@@ -52,4 +53,43 @@ export function buyIngredient(
   const need = price * count;
   if (have < need) return { kind: "notEnoughCoins", need, have };
   return addIngredients(addCoins(save, -need, content), [{ ingredientId, count }], content);
+}
+
+/** Quanto custa comprar tudo de uma receita na loja (o mais barato de cada categoria). */
+export function recipePrice(recipeId: string, content: ContentRegistry): number {
+  const recipe = content.recipes[recipeId];
+  const prices = content.balance.shop?.prices ?? {};
+  if (!recipe) return Infinity;
+  return recipe.requirements.reduce((sum, req) => {
+    const options =
+      req.kind === "ingredient"
+        ? [req.ingredientId]
+        : Object.values(content.ingredients)
+            .filter((i) => i.category === req.category)
+            .map((i) => i.id);
+    const cheapest = Math.min(...options.map((id) => prices[id] ?? Infinity));
+    return sum + cheapest * req.count;
+  }, 0);
+}
+
+/**
+ * Pizzas que os clientes podem pedir: as que o jogador já tem na mochila, consegue fazer
+ * com o que tem ou consegue pagar na loja. No começo (poucas moedas) os pedidos são das
+ * pizzas baratas; com mais moedas aparecem os sabores especiais.
+ */
+export function orderableRecipes(save: SaveData, content: ContentRegistry): string[] {
+  const char = save.characters[0];
+  if (!char) return [];
+  const known = getAvailableRecipes(char, content);
+  const money = coins(save, content);
+  const ok = known.filter(
+    (id) =>
+      save.inventory.pizzas.some((p) => p.recipeId === id) ||
+      !("kind" in previewPizza(id, suggestIngredients(save, id, content), char, content)) ||
+      recipePrice(id, content) <= money,
+  );
+  if (ok.length) return ok;
+  // Sem moedas nem ingredientes: a pizza mais barata.
+  const cheapest = [...known].sort((a, b) => recipePrice(a, content) - recipePrice(b, content));
+  return cheapest.slice(0, 1);
 }

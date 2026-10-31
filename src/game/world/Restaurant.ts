@@ -1,5 +1,5 @@
+import { orderableRecipes } from "../../core/shop";
 import type { GameEvent } from "../../content/schemas/events";
-import { getAvailableRecipes } from "../../core/cooking";
 import { customerCoins, isEmployeeWorking } from "../../core/restaurant";
 import type { SaveData } from "../../core/types";
 import type { Point } from "../../engine/Camera";
@@ -54,6 +54,10 @@ const RECIPE_TAGS: Record<string, string> = {
   "rec.funghi": "Funghi",
   "rec.napolitana": "Napol.",
   "rec.calabresa_picante": "C.Picante",
+  "rec.margherita_manjericao": "Margh.+M",
+  "rec.funghi_defumado": "F.Defum.",
+  "rec.diavola": "Diavola",
+  "rec.rustica": "Rústica",
 };
 
 const BUBBLES: Record<CustomerState, { text: string; color: string } | null> = {
@@ -407,9 +411,8 @@ export class Restaurant {
   }
 
   private pickRecipe(): string {
-    const char = this.o.session.state.characters[0]!;
-    const known = getAvailableRecipes(char, this.o.session.content);
-    return known[Math.floor(this.random() * known.length)] ?? "rec.margherita";
+    const options = orderableRecipes(this.o.session.state, this.o.session.content);
+    return options[Math.floor(this.random() * options.length)] ?? "rec.margherita";
   }
 
   private get door(): Point | undefined {

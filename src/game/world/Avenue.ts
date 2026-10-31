@@ -1,5 +1,5 @@
+import { orderableRecipes } from "../../core/shop";
 import type { GameEvent } from "../../content/schemas/events";
-import { getAvailableRecipes } from "../../core/cooking";
 import type { Point } from "../../engine/Camera";
 import type { Npc } from "../entities/Npc";
 import type { GameSession } from "../GameSession";
@@ -199,9 +199,8 @@ export class Avenue {
   private newOrder(): void {
     const cfg = this.config;
     if (this.orders.length >= cfg.maxOrders) return;
-    const char = this.o.session.state.characters[0]!;
-    const known = getAvailableRecipes(char, this.o.session.content);
-    const recipeId = known[Math.floor(this.random() * known.length)] ?? "rec.margherita";
+    const options = orderableRecipes(this.o.session.state, this.o.session.content);
+    const recipeId = options[Math.floor(this.random() * options.length)] ?? "rec.margherita";
     const address = cfg.addresses[Math.floor(this.random() * cfg.addresses.length)]!;
     const order = { id: ++this.seq, recipeId, address };
     this.orders.push(order);

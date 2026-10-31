@@ -23,7 +23,28 @@ const SHOPPING: Record<string, string[]> = {
   "rec.funghi": ["ing.farinha", "ing.molho_tomate", "ing.mussarela", "ing.cogumelo"],
   "rec.napolitana": ["ing.farinha", "ing.molho_tomate", "ing.queijo_cabra", "ing.manjericao"],
   "rec.calabresa_picante": ["ing.farinha", "ing.molho_apimentado", "ing.mussarela", "ing.linguica"],
+  "rec.defumada": ["ing.farinha", "ing.molho_tomate", "ing.queijo_defumado"],
+  "rec.margherita_manjericao": [
+    "ing.farinha",
+    "ing.molho_tomate",
+    "ing.mussarela",
+    "ing.manjericao",
+  ],
+  "rec.funghi_defumado": ["ing.farinha", "ing.molho_tomate", "ing.queijo_defumado", "ing.cogumelo"],
+  "rec.diavola": ["ing.farinha", "ing.molho_apimentado", "ing.queijo_defumado", "ing.linguica"],
+  "rec.rustica": ["ing.massa_fermentada", "ing.molho_tomate", "ing.queijo_cabra", "ing.cogumelo"],
 };
+/** Cardápio completo do Desafio 15. */
+const MENU = [
+  "rec.margherita_manjericao",
+  "rec.quatro_queijos",
+  "rec.brasa",
+  "rec.calabresa",
+  "rec.funghi",
+  "rec.napolitana",
+  "rec.diavola",
+  "rec.rustica",
+];
 
 const save = (s: GameSession) => s.state as SaveData;
 const step = (s: GameSession, quest: string) => s.state.quests[quest]?.step;
@@ -149,7 +170,8 @@ describe("partida completa: do desafio 1 à Lenda do Restaurante", () => {
     for (let i = 0; i < 3; i++) serve(s); // Desafio 9
     expect(step(s, CAREER)).toBe(1);
     expect(activeCharacter(save(s)).knownRecipes).toContain("rec.calabresa");
-    cook(s, "rec.calabresa"); // Desafio 10: Calabresa + 150 moedas
+    cook(s, "rec.calabresa");
+    cook(s, "rec.defumada"); // Desafio 10: Calabresa + Defumada + 150 moedas
     for (let i = 0; i < 60 && s.questStatus(CAREER) === "active"; i++) serve(s, "rec.margherita");
     expect(s.questStatus(CAREER)).toMatch(/completed|rewarded/);
 
@@ -170,19 +192,23 @@ describe("partida completa: do desafio 1 à Lenda do Restaurante", () => {
     expect(step(s, LEGEND)).toBe(1);
     expect(activeCharacter(save(s)).knownRecipes).toContain("rec.napolitana");
     cook(s, "rec.funghi");
-    cook(s, "rec.napolitana"); // Desafio 12
+    cook(s, "rec.napolitana");
+    cook(s, "rec.margherita_manjericao"); // Desafio 12
     expect(step(s, LEGEND)).toBe(2);
-    cook(s, "rec.calabresa_picante"); // Desafio 13
+    cook(s, "rec.calabresa_picante");
+    cook(s, "rec.diavola"); // Desafio 13
     expect(step(s, LEGEND)).toBe(3);
+    cook(s, "rec.rustica");
+    cook(s, "rec.funghi_defumado");
     for (const id of ["ing.massa_fermentada", "ing.queijo_cabra", "ing.queijo_defumado"])
       s.dispatch({ type: "buyIngredient", ingredientId: id, count: 1 });
     s.dispatch({
       type: "cookPizza",
       recipeId: "rec.quatro_queijos",
       ingredientIds: ["ing.massa_fermentada", "ing.queijo_cabra", "ing.queijo_defumado"],
-    }); // Desafio 14: nota 4
+    }); // Desafio 14: Rústica + Funghi Defumado + nota 4
     expect(step(s, LEGEND)).toBe(4);
-    for (const recipe of Object.keys(SHOPPING)) if (!hasPizza(s, recipe)) cook(s, recipe); // Desafio 15
+    for (const recipe of MENU) if (!hasPizza(s, recipe)) cook(s, recipe); // Desafio 15
     expect(step(s, LEGEND)).toBe(5);
     for (let i = 0; i < 8; i++) serve(s); // Desafio 16
     expect(step(s, LEGEND)).toBeGreaterThanOrEqual(6);
