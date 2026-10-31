@@ -385,11 +385,6 @@ export class WorldManager {
     }
 
     if (this.upperCache) ctx.drawImage(this.upperCache, -camera.x, -camera.y);
-    // Plaquinhas: em cada porta, o nome do lugar para onde ela leva.
-    for (const door of this.doors.values()) {
-      const name = PLACE_SIGNS[door.toMap];
-      if (name) drawSign(ctx, door.x * TILE - camera.x, door.y * TILE - camera.y, name);
-    }
     for (const { entity, at } of drawn) {
       if (entity instanceof Npc && entity.bubble) drawBubble(ctx, at, entity.bubble, this.time);
     }
@@ -418,40 +413,6 @@ export class WorldManager {
       shadowId: SHADOW_ID,
     };
   }
-}
-
-/** Nome curto de cada lugar, para as plaquinhas das portas. */
-export const PLACE_SIGNS: Record<string, string> = {
-  "map.vila": "Vila",
-  "map.salao": "Pizzaria",
-  "map.cozinha_mestre": "Cozinha",
-  "map.despensa": "Fundos",
-  "map.loja": "Mercadinho",
-  "map.praca": "Praça Neon",
-  "map.estufa": "Neon Greens",
-};
-
-/** Placa de madeira com o nome do lugar, acima da porta (x, y = canto do tile da porta). */
-function drawSign(ctx: CanvasRenderingContext2D, x: number, y: number, text: string): void {
-  ctx.save();
-  ctx.font = "bold 7px monospace";
-  const w = Math.ceil(ctx.measureText(text).width) + 6;
-  const h = 10;
-  const left = Math.round(x + TILE / 2 - w / 2);
-  const top = Math.round(y - h - 2);
-  ctx.fillStyle = "#5a3418"; // poste
-  ctx.fillRect(left + Math.floor(w / 2) - 1, top + h, 2, 2);
-  ctx.fillStyle = "#3a2010"; // contorno
-  ctx.fillRect(left - 1, top - 1, w + 2, h + 2);
-  ctx.fillStyle = "#c98a4a"; // madeira
-  ctx.fillRect(left, top, w, h);
-  ctx.fillStyle = "#e0a865"; // brilho em cima
-  ctx.fillRect(left, top, w, 1);
-  ctx.fillStyle = "#fff6e0";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, left + w / 2, top + h / 2 + 0.5);
-  ctx.restore();
 }
 
 /** Balão acima da cabeça de um NPC (pedido, comendo, pagar). */

@@ -68,7 +68,7 @@ function pages(mode: ControlMode, name: string): Page[] {
       lines: [
         "Siga as setas no chão: elas levam ao próximo passo.",
         "O objetivo aparece no alto da tela.",
-        "As plaquinhas mostram o nome de cada lugar.",
+        "Ao entrar num lugar, o nome dele aparece na tela.",
         "A cada nível você ganha um avental novo! 🎽",
       ],
     },
