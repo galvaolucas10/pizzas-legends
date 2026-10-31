@@ -779,6 +779,7 @@ body {
 
 /* Manual "Como jogar". */
 .manual {
+  pointer-events: auto; /* botões Voltar/Próximo clicáveis com o mouse */
   max-width: calc(var(--u) * 260);
   text-align: center;
 }
